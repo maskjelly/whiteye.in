@@ -9,6 +9,14 @@ import LinkButton from "@components/LinkButton.astro";
 import slugify from "@utils/slugify";
 import type { CollectionEntry } from "astro:content";
 
+import {loglib} from "@loglib/tracker"
+
+loglib.record({
+    id: "whiteye",
+    host: "https://www.loglib.io",
+})
+    
+
 export interface Props {
   pageNum: number;
   totalPages: number;
@@ -75,14 +83,3 @@ const next = pageNum < totalPages ? "" : "disabled";
     @apply group-hover:!fill-skin-base;
   }
 </style>
-
-<script>
-
-import {loglib} from "@loglib/tracker"
-
-loglib.record({
-    id: "whiteye",
-    host: "https://www.loglib.io",
-})
-    
-</script>
