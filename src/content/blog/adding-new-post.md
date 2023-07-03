@@ -44,11 +44,11 @@ While Windows may not be the best choice for programming, there are other operat
 
 ## macOS <3 :
 
-macOS is a Unix-based operating system that is specifically designed for Apple's hardware. It comes with a native package manager called Homebrew, which makes it easy to install and manage programming tools and dependencies. Additionally, macOS is known for its stability and ease of use, making it a popular choice among developers.
+As i previously have mentioned of me being an OG MacOS user , i really like Homebrew and how easy and comfortable it made for me to code and not run into issues i didnt create . Also considering how long its battery lasts really is impressive and definately something i very highly recommed .
 
 ## Linux (Arch and Ubuntu specially) ->>
 
-Linux is a free and open-source operating system that is highly customizable and flexible. It also comes with a native package manager called APT, which makes it easy to install and manage programming tools and dependencies. While Linux may have a steeper learning curve than macOS, it offers more control and customization options, making it a popular choice among power users and developers.
+Linux is a free and open-source operating system that is highly customizable and flexible , and with that it also comes with a native package manager called APT, which makes it easy to install and manage programming tools and dependencies. Although it have a steeper learning curve than macOS, it offers more control and customization options, making it a popular choice among power users and developers.
 
 ### SUMMARY
 
