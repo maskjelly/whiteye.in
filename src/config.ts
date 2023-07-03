@@ -27,15 +27,15 @@ export const SOCIALS: SocialObjects = [
     active: true,
   },
   {
-    name: "Mail",
-    href: "mailto:aaryan14decembersingh@gmail.com",
-    linkTitle: `Send an email to ${SITE.title}`,
-    active: false,
-  },
-  {
     name: "Twitter",
     href: "https://twitter.com/LiquidZooo",
     linkTitle: `${SITE.title} on Twitter`,
-    active: false,
+    active: true,
+  },
+  {
+    name: "Mail",
+    href: "mailto:aaryan14decembersingh@gmail.com",
+    linkTitle: `Send an email to ${SITE.title}`,
+    active: true,
   },
 ];

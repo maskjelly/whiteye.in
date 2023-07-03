@@ -1,120 +1,57 @@
 ---
-author: Sat Naing
-pubDatetime: 2022-09-23T15:22:00Z
-title: Adding new posts in AstroPaper theme
-postSlug: adding-new-posts-in-astropaper-theme
+author: whiteye [ Aaryan Singh ]
+pubDatetime: 2023-07-7T1:22:00Z
+title: Reconsidering Windows for Coders
+postSlug: reconsidering-windows-for-coders
 featured: true
 draft: false
 tags:
   - docs
+  - Windows
+  - Microsoft
+  - Programming
+  - Blog
 ogImage: ""
-description:
-  Some rules & recommendations for creating or adding new posts using AstroPaper
-  theme.
+description: If you are using windows you are doing something wrong .
+  Lets re-evaluate.
 ---
 
-Here are some rules/recommendations, tips & ticks for creating new posts in AstroPaper blog theme.
+### Why does this blog exist -
 
-## Table of contents
+As an ex-macOS user, I decided to give Windows a try for my new laptop since my MacBook was getting old (it was a 2017 MacBook Air). I bought a Windows gaming laptop and thought it shouldn't be THAT BAD...right?
 
-## Frontmatter
+Unfortunately, the nightmare began as soon as I started to set things up. Even before coding, I had to spend a good day or two just getting everything in place. In contrast, Linux/MacOS does everything by itself while you wait and watch.
 
-Frontmatter is the main place to store some important information about the post (article). Frontmatter lies at the top of the article and is written in YAML format. Read more about frontmatter and its usage in [astro documentation](https://docs.astro.build/en/guides/markdown-content/).
+One of the biggest issues I faced was memory management. My laptop came with 8GB pre-installed RAM, but almost all of it was taken away by bloatware and unnecessary applications that come pre-installed with Windows. These applications consume a lot of memory and resources, making it harder to run programming tasks smoothly. Additionally, background processes and updates can slow down the system and interfere with programming tasks.
 
-Here is the list of frontmatter property for each post.
+Another issue I faced was the lack of a native package manager like Homebrew on macOS or APT on Linux. This makes it harder to install and manage programming tools and dependencies.
 
-| Property          | Description                                                                     | Remark                                        |
-| ----------------- | ------------------------------------------------------------------------------- | --------------------------------------------- |
-| **_title_**       | Title of the post. (h1)                                                         | required<sup>\*</sup>                         |
-| **_description_** | Description of the post. Used in post excerpt and site description of the post. | required<sup>\*</sup>                         |
-| **_pubDatetime_** | Published datetime in ISO 8601 format.                                          | required<sup>\*</sup>                         |
-| **_author_**      | Author of the post.                                                             | default = SITE.author                         |
-| **_postSlug_**    | Slug for the post. Will automatically be slugified.                             | default = slugified title                     |
-| **_featured_**    | Whether or not display this post in featured section of home page               | default = false                               |
-| **_draft_**       | Mark this post 'unpublished'.                                                   | default = false                               |
-| **_tags_**        | Related keywords for this post. Written in array yaml format.                   | default = others                              |
-| **_ogImage_**     | OG image of the post. Useful for social media sharing and SEO.                  | default = SITE.ogImage or generated SVG image |
+Based on my experience, I would not recommend using Windows for programming.
 
-Only `title`, `description` and `pubDatetime` fields in frontmatter must be specified.
+- `Bloatware and unnecessary applications that come pre-installed with Windows, which consume a lot of memory and resources.`
 
-Title and description (excerpt) are important for search engine optimization (SEO) and thus AstroPaper encourages to include these in blog posts.
+- `Background processes and updates that can slow down the system and interfere with programming tasks.`
 
-`slug` is the unique identifier of the url. Thus, `slug` must be unique and different from other posts. The whitespace of `slug` needs to be separated with `-` or `_` but `-` is recommended. However, even if you don't write the correct slug, AstroPaper will automatically slugify your incorrect slug. If slug is not specified, the slugified title of the post will be used as slug.
+- `Lack of a native package manager like Homebrew on macOS or APT on Linux, which makes it harder to install and manage programming tools and dependencies.`
 
-If you omit `tags` in a blog post (in other words, if no tag is specified), the default tag `others` will be used as a tag for that post. You can set the default tag in the `/src/content/_schemas.ts` file.
+- ` Many programming tools and software are designed to work best on macOS or Linux, so using Windows may limit access to certain tools or make it harder to use them.`
 
-```ts
-// src/contents/_schemas.ts
-export const blogSchema = z.object({
-  // ---
-  // replace "others" with whatever you want
-  tags: z.array(z.string()).default(["others"]),
-  ogImage: z.string().optional(),
-  description: z.string(),
-});
-```
+- `The security of Windows is often questioned, and new users may not have the knowledge or experience to keep their system secure, which can lead to potential risks and security breaches.`
 
-### Sample Frontmatter
+### What actually you should consider for programming ->>
 
-Here is the sample frontmatter for a post.
+While Windows may not be the best choice for programming, there are other operating systems that are more suitable for this task. Two popular alternatives are:
 
-```yaml
-# src/contents/sample-post.md
----
-title: The title of the post
-author: your name
-pubDatetime: 2022-09-21T05:17:19Z
-postSlug: the-title-of-the-post
-featured: true
-draft: false
-tags:
-  - some
-  - example
-  - tags
-ogImage: ""
-description: This is the example description of the example post.
----
-```
+## macOS <3 :
 
-## Adding table of contents
+macOS is a Unix-based operating system that is specifically designed for Apple's hardware. It comes with a native package manager called Homebrew, which makes it easy to install and manage programming tools and dependencies. Additionally, macOS is known for its stability and ease of use, making it a popular choice among developers.
 
-By default, a post (article) does not include any table of contents (toc). To include toc, you have to specify it in a specific way.
+## Linux (Arch and Ubuntu specially) ->>
 
-Write `Table of contents` in h2 format (## in markdown) and place it where you want it to be appeared on the post.
+Linux is a free and open-source operating system that is highly customizable and flexible. It also comes with a native package manager called APT, which makes it easy to install and manage programming tools and dependencies. While Linux may have a steeper learning curve than macOS, it offers more control and customization options, making it a popular choice among power users and developers.
 
-For instance, if you want to place your table of contents just under the intro paragraph (like I usually do), you can do that in the following way.
+### SUMMARY
 
-```md
----
-# some frontmatter
----
+`and thats about it :)`
 
-Here are some recommendations, tips & ticks for creating new posts in AstroPaper blog theme.
-
-## Table of contents
-
-<!-- the rest of the post -->
-```
-
-## Headings
-
-There's one thing to note about headings. The AstroPaper blog posts use title (title in the frontmatter) as the main heading of the post. Therefore, the rest of the heading in the post should be using h2 \~ h6.
-
-This rule is not mandatory, but highly recommended for visual, accessibility and SEO purposes.
-
-## Bonus
-
-### Image compression
-
-When you put images in the blog post, it is recommended that the image is compressed. This will affect the overall performance of the website.
-
-My recommendation for image compression sites.
-
-- [TinyPng](https://tinypng.com/)
-- [TinyJPG](https://tinyjpg.com/)
-
-### OG Image
-
-The default OG image will be placed if a post does not specify the OG image. Though not required, OG image related to the post should be specify in the frontmatter. The recommended size for OG image is **_1200 X 640_** px.
-
-> Since AstroPaper v1.4.0, OG images will be generated automatically if not specified. Check out [the announcement](https://astro-paper.pages.dev/posts/dynamic-og-image-generation-in-astropaper-blog-posts/).
+this is my first ever blog and i hope you enjoyed it , tweet me about how u feel on what i wrote and if you agree or disaree
