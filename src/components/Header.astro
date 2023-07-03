@@ -1,4 +1,6 @@
 ---
+//This is the page where you can edit Posts , tags and search button on the header of the main page and shit 
+
 import { LOGO_IMAGE, SITE } from "@config";
 import Hr from "./Hr.astro";
 import LinkButton from "./LinkButton.astro";
@@ -7,7 +9,8 @@ import logoPNG from "/assets/logo.png";
 import logoSVG from "/assets/logo.svg";
 
 export interface Props {
-  activeNav?: "posts" | "tags" | "about" | "search";
+  activeNav?: "posts" | "tags" | "search";
+  //activeNav?: "posts" | "tags" | "about" |"search";
 }
 
 const { activeNav } = Astro.props;
@@ -68,11 +71,11 @@ const { activeNav } = Astro.props;
               Tags
             </a>
           </li>
-          <li>
+          <!-- <li>
             <a href="/about" class={activeNav === "about" ? "active" : ""}>
               About
             </a>
-          </li>
+          </li> -->
           <li>
             <LinkButton
               href="/search"
