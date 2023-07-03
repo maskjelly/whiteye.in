@@ -2,7 +2,7 @@
   "name": "whiteye",
   "version": "2.3.0",
   "scripts": {
-    "dev": "astro check --watch & astro dev",
+    "dev": "astro dev",
     "start": "astro dev",
     "build": "astro build && jampack ./dist",
     "preview": "astro preview",
