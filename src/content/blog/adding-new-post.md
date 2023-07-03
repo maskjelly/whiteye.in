@@ -11,7 +11,7 @@ tags:
   - Microsoft
   - Programming
   - Blog
-ogImage: ""
+ogImage: "../windowsbad.png"
 description: If you are using windows you are doing something wrong .
   Lets re-evaluate.
 ---
@@ -51,8 +51,8 @@ As i previously have mentioned of me being an OG MacOS user , i really like Home
 Linux is a free and open-source operating system that is highly customizable and flexible , and with that it also comes with a native package manager called APT, which makes it easy to install and manage programming tools and dependencies. Although it have a steeper learning curve than macOS, it offers more control and customization options, making it a popular choice among power users and developers.
 
 ### SUMMARY
-![Screenshot 2023-07-03 230254](https://github.com/asdfghjA1/whiteye.in/assets/62688683/e56d69c9-782e-4574-9fa5-fb1e12ec4535)
 
+![Screenshot 2023-07-03 230254](https://github.com/asdfghjA1/whiteye.in/assets/62688683/e56d69c9-782e-4574-9fa5-fb1e12ec4535)
 
 `and thats about it :)`
 
