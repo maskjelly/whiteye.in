@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@astrojs/rss": "^2.4.1",
+    "@loglib/tracker": "^0.3.4",
     "@resvg/resvg-js": "^2.4.1",
     "astro": "^2.7.3",
     "fuse.js": "^6.6.2",
