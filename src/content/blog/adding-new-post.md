@@ -16,6 +16,9 @@ description: If you are using windows you are doing something wrong .
   Lets re-evaluate.
 ---
 
+
+![Screenshot 2023-07-04 025051](https://github.com/asdfghjA1/whiteye.in/assets/62688683/d9513fc6-2ba3-4774-976a-fe54d2d910bc)
+
 ### Why does this blog exist -
 
 As an ex-macOS user, I decided to give Windows a try for my new laptop since my MacBook was getting old (it was a 2017 MacBook Air). I bought a Windows gaming laptop and thought it shouldn't be THAT BAD...right?
