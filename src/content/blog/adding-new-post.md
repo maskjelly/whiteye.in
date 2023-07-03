@@ -11,7 +11,7 @@ tags:
   - Microsoft
   - Programming
   - Blog
-ogImage: "../windowsbad.png"
+ogImage: ""
 description: If you are using windows you are doing something wrong .
   Lets re-evaluate.
 ---
