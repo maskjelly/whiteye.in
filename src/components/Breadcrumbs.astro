@@ -12,16 +12,6 @@ breadcrumbList[0] === "posts" &&
   breadcrumbList.splice(0, 2, `Posts (page ${breadcrumbList[1] || 1})`);
 ---
 
-<script>
-import { loglib } from "@loglib/tracker"
-
-loglib.record({
-    id: "whiteye",
-    host: "https://www.loglib.io",
-})
-    
-</script>
-
 <nav class="breadcrumb" aria-label="breadcrumb">
   <ul>
     <li>

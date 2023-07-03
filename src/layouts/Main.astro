@@ -5,13 +5,6 @@ export interface Props {
   pageTitle: string;
   pageDesc?: string;
 }
-
-import {loglib} from "@loglib/tracker"
-
-loglib.record({
-    id: "whiteye",
-    host: "https://www.loglib.io",
-})
     
 const { pageTitle, pageDesc } = Astro.props;
 ---
