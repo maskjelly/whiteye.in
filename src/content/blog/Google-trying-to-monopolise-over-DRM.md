@@ -19,7 +19,7 @@ SO , in the past there has been concern taking adblockers as we may be comming t
 
 
 Something was recently announced called the "Web Environment Integrity" which is one of the scariest thing i have heard in my life and what it seems like it would lead to the death of the INTERNET , or the WEB as we know it . Its kinda what is said to be "Death by a thousand cuts" where all the small things here and there that google and other giants are trying to do to monopolise over the market as much as possible that when it will be done , and we look back at the internet 5 - 10 years ago , we will then realise the internet does not even resemble even a bit of what it offered [ SPECIALLY THE FREEDOM ] .
-
+<!-- Add images after the blog is posted -->
 <!-- ![Alt text](./Pasted%20image%2020230801162942.png) -->
 "Keeps user data and intellectual property secure" 
 you already know this is going to be DRM for your web browser 
