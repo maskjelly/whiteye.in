@@ -28,7 +28,7 @@ Something was recently announced called the "Web Environment Integrity" which is
 you already know this is going to be DRM for your web browser 
 
 
-![Uploading Pasted image 20230801163216.png…]()
+![Pasted image 20230801163216](https://github.com/asdfghjA1/whiteye.in/assets/62688683/e2c5b72c-f189-4403-a6f4-2a9fd680a31a)
 
 
 <!-- ![[Pasted image 20230801163216.png]] -->
