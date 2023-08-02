@@ -5,7 +5,6 @@ import remarkToc from "remark-toc";
 import remarkCollapse from "remark-collapse";
 import sitemap from "@astrojs/sitemap";
 import { SITE } from "./src/config";
-import { defineConfig } from 'astro/config';
 import vercel from '@astrojs/vercel/edge';
 
 // https://astro.build/config
