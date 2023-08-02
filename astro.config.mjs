@@ -15,35 +15,35 @@ export default defineConfig({
     analytics: true,
   }),
 
-  site: SITE.website,
-  integrations: [
-    tailwind({
-      config: {
-        applyBaseStyles: false,
-      },
-    }),
-    react(),
-    sitemap(),
-  ],
-  markdown: {
-    remarkPlugins: [
-      remarkToc,
-      [
-        remarkCollapse,
-        {
-          test: "Table of contents",
-        },
-      ],
-    ],
-    shikiConfig: {
-      theme: "one-dark-pro",
-      wrap: true,
-    },
-    extendDefaultPlugins: true,
-  },
-  vite: {
-    optimizeDeps: {
-      exclude: ["@resvg/resvg-js"],
-    },
-  },
+  // site: SITE.website,
+  // integrations: [
+  //   tailwind({
+  //     config: {
+  //       applyBaseStyles: false,
+  //     },
+  //   }),
+  //   react(),
+  //   sitemap(),
+  // ],
+  // markdown: {
+  //   remarkPlugins: [
+  //     remarkToc,
+  //     [
+  //       remarkCollapse,
+  //       {
+  //         test: "Table of contents",
+  //       },
+  //     ],
+  //   ],
+  //   shikiConfig: {
+  //     theme: "one-dark-pro",
+  //     wrap: true,
+  //   },
+  //   extendDefaultPlugins: true,
+  // },
+  // vite: {
+  //   optimizeDeps: {
+  //     exclude: ["@resvg/resvg-js"],
+  //   },
+  // },
 });
