@@ -5,15 +5,18 @@ import remarkToc from "remark-toc";
 import remarkCollapse from "remark-collapse";
 import sitemap from "@astrojs/sitemap";
 import { SITE } from "./src/config";
-import vercel from '@astrojs/vercel/edge';
+import {loglib} from "@loglib/tracker"
+
 
 // https://astro.build/config
+loglib.record({
+  id: "whiteye",
+  host: "https://www.loglib.io",
+})
 
 export default defineConfig({
-  output: 'server',
-  adapter: vercel({
-    analytics: true,
-  }),
+
+
   site: SITE.website,
   integrations: [
     tailwind({
