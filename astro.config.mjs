@@ -9,10 +9,6 @@ import {loglib} from "@loglib/tracker"
 
 
 // https://astro.build/config
-loglib.record({
-  id: "whiteye",
-  host: "https://www.loglib.io",
-})
 
 export default defineConfig({
 
