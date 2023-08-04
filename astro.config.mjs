@@ -5,6 +5,10 @@ import remarkToc from "remark-toc";
 import remarkCollapse from "remark-collapse";
 import sitemap from "@astrojs/sitemap";
 import { SITE } from "./src/config";
+import { Fathom } from "astro-analytics";
+import { GoogleAnalytics } from "astro-analytics";
+<GoogleAnalytics id= "G-K2QCFDSD1K" />
+
 
 // https://astro.build/config
 

@@ -21,6 +21,7 @@
     "@resvg/resvg-js": "^2.4.1",
     "@vercel/analytics": "^1.0.1",
     "astro": "^2.9.6",
+    "astro-analytics": "^2.6.0",
     "fuse.js": "^6.6.2",
     "github-slugger": "^2.0.0",
     "remark-collapse": "^0.1.2",
