@@ -9,6 +9,13 @@ import { Fathom } from "astro-analytics";
 import { GoogleAnalytics } from "astro-analytics";
 <GoogleAnalytics id= "G-K2QCFDSD1K" />
 
+import {loglib} from "@loglib/tracker"
+
+loglib.record({
+    id: "whiteye",
+    host: "https://www.loglib.io",
+})
+  
 
 // https://astro.build/config
 
