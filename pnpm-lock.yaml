@@ -12,8 +12,8 @@ dependencies:
     specifier: ^2.4.1
     version: 2.4.3
   '@loglib/tracker':
-    specifier: ^0.3.5
-    version: 0.3.5
+    specifier: ^0.4.3
+    version: 0.4.3(react@18.2.0)
   '@resvg/resvg-js':
     specifier: ^2.4.1
     version: 2.4.1
@@ -1042,8 +1042,12 @@ packages:
       '@jridgewell/resolve-uri': 3.1.1
       '@jridgewell/sourcemap-codec': 1.4.15
 
-  /@loglib/tracker@0.3.5:
-    resolution: {integrity: sha512-vlCO7URoJXzgBRDH1sls19VakNsh6cpDwHRrSeUKtlAY0r0VEWhQuyWEcEdoBSqgrwXiheqXh4G67q3jCczi+Q==}
+  /@loglib/tracker@0.4.3(react@18.2.0):
+    resolution: {integrity: sha512-IbzS0QW8jl/h48gJ+kuQPZMWht8zfmwmtiKwDKYnsebkrOG+faYx077RfQkhx+Wj7HCQokUjN5uB5jv6AvwAxA==}
+    peerDependencies:
+      react: ^16.8||^17||^18
+    dependencies:
+      react: 18.2.0
     dev: false
 
   /@nodelib/fs.scandir@2.1.5:
@@ -3750,7 +3754,6 @@ packages:
     hasBin: true
     dependencies:
       js-tokens: 4.0.0
-    dev: true
 
   /lower-case@2.0.2:
     resolution: {integrity: sha512-7fm3l3NAF9WfN6W3JOmf5drwpVqX78JtoGJ3A6W0a6ZnldM41w2fV5D490psKFTpMds8TJse/eHLFFsNHHjHgg==}
@@ -4798,7 +4801,6 @@ packages:
     engines: {node: '>=0.10.0'}
     dependencies:
       loose-envify: 1.4.0
-    dev: true
 
   /read-cache@1.0.0:
     resolution: {integrity: sha512-Owdv/Ft7IjOgm/i0xvNDZ1LrRANRfew4b2prF3OWMQLxLfu3bS8FVhCsrSCMK4lR56Y9ya+AThoTpDCTxCmpRA==}
