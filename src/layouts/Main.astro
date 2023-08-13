@@ -11,6 +11,9 @@ export interface Props {
 const { pageTitle, pageDesc } = Astro.props;
     
 ---
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/@loglib/tracker@latest/dist/index.global.js" data-id=whiteye></script>
+</head>
 
 <Breadcrumbs />
 <main id="main-content">
