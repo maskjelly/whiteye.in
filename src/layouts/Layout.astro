@@ -63,6 +63,14 @@ const socialImageURL = new URL(
       rel="stylesheet"
     />
 
+    <!-- loglib -->
+    <script>
+      import { loglib } from "@loglib/tracker";
+      loglib.record({
+        id: "whiteye",
+      });
+    </script>
+
     {
       // If PUBLIC_GOOGLE_SITE_VERIFICATION is set in the environment variable,
       // include google-site-verification tag in the heading
@@ -75,19 +83,20 @@ const socialImageURL = new URL(
       )
     }
 
-<!-- Google tag (gtag.js) -->
-<script 
-type="text/partytown"
-async src="https://www.googletagmanager.com/gtag/js?id=G-K2QCFDSD1K"></script>
-<script type="text/partytown">
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+    <!-- Google tag (gtag.js) -->
+    <script
+      type="text/partytown"
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-K2QCFDSD1K"></script>
+    <script type="text/partytown">
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
 
-  gtag('config', 'G-K2QCFDSD1K');
-</script> 
-
-
+      gtag("config", "G-K2QCFDSD1K");
+    </script>
     <script is:inline src="/toggle-theme.js"></script>
   </head>
   <body>

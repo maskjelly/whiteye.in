@@ -1,19 +1,13 @@
-
 ---
-
 import Breadcrumbs from "@components/Breadcrumbs.astro";
 
 export interface Props {
   pageTitle: string;
   pageDesc?: string;
 }
-  
+
 const { pageTitle, pageDesc } = Astro.props;
-    
 ---
-<head>
-  <script src="https://cdn.jsdelivr.net/npm/@loglib/tracker@latest/dist/index.global.js" data-id=whiteye></script>
-</head>
 
 <Breadcrumbs />
 <main id="main-content">
@@ -21,8 +15,6 @@ const { pageTitle, pageDesc } = Astro.props;
   <p>{pageDesc}</p>
   <slot />
 </main>
-
-
 
 <style>
   #main-content {
