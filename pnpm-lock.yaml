@@ -23,6 +23,9 @@ dependencies:
   astro:
     specifier: ^2.9.6
     version: 2.9.7(@types/node@20.4.5)
+  astro-analytics:
+    specifier: ^2.6.0
+    version: 2.6.0
   fuse.js:
     specifier: ^6.6.2
     version: 6.6.2
@@ -1671,6 +1674,10 @@ packages:
     resolution: {integrity: sha512-Z7tMw1ytTXt5jqMcOP+OQteU1VuNK9Y02uuJtKQ1Sv69jXQKKg5cibLwGJow8yzZP+eAc18EmLGPal0bp36rvQ==}
     engines: {node: '>=8'}
     dev: true
+
+  /astro-analytics@2.6.0:
+    resolution: {integrity: sha512-H7pnYcHLMLATH2ilKEFqZVQqw4NlEQs72I9VYDrSIGNyjm+Abmqq7RwgxpfCpG5sszo6lGNaKhPlHmftG2M42A==}
+    dev: false
 
   /astro-eslint-parser@0.14.0:
     resolution: {integrity: sha512-3F8l1h7+5MNxzDg1cSQxEloalG7fj64K6vOERChUVG7RLnAzSoafADnPQlU8DpMM3WRNfRHSC4NwUCORk/aPrA==}
@@ -3458,6 +3465,7 @@ packages:
 
   /json-schema-traverse@1.0.0:
     resolution: {integrity: sha512-NM8/P9n3XjXhIZn1lLhkFaACTOURQXjWhV4BA/RnOv8xvgqtqpAX9IO4mRQxSx1Rlo4tqzeqb0sOlruaOy3dug==}
+    requiresBuild: true
     dev: true
 
   /json-stable-stringify-without-jsonify@1.0.1:
@@ -4906,6 +4914,7 @@ packages:
   /require-from-string@2.0.2:
     resolution: {integrity: sha512-Xf0nWe6RseziFMu+Ap9biiUbmplq6S9/p+7w7YXP/JBHhrUDDUhwa+vANyubuqfZWTveU//DYVGsDG7RKL/vEw==}
     engines: {node: '>=0.10.0'}
+    requiresBuild: true
     dev: true
 
   /resolve-dir@1.0.1:
