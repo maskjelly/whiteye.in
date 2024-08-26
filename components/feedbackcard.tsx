@@ -53,7 +53,7 @@ export default function CardWithForm() {
 
 
       <button onClick={async () => {
-    const response = await axios.post("http://localhost:3000/pages/api/route/", {
+    const response = await axios.post("/pages/api/route/", {
         username,
         rating
     });
