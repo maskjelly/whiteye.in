@@ -2,6 +2,9 @@ import * as React from "react"
 
 import { cn } from "@/lib/utils"
 
+// This is the card component page
+// The code defines reusable card components using React's forwardRef
+
 const Card = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
@@ -77,3 +80,7 @@ const CardFooter = React.forwardRef<
 CardFooter.displayName = "CardFooter"
 
 export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent }
+
+// Note: This file contains all the necessary components for creating a card UI.
+// Each component (Card, CardHeader, CardTitle, etc.) is defined separately
+// and can be used to construct a complete card layout.
