@@ -67,7 +67,7 @@ export default function Resume() {
         <section>
             <h2 className="text-2xl font-semibold mb-3">Skills</h2>
             <div className="flex flex-wrap gap-3">
-              {['JavaScript', 'React', 'Node.js', 'MongoDB', 'Docker', 'Prisma', 'Git', 'Ruby on Rails', 'Cloud Technologies'].map((skill) => (
+              {['React', 'Node.js', 'MongoDB', 'Docker', 'Prisma', 'Git', 'Ai Cloud model Development' , 'Ai Fine Tuning'].map((skill) => (
                 <Badge key={skill} variant="secondary" className="text-lg py-1 px-3">
                   {skill}
                 </Badge>
