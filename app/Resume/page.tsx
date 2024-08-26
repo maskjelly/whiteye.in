@@ -13,8 +13,8 @@ export default function Resume() {
   useEffect(() => {
     let index = 0;
     const typingInterval = setInterval(() => {
-      if (index < 12) {
-        setTypedText((prev) => prev + fullText.charAt(index));
+      if (index < fullText.length) {
+        setTypedText(fullText.substring(0, index + 1));
         index++;
       } else {
         clearInterval(typingInterval);
