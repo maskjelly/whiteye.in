@@ -13,7 +13,7 @@ export default function Resume() {
   useEffect(() => {
     let index = 0;
     const typingInterval = setInterval(() => {
-      if (index < fullText.length) {
+      if (index < 12) {
         setTypedText((prev) => prev + fullText.charAt(index));
         index++;
       } else {
