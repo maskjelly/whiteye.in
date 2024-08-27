@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -23,7 +22,7 @@ export default function CardWithForm() {
   const handleSubmit = async () => {
     setIsLoading(true);
     try {
-      const response = await axios.post("/pages/api/route/", {
+      const response = await axios.post("/pages/api/feedbacks/", {
         username,
         rating
       });
