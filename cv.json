@@ -20,19 +20,19 @@
         "network": "LinkedIn",
         "icon": "mdi:linkedin",
         "username": "maskjelly",
-        "url": "https://www.linkedin.com/in/maskjelly"
+        "url": "https://www.linkedin.com/in/aaryan-singh-625446244/"
       },
       {
         "network": "Twitter",
         "icon": "mdi:twitter",
         "username": "maskjelly",
-        "url": "https://twitter.com/maskjelly"
+        "url": "https://twitter.com/LiquidZooo"
       },
       {
         "network": "GitHub",
         "icon": "mdi:github",
         "username": "MiraHikari",
-        "url": "https://github.com/MiraHikari"
+        "url": "https://github.com/maskjelly"
       }
     ]
   },
@@ -322,14 +322,16 @@
         "🎯 Privacy-friendly, no registration required, out-of-the-box",
         "✨ Gasps and shocks emotions also available"
       ],
-      "url": "https://what-the-fuck.sbs",
-      "github": "https://github.com/MiraHikari/cloudflare-vmail"
+      "url": "https://callher.vercel.app",
+      "github": "https://github.com/maskjelly/AiCalls"
     },
     {
       "name": "MorphicLabs",
       "image": {
-        "url": "https://rth2-webstatic.gbclstudio.cn/wp-content/uploads/2024/02/1707656250-76b2b0d2c94824e89a2b8b2c7d1c6afe.png",
+        "url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShqA7NGabTvFdv5uXg5g5i0pTwqwvXwH0s",
         "position": "background"
+
+
       },
       "isActive": true,
       "description": "An opensource Answer Engine that searches the internet for query , feeds it to LLM and generates your response",
@@ -343,7 +345,7 @@
     {
       "name": "HaloTour",
       "image": {
-        "url": "https://rth2-webstatic.gbclstudio.cn/wp-content/uploads/2024/02/1707656250-76b2b0d2c94824e89a2b8b2c7d1c6afe.png",
+        "url": "",
         "position": "background"
       },
       "isActive": true,
@@ -358,7 +360,7 @@
     {
       "name": "AiTutor",
       "image": {
-        "url": "https://rth2-webstatic.gbclstudio.cn/wp-content/uploads/2024/02/1707656250-76b2b0d2c94824e89a2b8b2c7d1c6afe.png",
+        "url": "",
         "position": "background"
       },
       "isActive": true,
