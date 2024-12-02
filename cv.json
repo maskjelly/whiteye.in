@@ -312,7 +312,7 @@
     {
       "name": "Ai Caller Voice - to - Voice",
       "image": {
-        "url": "https://whiteye.in/",
+        "url": "https://callher.vercel.app/",
         "position": "container",
         "dark": "https://i0.hdslb.com/bfs/article/4d0bf8a784d22e54e3e61763c361c9ef480025691.png@100q_1e_1c.webp"
       },
@@ -355,7 +355,7 @@
         "😊 Images also available ",
         "💕 Context Aware AI "
       ],
-      "url": "https://morphiclabs.vercel.app/"
+      "url": "https://halotour.vercel.app/"
     },
     {
       "name": "AiTutor",
@@ -370,7 +370,7 @@
         "😊 Folloup questions with previous questions",
         "💕 Out of the box available with no signup or payment"
       ],
-      "url": "https://morphiclabs.vercel.app/"
+      "url": "https://rag-misti-perplexity.vercel.app/"
     }
   ]
 }
