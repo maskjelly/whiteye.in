@@ -1,0 +1,36 @@
+[C]- Make the main page home where users can choose subjects and then study those subjects
+
+- Like there will be cards and things where users will click like physics and shit and then they will go to an AI thats been trained to lets say instructed to teach you physics very detailedly 
+
+- DO IT FOR PHYSICS CHEMISTRY MATHS ENGLISH AND LANGUAGE (base)
+
+[X] [PDF uploading capability] - maybe just feed it into the instructions of it for the PDF's 
+                - For pdf's maybe just have it chat availabled
+                - youtube video summarizer 
+                - Maths teacher VIA - texts 
+
+Voice version of this will only be able to make it such that people if they wana talk and learn then they can - since voice is more expensive than chat - voice is just optional and for general understanding of propriatary doubts and language issues - higher class PHD proff and higher education students prefer text to study rather than voice
+
+
+class 6 and 7 for HIGHSCHOOL EXAMPLE
+
+[X] college 1st and 2nd year capabilities to solve mathematical problems for their studies
+
+[X] JEE NEET CAT SAT - prep for all of there examinations with daily o1preview prepared MCQ's and quick timer based tests 
+
+Business and Econ - idk
+
+write articles and solve complex user understanding problems 
+explain things in multiple languages for better understanding
+
+videos and solutions prepared by mathematicians and physicians for whole NEET JEE CAT SAT etc QUESTIONS PAPERS(untill we figure out how to make it fully AI based)
+
+[X] JEE Advanced Preparation and UNLIMITED QUESTION PAPER GENERATIONS FROM PAST PAPERS UNDERTANDING TO MAKE MORE PAPER's FOR PRACTISE 
+
+get new generated question papers by multiple sources and make them more easily understandable by AI explanation 
+
+Summarise youtube videos and make them more simple and to the point understandable 
+
+[X] show photo of your maths questions and it will analyse and take you step by step on how to solve IN HINDI VIA VOICE SLOW AND STEADY 
+
+[F] [UI IMPROVEMENTS] - get the ui as good as revisiondojo%  
