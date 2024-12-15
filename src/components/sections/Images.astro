@@ -1,36 +1,64 @@
 ---
 import { Image } from "astro:assets";
 import Section from "../Section.astro";
-
 import CV from "@cv";
-const images = CV.images!;
+
+// Define the types for CV and images
+interface ImageItem {
+  image: string;
+  alt: string;
+  desc: string;
+}
+
+interface CVType {
+  images?: {
+    intro?: string;
+    list: ImageItem[];
+  };
+  analyticsCode: string;
+  pageLayout: string;
+  basics: {
+    name: string;
+    label: string;
+    image: string;
+    email: string;
+    url: string;
+    summary: string;
+    theme: string;
+    location: {
+      address: string;
+      city: string;
+      countryCode: string;
+      region: string;
+    };
+    profiles: { [key: string]: string }[];
+  };
+}
+
+const images = (CV as CVType).images!;
 ---
 
 <Section className={Astro.props.className} title="Images Gallery">
   {images?.intro && <p class="font-mono ml-3 text-skin-muted">{images.intro}</p>}
-  <div
-    class="grid grid-cols-1 gap-2 p-2 pt-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
-  >
-    {
-      images.list.map(({ image, alt, desc }) => (
-        <div class="relative overflow-hidden rounded-lg border border-skin-hue/20 bg-skin-button-accent/20">
-          <a
-            href={image}
-            data-fancybox="gallery"
-            data-caption={desc}
-            class="block aspect-square"
-          >
-            <Image
-              src={image}
-              alt={alt}
-              width={500}
-              height={500}
-              class="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
-            />
-          </a>
-        </div>
-      ))
-    }
+  <div class="grid grid-cols-1 gap-2 p-2 pt-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+    {images.list.map(({ image, alt, desc }) => (
+      <div class="relative overflow-hidden rounded-lg border border-skin-hue/20 bg-skin-button-accent/20">
+        <a
+          href={image}
+          data-fancybox="gallery"
+          data-caption={desc}
+          class="block aspect-square"
+        >
+          <Image
+            src={image}
+            alt={alt}
+            width={500}
+            height={500}
+            class="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
+          />
+        </a>
+      </div>
+    ))}
   </div>
 </Section>
 
