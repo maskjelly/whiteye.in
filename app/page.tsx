@@ -1,101 +1,97 @@
-import Image from "next/image";
+// app/page.tsx
+import Link from "next/link"
+import TypewriterHeading from './components/TypewriterHeading'
+import ContributionsGraph from './components/ContributionsGraph'
+import ProjectsContainer from './components/ProjectsContainer'
 
-export default function Home() {
+export default async function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <div className="min-h-screen bg-white font-mono flex flex-col">
+      <main className="max-w-3xl mx-auto px-6 py-12 flex-grow">
+        <div className="border-2 border-black p-6 mb-12">
+          <TypewriterHeading />
         </div>
+
+        <section className="mb-12 p-6 border border-gray-300 relative">
+          <div className="absolute top-0 left-0 w-2 h-2 border-t-2 border-l-2 border-black"></div>
+          <div className="absolute top-0 right-0 w-2 h-2 border-t-2 border-r-2 border-black"></div>
+          <div className="absolute bottom-0 left-0 w-2 h-2 border-b-2 border-l-2 border-black"></div>
+          <div className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-black"></div>
+          <p className="text-lg mb-3">
+            i am a second year student, studying computer science.
+          </p>
+          <p className="text-lg mb-3">mainly work in deep learning/natural language processing.</p>
+          <p className="text-lg">and also some Gen AI and web3 type stuff</p>
+        </section>
+
+        <section className="mb-12">
+          <h2 className="text-2xl font-light tracking-wide mb-6 border-l-4 border-black pl-4 flex items-center">
+            <span className="mr-2">experience</span>
+            <div className="flex-grow h-[1px] bg-black ml-4"></div>
+          </h2>
+          <ul className="space-y-4 pl-6 border-l border-gray-200">
+            <li className="flex items-center before:content-[''] before:w-2 before:h-2 before:bg-black before:mr-4 before:rotate-45">
+              2x YC Backed Engineer
+            </li>
+            <li className="flex items-center before:content-[''] before:w-2 before:h-2 before:bg-black before:mr-4 before:rotate-45">
+              Founding and Lead Engineer at{" "}
+              <a
+                href="https://fnbc.com"
+                className="ml-2 relative group"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                FnBC
+                <span className="absolute -bottom-1 left-0 w-full h-[1px] bg-black origin-left transform scale-x-0 transition-transform group-hover:scale-x-100"></span>
+              </a>
+            </li>
+            <li className="flex items-center before:content-[''] before:w-2 before:h-2 before:bg-black before:mr-4 before:rotate-45">
+              Founder and CTO of Existence . Co
+            </li>
+          </ul>
+        </section>
+        
+        <section className="mb-12">
+          <h2 className="text-2xl font-light tracking-wide mb-6 border-l-4 border-black pl-4 flex items-center">
+            <span className="mr-2">contributions</span>
+            <div className="flex-grow h-[1px] bg-black ml-4"></div>
+          </h2>
+          <div className="border-2 border-black relative bg-black">
+            <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-black -translate-x-1 -translate-y-1"></div>
+            <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-black translate-x-1 -translate-y-1"></div>
+            <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-black -translate-x-1 translate-y-1"></div>
+            <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-black translate-x-1 translate-y-1"></div>
+            <ContributionsGraph />
+          </div>
+        </section>
+
+        <ProjectsContainer />
       </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
+      <footer className="py-8 mt-12 border-t-2 border-black">
+        <div className="max-w-3xl mx-auto px-6">
+          <div className="pt-8 flex justify-center gap-8">
+            <a
+              href="https://github.com/maskjelly"
+              className="text-black hover:text-gray-700 transition-colors tracking-wide relative group"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              github
+              <span className="absolute -bottom-1 left-0 w-full h-[1px] bg-black origin-left transform scale-x-0 transition-transform group-hover:scale-x-100"></span>
+            </a>
+            <span className="w-[1px] h-6 bg-black"></span>
+            <a
+              href="https://twitter.com/LiquidZooo"
+              className="text-black hover:text-gray-700 transition-colors tracking-wide relative group"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              twitter
+              <span className="absolute -bottom-1 left-0 w-full h-[1px] bg-black origin-left transform scale-x-0 transition-transform group-hover:scale-x-100"></span>
+            </a>
+          </div>
+        </div>
       </footer>
     </div>
-  );
+  )
 }
