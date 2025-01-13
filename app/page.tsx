@@ -74,15 +74,16 @@ export default async function Home() {
       <div className="hidden lg:block fixed bottom-8 right-8 pointer-events-none z-50">
         <div className="w-[300px] xl:w-[700px] h-[300px] xl:h-[700px] relative">
           {/* Border container with darker border */}
-          <div className="absolute inset-0 border-2 border-black bg-white/50 backdrop-blur-sm rounded-sm">
+          <div className="absolute inset-0 border-4 border-black bg-white/50 backdrop-blur-sm rounded-sm">
             {/* Smooth corner decorations */}
-            <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-black -translate-x-1 -translate-y-1 rounded-tl"></div>
-            <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-black translate-x-1 -translate-y-1 rounded-tr"></div>
-            <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-black -translate-x-1 translate-y-1 rounded-bl"></div>
-            <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-black translate-x-1 translate-y-1 rounded-br"></div>
+            <div className="absolute top-0 left-0 w-4 h-4 border-t-4 border-l-4 border-black -translate-x-3 -translate-y-3 rounded-tl"></div>
+            <div className="absolute top-0 right-0 w-4 h-4 border-t-4 border-r-4 border-black translate-x-3 -translate-y-3 rounded-tr"></div>
+            <div className="absolute bottom-0 left-0 w-4 h-4 border-b-4 border-l-4 border-black -translate-x-3 translate-y-3 rounded-bl"></div>
+            <div className="absolute bottom-0 right-0 w-4 h-4 border-b-4 border-r-4 border-black translate-x-3 translate-y-3 rounded-br"></div>
           </div>
           
           <span className="pointer-events-auto absolute top-4 left-4 text-sm sm:text-base z-10">Hover over me</span>
+
           <SplineScene 
             scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
             className="w-full h-full absolute top-0 left-0 pointer-events-auto"
