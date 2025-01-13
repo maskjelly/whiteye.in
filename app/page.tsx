@@ -1,5 +1,5 @@
 // app/page.tsx
-import Link from "next/link"
+// import Link from "next/link"
 import TypewriterHeading from './components/TypewriterHeading'
 import ContributionsGraph from './components/ContributionsGraph'
 import ProjectsContainer from './components/ProjectsContainer'
