@@ -1,7 +1,7 @@
 export default function TEST() {
     return (
         <div>
-            TRhe
+        GIT COMMIT TESt
         </div>
     )
 }
