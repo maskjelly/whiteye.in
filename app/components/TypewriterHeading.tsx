@@ -33,10 +33,10 @@ export default function TypewriterHeading() {
 
   return (
     <div className="relative">
-      <h1 className="text-4xl font-light tracking-tight text-black inline-flex items-center">
+      <h1 className="text-4xl font-light tracking-tight text-white inline-flex items-center">
         {text}
         <span 
-          className={`ml-1 inline-block w-3 h-8 bg-black ${showCursor ? 'opacity-100' : 'opacity-0'}`}
+          className={`ml-1 inline-block w-3 h-8 bg-white ${showCursor ? 'opacity-100' : 'opacity-0'}`}
           aria-hidden="true"
         />
       </h1>

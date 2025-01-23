@@ -1,0 +1,84 @@
+@font-face {
+    font-family: "PressStart2P";
+    src: url("/fonts/PressStart2P-Regular.ttf") format("truetype");
+  }
+  
+  body {
+    font-family: "PressStart2P", cursive;
+    background-color: #5c94fc;
+    color: #ffffff;
+    line-height: 1.6;
+    image-rendering: pixelated;
+  }
+  
+  .pixel-border {
+    border-style: solid;
+    border-width: 4px;
+    border-image-slice: 2;
+    border-image-width: 2;
+    border-image-outset: 0;
+    border-image-source: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='6' height='6'><path d='M0 2h6M2 0v6' stroke='white' fill='none'/></svg>");
+    border-image-repeat: stretch;
+    image-rendering: pixelated;
+  }
+  
+  .pixel-box {
+    background-color: #e75a10;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+  
+  .pixel-button {
+    background-color: #ffcb5b;
+    color: #000000;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .pixel-button:hover {
+    background-color: #ffa500;
+  }
+  
+  .mario-pipe {
+    width: 60px;
+    height: 80px;
+    background-color: #00a800;
+    position: relative;
+  }
+  
+  .mario-pipe::before {
+    content: "";
+    position: absolute;
+    top: -20px;
+    left: -10px;
+    right: -10px;
+    height: 20px;
+    background-color: #00c800;
+  }
+  
+  .coin {
+    width: 20px;
+    height: 20px;
+    background-color: #ffd700;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 5px;
+  }
+  
+  @keyframes jump {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-20px);
+    }
+  }
+  
+  .mario-jump {
+    animation: jump 0.5s infinite;
+  }
+  
+  

@@ -1,7 +1,6 @@
 import TypewriterHeading from "./components/TypewriterHeading"
 import ContributionsGraph from "./components/ContributionsGraph"
 import ProjectsContainer from "./components/ProjectsContainer"
-import { SplineScene } from "@/components/ui/splite"
 import ResponsiveSplineScene from "./components/ResponsiveSplineScrene"
 
 export default async function Home() {
