@@ -1,13 +1,7 @@
-'use client'
-import dynamic from "next/dynamic";
+import Excalidraw from './components/excalidraw';
 
+const HomePage = () => {
+    return <Excalidraw />;
+};
 
-const ExcalidrawWrapper = dynamic(
-  async () => (await import("./excalidrawWrapper")).default,
-);
-
-export default function Page() {
-  return (
-    <ExcalidrawWrapper />
-  );
-}
+export default HomePage;
