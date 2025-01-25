@@ -1,6 +1,6 @@
 'use client'
 import React, { useState } from 'react';
-import { ChevronRight, ChevronDown, FileText } from 'lucide-react';
+import { FileText } from 'lucide-react';
 
 // Interface for paper/PDF item
 interface PdfItem {
@@ -30,14 +30,8 @@ const papers: PdfItem[] = [
 
 export default function PDFReader() {
   const [selectedPdf, setSelectedPdf] = useState<string | null>(papers[0].path);
-  const [expandedItems, setExpandedItems] = useState<{[key: string]: boolean}>({});
+//   const [setExpandedItems] = useState<{[key: string]: boolean}>({});
 
-  const toggleExpand = (title: string) => {
-    setExpandedItems(prev => ({
-      ...prev,
-      [title]: !prev[title]
-    }));
-  };
 
   return (
     <div className="flex h-screen">
