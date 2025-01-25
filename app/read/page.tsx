@@ -1,15 +1,15 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { Worker, Viewer } from "@react-pdf-viewer/core"
-import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout"
-import { FileText } from "lucide-react"
-import "@react-pdf-viewer/core/lib/styles/index.css"
-import "@react-pdf-viewer/default-layout/lib/styles/index.css"
+import { useState, useEffect } from "react";
+import { Worker, Viewer } from "@react-pdf-viewer/core";
+import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout";
+import { FileText } from "lucide-react";
+import "@react-pdf-viewer/core/lib/styles/index.css";
+import "@react-pdf-viewer/default-layout/lib/styles/index.css";
 
 interface PdfItem {
-  title: string
-  path: string
+  title: string;
+  path: string;
 }
 
 // Sample PDF list
@@ -30,25 +30,31 @@ const papers: PdfItem[] = [
     title: "DeepSeek LLM: Scaling Open-Source Language Models",
     path: "/papers/deepseekr1.pdf",
   },
-]
+];
 
 export default function PDFReader() {
-  const [workerUrl, setWorkerUrl] = useState("")
-  const [selectedPdf, setSelectedPdf] = useState<string>(papers[0].path)
-  const defaultLayoutPluginInstance = defaultLayoutPlugin()
+  const [workerUrl, setWorkerUrl] = useState("");
+  const [selectedPdf, setSelectedPdf] = useState<string>(papers[0].path);
+  const defaultLayoutPluginInstance = defaultLayoutPlugin();
 
   useEffect(() => {
-    setWorkerUrl("/pdf.worker.min.js")
-  }, [])
+    setWorkerUrl("/pdf.worker.min.js");
+  }, []);
 
-  if (!workerUrl) return null
+  if (!workerUrl) return null;
 
   return (
     <div className="flex flex-col lg:flex-row h-screen bg-black">
       {/* Sidebar */}
       <div className="w-full lg:w-72 border-b lg:border-r border-zinc-800 bg-black/50 backdrop-blur-sm">
         <div className="p-4">
-          <h2 className="text-xl font-bold mb-4 text-zinc-200">Research Papers</h2>
+          <button className="hover:text-orange-500 px-14 rounded-sm border hover:border-orange-500 py-4 ml-4">
+            {" "}
+            &larr; go back
+          </button>
+          <h2 className="text-xl font-bold mb-4 mt-3 text-zinc-200">
+            Research Papers
+          </h2>
           <div className="space-y-2">
             {papers.map((paper) => (
               <div key={paper.title}>
@@ -85,6 +91,5 @@ export default function PDFReader() {
         </Worker>
       </div>
     </div>
-  )
+  );
 }
-
