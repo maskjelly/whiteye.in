@@ -1,8 +1,8 @@
-import TypewriterHeading from "./components/TypewriterHeading";
-import ContributionsGraph from "./components/ContributionsGraph";
-import ProjectsContainer from "./components/ProjectsContainer";
-import ResponsiveSplineScene from "./components/ResponsiveSplineScrene";
-import RetroPopup from "./components/RetroPopup";
+import TypewriterHeading from "./components/TypewriterHeading"
+import ContributionsGraph from "./components/ContributionsGraph"
+import ProjectsContainer from "./components/ProjectsContainer"
+import ResponsiveSplineScene from "./components/ResponsiveSplineScrene"
+import RetroPopup from "./components/RetroPopup"
 
 export default function Home() {
   return (
@@ -17,15 +17,9 @@ export default function Home() {
           <div className="absolute top-0 right-0 w-2 h-2 border-t-2 border-r-2 border-orange-500"></div>
           <div className="absolute bottom-0 left-0 w-2 h-2 border-b-2 border-l-2 border-orange-500"></div>
           <div className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-orange-500"></div>
-          <p className="text-base sm:text-lg mb-3">
-            i am 19y/o || second year student, studying computer science.
-          </p>
-          <p className="text-base sm:text-lg mb-3">
-            mainly work in deep learning/natural language processing.
-          </p>
-          <p className="text-base sm:text-lg">
-            and also some Gen AI and web3 type stuff
-          </p>
+          <p className="text-base sm:text-lg mb-3">i am 19y/o || second year student, studying computer science.</p>
+          <p className="text-base sm:text-lg mb-3">mainly work in deep learning/natural language processing.</p>
+          <p className="text-base sm:text-lg">and also some Gen AI and web3 type stuff</p>
         </section>
 
         <section className="mb-8 sm:mb-12">
@@ -121,5 +115,6 @@ export default function Home() {
         </div>
       </footer>
     </div>
-  );
+  )
 }
+
