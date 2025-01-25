@@ -6,6 +6,7 @@ import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout";
 import { FileText } from "lucide-react";
 import "@react-pdf-viewer/core/lib/styles/index.css";
 import "@react-pdf-viewer/default-layout/lib/styles/index.css";
+import Link from "next/link";
 
 interface PdfItem {
   title: string;
@@ -48,10 +49,15 @@ export default function PDFReader() {
       {/* Sidebar */}
       <div className="w-full lg:w-72 border-b lg:border-r border-zinc-800 bg-black/50 backdrop-blur-sm">
         <div className="p-4">
-          <button className="hover:text-orange-500 px-14 rounded-sm border hover:border-orange-500 py-4 ml-4">
-            {" "}
-            &larr; go back
-          </button>
+          <div>
+            <Link href={"/"}>
+
+            <button className="hover:text-orange-500 px-14 rounded-sm border hover:border-orange-500 py-4 ml-4">
+              {" "}
+              &larr; go back
+            </button>
+</Link>
+          </div>
           <h2 className="text-xl font-bold mb-4 mt-3 text-zinc-200">
             Research Papers
           </h2>
