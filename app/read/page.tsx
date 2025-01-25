@@ -1,17 +1,21 @@
-'use client'
-import React, { useState } from 'react';
-import { FileText } from 'lucide-react';
+"use client"
 
-// Interface for paper/PDF item
+import { useState, useEffect } from "react"
+import { Worker, Viewer } from "@react-pdf-viewer/core"
+import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout"
+import { FileText } from "lucide-react"
+import "@react-pdf-viewer/core/lib/styles/index.css"
+import "@react-pdf-viewer/default-layout/lib/styles/index.css"
+
 interface PdfItem {
-  title: string;
-  path: string;
+  title: string
+  path: string
 }
 
-// Sample PDF list (you'll replace this with your actual PDFs)
+// Sample PDF list
 const papers: PdfItem[] = [
   {
-    title: "Attention is all you need",
+    title: "Attention is All You Need",
     path: "/papers/AIAYN.pdf",
   },
   {
@@ -23,53 +27,64 @@ const papers: PdfItem[] = [
     path: "/papers/llama3report.pdf",
   },
   {
-    title: "DeepSeek LLM: Scaling Open-Source Language Models with Longtermism",
+    title: "DeepSeek LLM: Scaling Open-Source Language Models",
     path: "/papers/deepseekr1.pdf",
-  }
-];
+  },
+]
 
 export default function PDFReader() {
-  const [selectedPdf, setSelectedPdf] = useState<string | null>(papers[0].path);
-//   const [setExpandedItems] = useState<{[key: string]: boolean}>({});
+  const [workerUrl, setWorkerUrl] = useState("")
+  const [selectedPdf, setSelectedPdf] = useState<string>(papers[0].path)
+  const defaultLayoutPluginInstance = defaultLayoutPlugin()
 
+  useEffect(() => {
+    setWorkerUrl("/pdf.worker.min.js")
+  }, [])
+
+  if (!workerUrl) return null
 
   return (
-    <div className="flex h-screen">
-      {/* Sidebar Tree View */}
-      <div className="w-1/4  p-4 overflow-y-auto">
-        <h2 className="text-xl font-bold mb-4">Research Papers</h2>
-        {papers.map((paper) => (
-          <div key={paper.title} className="mb-2">
-            <div 
-              className={`flex items-center cursor-pointer p-2 rounded ${
-                selectedPdf === paper.path 
-                  ? 'bg-orange-100 text-orange-600' 
-                  : 'hover:bg-gray-200 hover:text-black'
-              }`}
-              onClick={() => setSelectedPdf(paper.path)}
-            >
-              <FileText className="mr-2 w-5 h-5" />
-              <span className="flex-1 truncate">{paper.title}</span>
-            </div>
+    <div className="flex flex-col lg:flex-row h-screen bg-black">
+      {/* Sidebar */}
+      <div className="w-full lg:w-72 border-b lg:border-r border-zinc-800 bg-black/50 backdrop-blur-sm">
+        <div className="p-4">
+          <h2 className="text-xl font-bold mb-4 text-zinc-200">Research Papers</h2>
+          <div className="space-y-2">
+            {papers.map((paper) => (
+              <div key={paper.title}>
+                <button
+                  onClick={() => setSelectedPdf(paper.path)}
+                  className={`w-full flex items-center gap-2 px-3 py-2 rounded-md text-sm transition-colors
+                    ${
+                      selectedPdf === paper.path
+                        ? "bg-orange-500/10 text-orange-500"
+                        : "text-zinc-400 hover:bg-zinc-800/50 hover:text-zinc-200"
+                    }`}
+                >
+                  <FileText className="w-4 h-4 flex-shrink-0" />
+                  <span className="truncate text-left">{paper.title}</span>
+                </button>
+              </div>
+            ))}
           </div>
-        ))}
+        </div>
       </div>
 
       {/* PDF Viewer */}
-      <div className="w-3/4 p-4">
-        {selectedPdf ? (
-          <iframe 
-            src={selectedPdf} 
-            width="100%" 
-            height="100%" 
-            className="border rounded-lg shadow-md"
-          />
-        ) : (
-          <div className="flex items-center justify-center h-full text-gray-500">
-            No PDF selected
+      <div className="flex-1 h-full bg-zinc-900">
+        <Worker workerUrl={workerUrl}>
+          <div className="h-full">
+            <Viewer
+              fileUrl={selectedPdf}
+              plugins={[defaultLayoutPluginInstance]}
+              theme={{
+                theme: "dark",
+              }}
+            />
           </div>
-        )}
+        </Worker>
       </div>
     </div>
-  );
+  )
 }
+
