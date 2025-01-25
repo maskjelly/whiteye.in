@@ -1,12 +1,13 @@
-import TypewriterHeading from "./components/TypewriterHeading"
-import ContributionsGraph from "./components/ContributionsGraph"
-import ProjectsContainer from "./components/ProjectsContainer"
-import ResponsiveSplineScene from "./components/ResponsiveSplineScrene"
+import TypewriterHeading from "./components/TypewriterHeading";
+import ContributionsGraph from "./components/ContributionsGraph";
+import ProjectsContainer from "./components/ProjectsContainer";
+import ResponsiveSplineScene from "./components/ResponsiveSplineScrene";
+import RetroPopup from "./components/RetroPopup";
 
-export default async function Home() {
+export default function Home() {
   return (
-    <div className="min-h-screen bg-black text-white font-mono flex flex-col relative">
-      <main className="max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-12 flex-grow">
+    <div className="min-h-screen bg-black text-white font-mono flex relative">
+      <main className="flex-grow max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-12">
         <div className="border-2 border-white p-4 sm:p-6 mb-8 sm:mb-12">
           <TypewriterHeading />
         </div>
@@ -16,9 +17,15 @@ export default async function Home() {
           <div className="absolute top-0 right-0 w-2 h-2 border-t-2 border-r-2 border-orange-500"></div>
           <div className="absolute bottom-0 left-0 w-2 h-2 border-b-2 border-l-2 border-orange-500"></div>
           <div className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-orange-500"></div>
-          <p className="text-base sm:text-lg mb-3">i am 19y/o || second year student, studying computer science.</p>
-          <p className="text-base sm:text-lg mb-3">mainly work in deep learning/natural language processing.</p>
-          <p className="text-base sm:text-lg">and also some Gen AI and web3 type stuff</p>
+          <p className="text-base sm:text-lg mb-3">
+            i am 19y/o || second year student, studying computer science.
+          </p>
+          <p className="text-base sm:text-lg mb-3">
+            mainly work in deep learning/natural language processing.
+          </p>
+          <p className="text-base sm:text-lg">
+            and also some Gen AI and web3 type stuff
+          </p>
         </section>
 
         <section className="mb-8 sm:mb-12">
@@ -67,9 +74,28 @@ export default async function Home() {
         <ProjectsContainer />
       </main>
 
-      <ResponsiveSplineScene />
+      <aside className="w-80 border-l border-white fixed right-0 top-0 h-full overflow-y-auto flex flex-col">
+        <div className="flex-1 p-4 border-b border-white">
+          <div className="border-2 border-white p-2 mb-4 relative">
+            <div className="absolute top-0 left-0 w-2 h-2 border-t-2 border-l-2 border-orange-500 -translate-x-1/2 -translate-y-1/2"></div>
+            <div className="absolute top-0 right-0 w-2 h-2 border-t-2 border-r-2 border-orange-500 translate-x-1/2 -translate-y-1/2"></div>
+            <div className="absolute bottom-0 left-0 w-2 h-2 border-b-2 border-l-2 border-orange-500 -translate-x-1/2 translate-y-1/2"></div>
+            <div className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-orange-500 translate-x-1/2 translate-y-1/2"></div>
+            <ResponsiveSplineScene />
+          </div>
+        </div>
+        <div className="flex-1 p-4">
+          <div className="border-2 border-white p-2 relative">
+            <div className="absolute top-0 left-0 w-2 h-2 border-t-2 border-l-2 border-orange-500 -translate-x-1/2 -translate-y-1/2"></div>
+            <div className="absolute top-0 right-0 w-2 h-2 border-t-2 border-r-2 border-orange-500 translate-x-1/2 -translate-y-1/2"></div>
+            <div className="absolute bottom-0 left-0 w-2 h-2 border-b-2 border-l-2 border-orange-500 -translate-x-1/2 translate-y-1/2"></div>
+            <div className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-orange-500 translate-x-1/2 translate-y-1/2"></div>
+            <RetroPopup />
+          </div>
+        </div>
+      </aside>
 
-      <footer className="py-6 sm:py-8 mt-8 sm:mt-12 border-t-2 border-white">
+      <footer className="fixed bottom-0 left-0 right-80 py-6 sm:py-8 border-t-2 border-white bg-black">
         <div className="max-w-3xl mx-auto px-4 sm:px-6">
           <div className="flex justify-center gap-6 sm:gap-8">
             <a
@@ -95,6 +121,5 @@ export default async function Home() {
         </div>
       </footer>
     </div>
-  )
+  );
 }
-
