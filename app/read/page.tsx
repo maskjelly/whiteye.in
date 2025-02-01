@@ -51,12 +51,11 @@ export default function PDFReader() {
         <div className="p-4">
           <div>
             <Link href={"/"}>
-
-            <button className="hover:text-orange-500 px-14 rounded-sm border hover:border-orange-500 py-4 ml-4">
-              {" "}
-              &larr; go back
-            </button>
-</Link>
+              <button className="hover:text-orange-500 px-14 rounded-sm border hover:border-orange-500 py-4 ml-4">
+                {" "}
+                &larr; go back
+              </button>
+            </Link>
           </div>
           <h2 className="text-xl font-bold mb-4 mt-3 text-zinc-200">
             Research Papers
