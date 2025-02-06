@@ -3,6 +3,7 @@ import ContributionsGraph from "./components/ContributionsGraph"
 import ProjectsContainer from "./components/ProjectsContainer"
 import ResponsiveSplineScene from "./components/ResponsiveSplineScrene"
 import RetroPopup from "./components/RetroPopup"
+import UpcomingProject from "./components/UpcomingProject"
 
 export default function Home() {
   return (
@@ -85,6 +86,15 @@ export default function Home() {
             <div className="absolute bottom-0 left-0 w-2 h-2 border-b-2 border-l-2 border-orange-500 -translate-x-1/2 translate-y-1/2"></div>
             <div className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-orange-500 translate-x-1/2 translate-y-1/2"></div>
             <RetroPopup />
+          </div>
+        </div>
+        <div className="flex-1 p-4">
+          <div className="border-2 border-white p-2 relative">
+            <div className="absolute top-0 left-0 w-2 h-2 border-t-2 border-l-2 border-orange-500 -translate-x-1/2 -translate-y-1/2"></div>
+            <div className="absolute top-0 right-0 w-2 h-2 border-t-2 border-r-2 border-orange-500 translate-x-1/2 -translate-y-1/2"></div>
+            <div className="absolute bottom-0 left-0 w-2 h-2 border-b-2 border-l-2 border-orange-500 -translate-x-1/2 translate-y-1/2"></div>
+            <div className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-orange-500 translate-x-1/2 translate-y-1/2"></div>
+            <UpcomingProject />
           </div>
         </div>
       </aside>
