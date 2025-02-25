@@ -3,13 +3,13 @@
 export default function ContributionsGraph() {
   return (
     <div className="relative group">
-      <div className="bg-black p-4">
+      <div className="bg-white p-4">
         <style jsx>{`
           .contribution-graph :global(rect[data-level="0"]) {
-            fill: rgba(255, 255, 255, 0.1);
+            fill: #0099ff;
           }
           .contribution-graph :global(rect[data-level="1"]) {
-            fill: rgba(255, 255, 255, 0.3);
+            fill: rgba(0, 132, 255, 0.3);
           }
           .contribution-graph :global(rect[data-level="2"]) {
             fill: rgba(255, 255, 255, 0.5);
@@ -18,16 +18,16 @@ export default function ContributionsGraph() {
             fill: rgba(255, 255, 255, 0.7);
           }
           .contribution-graph :global(rect[data-level="4"]) {
-            fill: rgba(255, 255, 255, 1);
+            fill: rgb(0, 153, 255);
           }
           .contribution-graph :global(text) {
-            fill: white;
-            font-size: 10px;
+            fill: red;
+            font-size: 16px;
           }
         `}</style>
         <div className="contribution-graph">
           <img 
-            src="https://ghchart.rshah.org/maskjelly" 
+            src="https://ghchart.rshah.org/00000/maskjelly" 
             alt="GitHub Contributions" 
             className="w-full transition-transform duration-200 group-hover:scale-[1.01] [&_rect]:transition-all [&_rect]:duration-200"
           />

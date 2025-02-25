@@ -1,130 +1,243 @@
-import TypewriterHeading from "./components/TypewriterHeading"
-import ContributionsGraph from "./components/ContributionsGraph"
-import ProjectsContainer from "./components/ProjectsContainer"
-import ResponsiveSplineScene from "./components/ResponsiveSplineScrene"
-import RetroPopup from "./components/RetroPopup"
-import UpcomingProject from "./components/UpcomingProject"
+import React from "react";
+import ContributionsGraph from "./components/ContributionsGraph";
+import ProjectsContainer from "./components/ProjectsContainer";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-black text-white font-mono flex relative">
-      <main className="flex-grow max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-12">
-        <div className="border-2 border-white p-4 sm:p-6 mb-8 sm:mb-12">
-          <TypewriterHeading />
+    <div className="min-h-screen bg-white text-black font-['Terminus',_monospace] text-base leading-relaxed p-4 sm:p-6">
+      {/* Header */}
+      <header className="mb-8 border-b border-gray-300 pb-2">
+        <div className="flex justify-between items-center">
+          <span className="text-xs sm:text-sm tracking-wider">
+            [working on shit i dont even understand]
+          </span>
+          <span>
+            <a href="/roadmap" className="underline">
+              [current vision map]
+            </a>
+          </span>
+          <span className="text-gray-600 text-xs sm:text-sm">
+            aaryan@whiteye.in
+          </span>
         </div>
+      </header>
 
-        <section className="mb-8 sm:mb-12 p-4 sm:p-6 border border-gray-700 relative">
-          <div className="absolute top-0 left-0 w-2 h-2 border-t-2 border-l-2 border-orange-500"></div>
-          <div className="absolute top-0 right-0 w-2 h-2 border-t-2 border-r-2 border-orange-500"></div>
-          <div className="absolute bottom-0 left-0 w-2 h-2 border-b-2 border-l-2 border-orange-500"></div>
-          <div className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-orange-500"></div>
-          <p className="text-base sm:text-lg mb-3">i am 19y/o || second year student, studying computer science.</p>
-          <p className="text-base sm:text-lg mb-3">mainly work in deep learning/natural language processing.</p>
-          <p className="text-base sm:text-lg">and also some Gen AI and web3 type stuff</p>
+      {/* Main Content */}
+      <main className="max-w-2xl mx-auto">
+        {/* Bio */}
+        <section className="mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold mb-1">
+            aaryan singh | maskjelly |
+          </h1>
+          <p className="text-sm sm:text-base text-gray-700 mb-2">
+            @ student + working on Data Engine for robots
+          </p>
+          <p className="text-sm sm:text-base leading-relaxed">
+            i’m a 19 y/o cs undergrad student. i love building things and solving
+            problems. i enjoy language design, theoretical computer science, and
+            i live on the terminal. if i’m not coding, i’m probably doing cardio,
+            watching movies, or obsessing over mechanical keyboards and robots .
+          </p>
         </section>
 
-        <section className="mb-8 sm:mb-12">
-          <h2 className="text-xl sm:text-2xl font-light tracking-wide mb-4 sm:mb-6 border-l-4 border-orange-500 pl-4 flex items-center">
-            <span className="mr-2">experience</span>
-            <div className="flex-grow h-[1px] bg-white ml-4"></div>
+        {/* Work */}
+        <section className="mb-8">
+                    <div className="text-center mb-4">
+            <span className="text-xs sm:text-sm font-mono text-gray-800 tracking-wider">
+              {"-".repeat(10)} Experience {"-".repeat(10)}
+            </span>
+          </div>
+          <h2 className="text-xs sm:text-sm uppercase mb-3 text-gray-800 tracking-wider">
+            * work
           </h2>
-          <ul className="space-y-4 pl-6 border-l border-gray-700">
-            <li className="flex items-center before:content-[''] before:w-2 before:h-2 before:bg-orange-500 before:mr-4 before:rotate-45 text-sm sm:text-base">
-              2x YC Backed Engineer
-            </li>
-            <li className="flex items-center before:content-[''] before:w-2 before:h-2 before:bg-orange-500 before:mr-4 before:rotate-45 text-sm sm:text-base">
-              <span className="flex flex-wrap items-center">
-                Founding and Lead Engineer at
-                <a
-                  href="https://fnbc.com"
-                  className="ml-2 relative group text-orange-500"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  FnBC
-                  <span className="absolute -bottom-1 left-0 w-full h-[1px] bg-orange-500 origin-left transform scale-x-0 transition-transform group-hover:scale-x-100"></span>
-                </a>
+          <ul className="list-none pl-0 text-sm sm:text-base text-gray-800">
+            <li className="mb-4">
+              <strong className="block">2x YC backed engineer</strong>
+              <span className="text-gray-600 text-xs sm:text-sm">
+                <span className="text-gray-600 text-xs sm:text-sm">
+                  @O1Visa and @Fridaymail
+                </span>
               </span>
+              <p className="mt-1 leading-relaxed">
+                Mostly did work on backend management | onBoarding | Database management |
+              </p>
             </li>
-            <li className="flex items-center before:content-[''] before:w-2 before:h-2 before:bg-orange-500 before:mr-4 before:rotate-45 text-sm sm:text-base">
-              Founder and CTO of Existence . Co
+            <li>
+              <strong className="block">FnBC</strong>
+              <span className="text-gray-600 text-xs sm:text-sm">
+                full-stack engineer (nov 2023 - jan 2024)
+              </span>
+              <p className="mt-1 leading-relaxed">
+                contributed to a large-scale t3 stack app, worked on real-time
+                presence and chat features and multiple client workspaces .
+              </p>
             </li>
           </ul>
         </section>
 
-        <section className="mb-8 sm:mb-12">
-          <h2 className="text-xl sm:text-2xl font-light tracking-wide mb-4 sm:mb-6 border-l-4 border-orange-500 pl-4 flex items-center">
-            <span className="mr-2">contributions</span>
-            <div className="flex-grow h-[1px] bg-white ml-4"></div>
+        {/* Projects */}
+        <section className="mb-8">
+                    <div className="text-center mb-4">
+            <span className="text-xs sm:text-sm font-mono text-gray-800 tracking-wider">
+              {"-".repeat(10)} Projects {"-".repeat(10)}
+            </span>
+          </div>
+          <h2 className="text-xs sm:text-sm uppercase mb-3 text-gray-800 tracking-wider">
+            * projects
           </h2>
-          <div className="border-2 border-white relative bg-gray-900">
-            <div className="absolute top-0 left-0 w-3 sm:w-4 h-3 sm:h-4 border-t-2 border-l-2 border-orange-500 -translate-x-1 -translate-y-1"></div>
-            <div className="absolute top-0 right-0 w-3 sm:w-4 h-3 sm:h-4 border-t-2 border-r-2 border-orange-500 translate-x-1 -translate-y-1"></div>
-            <div className="absolute bottom-0 left-0 w-3 sm:w-4 h-3 sm:h-4 border-b-2 border-l-2 border-orange-500 -translate-x-1 translate-y-1"></div>
-            <div className="absolute bottom-0 right-0 w-3 sm:w-4 h-3 sm:h-4 border-b-2 border-r-2 border-orange-500 translate-x-1 translate-y-1"></div>
+          <ul className="list-none pl-0 text-sm sm:text-base text-gray-800">
+            <li className="mb-4">
+              <strong className="block">[current] DataEngine </strong>
+              <span className="text-gray-600 text-xs sm:text-sm">
+                creator and maintainer with a small team
+              </span>
+              <p className="mt-1 leading-relaxed">
+                Data Engine for robots to get trained on simulation of real world events to get them preped at relatively NULL COST and TIME WASTE .
+                The ultimate robotics AI environment .
+              </p>
+            </li>
+            <li className="mb-4">
+              <strong className="block">PunkMail</strong>
+
+              <span className="text-gray-600 text-xs sm:text-sm">creator</span>
+              <p className="mt-1 leading-relaxed">
+                Mass emailer for business \ B2C maily \
+              </p>
+            </li>
+            <li>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <a
+                    href="#"
+                    className="underline text-blue-600 hover:text-blue-800"
+                  >
+                    all projects
+                  </a>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle className="text-black">Currently under work</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Some stuff under work
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel className="text-black boundary">Cancel</AlertDialogCancel>
+                    <AlertDialogAction>Ok</AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </li>
+          </ul>
+        </section>
+
+        {/* Blog Section */}
+        <section className="mb-8">
+          {/* Retro Divider */}
+          <div className="text-center mb-4">
+            <span className="text-xs sm:text-sm font-mono text-gray-800 tracking-wider">
+              {"-".repeat(10)} Blog {"-".repeat(10)}
+            </span>
+          </div>
+
+          <h2 className="text-xs sm:text-sm uppercase mb-3 text-gray-800 tracking-wider">
+            * blog
+          </h2>
+          <ul className="list-none pl-0 text-sm sm:text-base text-gray-800">
+            <li className="mb-2">
+              <strong className="block">How I built my own VCS like GIT</strong>
+              <span className="text-gray-600 text-xs sm:text-sm">
+                [under work {new Date().toLocaleDateString()}]
+              </span>
+            </li>
+            <li className="mb-2">
+              <strong className="block">More coming...</strong>
+              <span className="text-gray-600 text-xs sm:text-sm"></span>
+            </li>
+          </ul>
+        </section>
+
+        <section className="mb-8">
+          <div className="text-center mb-4">
+            <span className="text-xs sm:text-sm font-mono text-gray-800 tracking-wider">
+              {"-".repeat(10)} my "Must Read" collection {"-".repeat(10)}
+            </span>
+          </div>
+          <h2 className="text-xs sm:text-sm uppercase mb-3 text-gray-800 tracking-wider">
+            * MUST READ FOR NERDS
+          </h2>
+          <ul className="list-none pl-0 text-sm sm:text-base text-gray-800">
+            <li className="mb-2">
+              <strong className="block">
+                {''}
+                <a href="/read" className="underline">
+                  A little collection i am building up of cool researchpapers that i like
+                </a>
+              </strong>
+              <span className="text-gray-600 text-xs sm:text-sm">
+                [under work {new Date().toLocaleDateString()}]
+              </span>
+            </li>
+          </ul>
+        </section>
+        {/* Contributions */}
+        <section className="mb-8">
+          <h2 className="text-xs sm:text-sm uppercase mb-3 text-gray-800 tracking-wider">
+            * github contributions
+          </h2>
+          <div className="border border-gray-300 p-2 bg-gray-50">
             <ContributionsGraph />
           </div>
         </section>
+        {/* 
+        Projects Container
+        <section className="mb-8">
+          <h2 className="text-xs sm:text-sm uppercase mb-3 text-gray-800 tracking-wider">
+            * projects
+          </h2>
+          <ProjectsContainer />
+        </section> */}
 
-        <ProjectsContainer />
-      </main>
-
-      <aside className="w-80 border-l border-white fixed right-0 top-0 h-full overflow-y-auto flex flex-col">
-        <div className="flex-1 p-4 border-b border-white">
-          <div className="border-2 border-white p-2 mb-4 relative">
-            <div className="absolute top-0 left-0 w-2 h-2 border-t-2 border-l-2 border-orange-500 -translate-x-1/2 -translate-y-1/2"></div>
-            <div className="absolute top-0 right-0 w-2 h-2 border-t-2 border-r-2 border-orange-500 translate-x-1/2 -translate-y-1/2"></div>
-            <div className="absolute bottom-0 left-0 w-2 h-2 border-b-2 border-l-2 border-orange-500 -translate-x-1/2 translate-y-1/2"></div>
-            <div className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-orange-500 translate-x-1/2 translate-y-1/2"></div>
-            <ResponsiveSplineScene />
-          </div>
-        </div>
-        <div className="flex-1 p-4">
-          <div className="border-2 border-white p-2 relative">
-            <div className="absolute top-0 left-0 w-2 h-2 border-t-2 border-l-2 border-orange-500 -translate-x-1/2 -translate-y-1/2"></div>
-            <div className="absolute top-0 right-0 w-2 h-2 border-t-2 border-r-2 border-orange-500 translate-x-1/2 -translate-y-1/2"></div>
-            <div className="absolute bottom-0 left-0 w-2 h-2 border-b-2 border-l-2 border-orange-500 -translate-x-1/2 translate-y-1/2"></div>
-            <div className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-orange-500 translate-x-1/2 translate-y-1/2"></div>
-            <RetroPopup />
-          </div>
-        </div>
-        <div className="flex-1 p-4">
-          <div className="border-2 border-white p-2 relative">
-            <div className="absolute top-0 left-0 w-2 h-2 border-t-2 border-l-2 border-orange-500 -translate-x-1/2 -translate-y-1/2"></div>
-            <div className="absolute top-0 right-0 w-2 h-2 border-t-2 border-r-2 border-orange-500 translate-x-1/2 -translate-y-1/2"></div>
-            <div className="absolute bottom-0 left-0 w-2 h-2 border-b-2 border-l-2 border-orange-500 -translate-x-1/2 translate-y-1/2"></div>
-            <div className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-orange-500 translate-x-1/2 translate-y-1/2"></div>
-            <UpcomingProject />
-          </div>
-        </div>
-      </aside>
-
-      <footer className="fixed bottom-0 left-0 right-80 py-6 sm:py-8 border-t-2 border-white bg-black">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6">
-          <div className="flex justify-center gap-6 sm:gap-8">
+        {/* Links */}
+        <section className="mb-8">
+          <h2 className="text-xs sm:text-sm uppercase mb-3 text-gray-800 tracking-wider">
+            * links
+          </h2>
+          <p className="text-sm sm:text-base text-gray-800">
             <a
-              href="https://github.com/maskjelly"
-              className="text-sm sm:text-base text-white hover:text-orange-500 transition-colors tracking-wide relative group"
-              target="_blank"
-              rel="noopener noreferrer"
+              href="mailto:x.com"
+              className="underline text-blue-600 hover:text-blue-800"
             >
-              github
-              <span className="absolute -bottom-1 left-0 w-full h-[1px] bg-orange-500 origin-left transform scale-x-0 transition-transform group-hover:scale-x-100"></span>
-            </a>
-            <span className="w-[1px] h-4 sm:h-6 bg-white"></span>
+              email
+            </a>{" "}
+            |
             <a
               href="https://twitter.com/LiquidZooo"
-              className="text-sm sm:text-base text-white hover:text-orange-500 transition-colors tracking-wide relative group"
-              target="_blank"
-              rel="noopener noreferrer"
+              className="underline text-blue-600 hover:text-blue-800 ml-1"
             >
               twitter
-              <span className="absolute -bottom-1 left-0 w-full h-[1px] bg-orange-500 origin-left transform scale-x-0 transition-transform group-hover:scale-x-100"></span>
-            </a>
-          </div>
-        </div>
-      </footer>
+            </a>{" "}
+            |
+            <a
+              href="https://github.com/maskjelly"
+              className="underline text-blue-600 hover:text-blue-800 ml-1"
+            >
+              github
+            </a>{" "}
+          </p>
+        </section>
+      </main>
     </div>
-  )
+  );
 }
-
