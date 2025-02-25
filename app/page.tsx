@@ -156,7 +156,7 @@ export default function Home() {
           </h2>
           <ul className="list-none pl-0 text-sm sm:text-base text-gray-800">
             <li className="mb-2">
-              <strong className="block">How I built my own VCS like GIT</strong>
+              <strong className="block">How I built my own VCS like GIT in C</strong>
               <span className="text-gray-600 text-xs sm:text-sm">
                 [under work {new Date().toLocaleDateString()}]
               </span>
