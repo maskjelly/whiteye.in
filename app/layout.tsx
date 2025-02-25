@@ -23,7 +23,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
+
     <html lang="en">
+     {/* <link href="https://files.ax86.net/terminus-ttf/files/4.30/TerminusMedium.ttf" rel="stylesheet"></link> */}
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-black text-white font-mono flex flex-col relative`}
       >

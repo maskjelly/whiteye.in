@@ -1,217 +1,335 @@
-// pages/Roadmap.tsx
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+'use client'
+import React, { useState, useEffect } from 'react';
 
 const Roadmap = () => {
+  const [isDarkTheme, setIsDarkTheme] = useState(true);
+
+  // Persist theme preference in localStorage
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+      setIsDarkTheme(savedTheme === 'dark');
+    }
+  }, []);
+
+  const toggleTheme = () => {
+    setIsDarkTheme(!isDarkTheme);
+    localStorage.setItem('theme', !isDarkTheme ? 'dark' : 'light');
+  };
+
   return (
-    <div className="max-w-5xl mx-auto p-4 md:p-6 bg-gray-50 min-h-screen font-sans">
-      {/* Header Section */}
-      <header className="text-center mb-8 md:mb-12 border-b-2 border-gray-300 pb-4">
-        <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight text-gray-900">
-          A Roadmap for Advancing Robotics Simulation
-        </h1>
-        <p className="text-md md:text-lg text-gray-600 mt-2 italic">
-          Leveraging Genesis Physics Engine and RoboGen for Startup Innovation in Embodied AI
-        </p>
+    <div
+      className={`h-screen w-screen overflow-y-auto font-['Terminus',_monospace] text-base leading-relaxed transition-colors duration-300 ${
+        isDarkTheme
+          ? 'bg-black text-[#00FF00]'
+          : 'bg-[#F5F5F5] text-[#000000]'
+      }`}
+    >
+      {/* Header Section - News Article Style */}
+      <header className="w-full p-4 sm:p-6 md:p-8 bg-inherit border-b border-[#333333]">
+        <div className="max-w-3xl mx-auto">
+          <h1
+            className={`text-xl sm:text-2xl md:text-3xl uppercase tracking-wider font-bold mb-2 ${
+              isDarkTheme ? 'text-[#00FF00]' : 'text-[#000000]'
+            }`}
+          >
+            A ROADMAP FOR ADVANCING ROBOTICS SIMULATION
+          </h1>
+          <p className="text-sm sm:text-base md:text-lg italic mb-4">
+            Leveraging Genesis Physics Engine and RoboGen for Startup Innovation
+          </p>
+          <div className="flex justify-between items-center text-sm sm:text-base">
+            <span>Published: February 25, 2025</span>
+            <button
+              onClick={toggleTheme}
+              className={`px-2 py-1 border border-[#333333] uppercase hover:bg-[#333333] hover:text-[#00FF00] transition-colors ${
+                isDarkTheme ? 'bg-black text-[#00FF00]' : 'bg-[#F5F5F5] text-[#000000]'
+              }`}
+            >
+              {isDarkTheme ? 'LIGHT' : 'DARK'}
+            </button>
+          </div>
+        </div>
       </header>
 
-      {/* Abstract */}
-      <Card className="mb-8 shadow-md">
-        <CardHeader>
-          <CardTitle className="text-xl md:text-2xl font-semibold text-gray-800">Abstract</CardTitle>
-        </CardHeader>
-        <CardContent className="columns-1 md:columns-2 gap-6">
-          <p className="text-gray-700 break-words">
-            <span className="font-bold text-gray-900">This report details</span> a strategic roadmap for our startup, harnessing the Genesis physics engine and RoboGen to address the scarcity of real-world robotics data for early-generation robots. By simulating robot behavior in virtual environments and automating task generation, we extract high-fidelity synthetic data for AI training. Integrating Genesis’s ultra-fast simulation with RoboGen’s generative capabilities, our cloud-based pipeline emphasizes scalability, security, and efficiency, reducing costs and accelerating development.
+      {/* Main Content - Single Column */}
+      <main className="max-w-3xl mx-auto p-4 sm:p-6 md:p-8">
+        {/* Abstract */}
+        <section className="mb-8">
+          <h2
+            className={`text-base sm:text-lg md:text-xl uppercase font-bold mb-2 ${
+              isDarkTheme ? 'text-[#00FF00]' : 'text-[#000000]'
+            }`}
+          >
+            ABSTRACT
+          </h2>
+          <p className="text-sm sm:text-base">
+            THIS REPORT OUTLINES A STRATEGIC ROADMAP FOR OUR STARTUP, UTILIZING THE GENESIS PHYSICS ENGINE AND ROBOGEN TO ADDRESS THE SCARCITY OF REAL-WORLD ROBOTICS DATA FOR EARLY-GENERATION ROBOTS. BY SIMULATING ROBOT BEHAVIOR IN VIRTUAL ENVIRONMENTS AND AUTOMATING TASK GENERATION, WE PRODUCE HIGH-FIDELITY SYNTHETIC DATA FOR AI TRAINING. OUR CLOUD-BASED PIPELINE INTEGRATES GENESIS’S ULTRA-FAST SIMULATION WITH ROBOGEN’S GENERATIVE CAPABILITIES, PRIORITIZING SCALABILITY, SECURITY, AND EFFICIENCY TO REDUCE COSTS AND ACCELERATE DEVELOPMENT.
           </p>
-        </CardContent>
-      </Card>
+        </section>
 
-      {/* Introduction */}
-      <Card className="mb-8 shadow-md">
-        <CardHeader>
-          <CardTitle className="text-xl md:text-2xl font-semibold text-gray-800">1. Introduction</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <h3 className="text-lg font-semibold mb-2 text-gray-900">1.1 Define the Problem</h3>
-          <p className="text-gray-700 mb-4">
-            <strong>Need:</strong> Limited real-world data hampers robotics, especially for early-generation robots where prototypes are scarce or costly.
+        {/* Introduction */}
+        <section className="mb-8">
+          <h2
+            className={`text-base sm:text-lg md:text-xl uppercase font-bold mb-2 ${
+              isDarkTheme ? 'text-[#00FF00]' : 'text-[#000000]'
+            }`}
+          >
+            1. INTRODUCTION
+          </h2>
+          <h3
+            className={`text-sm sm:text-base md:text-lg uppercase mb-2 ${
+              isDarkTheme ? 'text-[#00FF00]' : 'text-[#000000]'
+            }`}
+          >
+            1.1 DEFINE THE PROBLEM
+          </h3>
+          <p className="text-sm sm:text-base mb-4">
+            NEED: LIMITED REAL-WORLD DATA RESTRICTS ROBOTICS DEVELOPMENT, PARTICULARLY FOR EARLY-GENERATION ROBOTS WHERE PROTOTYPES ARE SCARCE OR EXPENSIVE.
           </p>
-          <p className="text-gray-700 mb-4">
-            <strong>Solution:</strong> We simulate robot behavior using Genesis, extracting data like leg movement and sensor readings, enhanced by RoboGen’s task automation.
+          <p className="text-sm sm:text-base mb-4">
+            SOLUTION: WE USE GENESIS TO SIMULATE ROBOT BEHAVIOR, CAPTURING DATA SUCH AS LEG MOVEMENT AND SENSOR READINGS, ENHANCED BY ROBOGEN’S TASK AUTOMATION.
           </p>
-          <p className="text-gray-700">
-            <strong>Benefits:</strong> Genesis’s 43 million frames per second on an RTX 4090 cuts simulation time, while RoboGen streamlines data generation, lowering costs and boosting development speed (<a href="https://genesis-embodied-ai.github.io/" className="text-blue-600 underline">Genesis Docs</a>).
+          <p className="text-sm sm:text-base">
+            BENEFITS: GENESIS DELIVERS 43 MILLION FRAMES PER SECOND ON AN RTX 4090, REDUCING SIMULATION TIME, WHILE ROBOGEN STREAMLINES DATA GENERATION (<a href="https://genesis-embodied-ai.github.io/" className="underline">GENESIS DOCS</a>).
           </p>
-        </CardContent>
-      </Card>
+        </section>
 
-      {/* Background */}
-      <Card className="mb-8 shadow-md">
-        <CardHeader>
-          <CardTitle className="text-xl md:text-2xl font-semibold text-gray-800">2. Background and Context</CardTitle>
-        </CardHeader>
-        <CardContent className="columns-1 md:columns-2 gap-6">
-          <p className="text-gray-700 break-words">
-            Genesis, an open-source physics engine, is tailored for robotics and Embodied AI, integrating solvers (rigid body, MPM, SPH) for simulations up to 80 times faster than Isaac Gym. Its photo-realistic rendering and Pythonic API lower research barriers, excelling in synthetic data generation for early-stage robots (<a href="https://www.datacamp.com/tutorial/genesis-physics-engine-tutorial" className="text-blue-600 underline">DataCamp</a>). RoboGen, a generative agent within Genesis, automates skill proposal and mastery, making it a cornerstone of our approach (<a href="https://github.com/Genesis-Embodied-AI/RoboGen" className="text-blue-600 underline">RoboGen GitHub</a>).
+        {/* Background */}
+        <section className="mb-8">
+          <h2
+            className={`text-base sm:text-lg md:text-xl uppercase font-bold mb-2 ${
+              isDarkTheme ? 'text-[#00FF00]' : 'text-[#000000]'
+            }`}
+          >
+            2. BACKGROUND AND CONTEXT
+          </h2>
+          <p className="text-sm sm:text-base">
+            GENESIS, AN OPEN-SOURCE PHYSICS ENGINE DESIGNED FOR ROBOTICS AND EMBODIED AI, INTEGRATES SOLVERS (RIGID BODY, MPM, SPH) FOR SIMULATIONS UP TO 80 TIMES FASTER THAN ISAAC GYM. ITS PHOTO-REALISTIC RENDERING AND PYTHONIC API LOWER ENTRY BARRIERS, EXCELLING IN SYNTHETIC DATA GENERATION FOR EARLY-STAGE ROBOTS (<a href="https://www.datacamp.com/tutorial/genesis-physics-engine-tutorial" className="underline">DATACAMP</a>). ROBOGEN, A GENERATIVE AGENT WITHIN GENESIS, AUTOMATES SKILL PROPOSAL AND MASTERY, FORMING A KEY PILLAR OF OUR APPROACH (<a href="https://github.com/Genesis-Embodied-AI/RoboGen" className="underline">ROBOGEN GITHUB</a>).
           </p>
-        </CardContent>
-      </Card>
+        </section>
 
-      {/* System Overview */}
-      <Card className="mb-8 shadow-md">
-        <CardHeader>
-          <CardTitle className="text-xl md:text-2xl font-semibold text-gray-800">3. System Overview</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <h3 className="text-lg font-semibold mb-2 text-gray-900">3.1 Architecture and Components</h3>
-          <ul className="list-disc pl-6 text-gray-700 mb-4">
-            <li><strong>Core Components:</strong> Genesis Simulation Engine, RoboGen Task Generator, Data Capture, Client UI</li>
-            <li><strong>Data Flow:</strong> Clients upload models and specify tasks; RoboGen generates scenarios; processed data is delivered.</li>
-            <li><strong>Scalability:</strong> Cloud infrastructure for concurrent simulations.</li>
-            <li><strong>Security:</strong> Robust protection for client data and early-stage designs.</li>
+        {/* System Overview */}
+        <section className="mb-8">
+          <h2
+            className={`text-base sm:text-lg md:text-xl uppercase font-bold mb-2 ${
+              isDarkTheme ? 'text-[#00FF00]' : 'text-[#000000]'
+            }`}
+          >
+            3. SYSTEM OVERVIEW
+          </h2>
+          <h3
+            className={`text-sm sm:text-base md:text-lg uppercase mb-2 ${
+              isDarkTheme ? 'text-[#00FF00]' : 'text-[#000000]'
+            }`}
+          >
+            3.1 ARCHITECTURE AND COMPONENTS
+          </h3>
+          <ul className="list-[square] pl-6 mb-4 text-sm sm:text-base">
+            <li>CORE COMPONENTS: GENESIS SIMULATION ENGINE, ROBOGEN TASK GENERATOR, DATA CAPTURE, CLIENT UI</li>
+            <li>DATA FLOW: CLIENTS UPLOAD MODELS AND TASKS; ROBOGEN GENERATES SCENARIOS; PROCESSED DATA IS RETURNED.</li>
+            <li>SCALABILITY: CLOUD-BASED INFRASTRUCTURE SUPPORTS CONCURRENT SIMULATIONS.</li>
+            <li>SECURITY: ROBUST SAFEGUARDS PROTECT CLIENT DATA AND DESIGNS.</li>
           </ul>
-          <h3 className="text-lg font-semibold mb-2 text-gray-900">3.2 Testing Strategy</h3>
-          <p className="text-gray-700">
-            Data is tested across environments to refine behavior, with an internal filter for quality assurance, leveraging RoboGen’s diverse outputs.
+          <h3
+            className={`text-sm sm:text-base md:text-lg uppercase mb-2 ${
+              isDarkTheme ? 'text-[#00FF00]' : 'text-[#000000]'
+            }`}
+          >
+            3.2 TESTING STRATEGY
+          </h3>
+          <p className="text-sm sm:text-base">
+            DATA IS VALIDATED ACROSS DIVERSE ENVIRONMENTS, WITH AN INTERNAL FILTER ENSURING QUALITY, LEVERAGING ROBOGEN’S VARIED OUTPUTS.
           </p>
-        </CardContent>
-      </Card>
+        </section>
 
-      {/* Implementation */}
-      <Card className="mb-8 shadow-md">
-        <CardHeader>
-          <CardTitle className="text-xl md:text-2xl font-semibold text-gray-800">4. Implementation</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <h3 className="text-lg font-semibold mb-2 text-gray-900">4.1 Setup</h3>
-          <ul className="list-disc pl-6 text-gray-700 mb-4">
-            <li>Install Genesis and verify compatibility (<a href="https://pypi.org/project/genesis-world/" className="text-blue-600 underline">PyPI</a>)</li>
+        {/* Implementation */}
+        <section className="mb-8">
+          <h2
+            className={`text-base sm:text-lg md:text-xl uppercase font-bold mb-2 ${
+              isDarkTheme ? 'text-[#00FF00]' : 'text-[#000000]'
+            }`}
+          >
+            4. IMPLEMENTATION
+          </h2>
+          <h3
+            className={`text-sm sm:text-base md:text-lg uppercase mb-2 ${
+              isDarkTheme ? 'text-[#00FF00]' : 'text-[#000000]'
+            }`}
+          >
+            4.1 SETUP
+          </h3>
+          <ul className="list-[square] pl-6 mb-4 text-sm sm:text-base">
+            <li>INSTALL GENESIS AND CONFIRM COMPATIBILITY (<a href="https://pypi.org/project/genesis-world/" className="underline">PYPI</a>)</li>
           </ul>
-          <h3 className="text-lg font-semibold mb-2 text-gray-900">4.2 Integrate Client Robot Models</h3>
-          <ul className="list-disc pl-6 text-gray-700 mb-4">
-            <li>Start with a default model; scale to client-provided models.</li>
-            <li>Calibrate physics properties (<a href="https://genesis-embodied-ai.github.io/" className="text-blue-600 underline">Docs</a>).</li>
-            <li>Updates via <a href="https://github.com/Genesis-Embodied-AI/RoboGen" className="text-blue-600 underline">GitHub</a> and <a href="https://robogen-ai.github.io/" className="text-blue-600 underline">RoboGen Paper</a>.</li>
+          <h3
+            className={`text-sm sm:text-base md:text-lg uppercase mb-2 ${
+              isDarkTheme ? 'text-[#00FF00]' : 'text-[#000000]'
+            }`}
+          >
+            4.2 INTEGRATE CLIENT ROBOT MODELS
+          </h3>
+          <ul className="list-[square] pl-6 mb-4 text-sm sm:text-base">
+            <li>BEGIN WITH A DEFAULT MODEL; EXPAND TO CLIENT-PROVIDED MODELS.</li>
+            <li>CALIBRATE PHYSICS PROPERTIES (<a href="https://genesis-embodied-ai.github.io/" className="underline">DOCS</a>).</li>
+            <li>UPDATES VIA <a href="https://github.com/Genesis-Embodied-AI/RoboGen" className="underline">GITHUB</a> AND <a href="https://robogen-ai.github.io/" className="underline">ROBOGEN PAPER</a>.</li>
           </ul>
-          <h3 className="text-lg font-semibold mb-2 text-gray-900">4.3 Define Simulation Environments</h3>
-          <ul className="list-disc pl-6 text-gray-700 mb-4">
-            <li>Scenarios: legged robots, manipulators; use <code>gs.morphs.Terrain</code> or custom maps.</li>
-            <li>Configure gravity, time step, conditions.</li>
+          <h3
+            className={`text-sm sm:text-base md:text-lg uppercase mb-2 ${
+              isDarkTheme ? 'text-[#00FF00]' : 'text-[#000000]'
+            }`}
+          >
+            4.3 DEFINE SIMULATION ENVIRONMENTS
+          </h3>
+          <ul className="list-[square] pl-6 mb-4 text-sm sm:text-base">
+            <li>SCENARIOS: LEGGED ROBOTS, MANIPULATORS; USE `GS.MORPHS.TERRAIN` OR CUSTOM MAPS.</li>
+            <li>CONFIGURE GRAVITY, TIME STEP, AND CONDITIONS.</li>
           </ul>
-          <h3 className="text-lg font-semibold mb-2 text-gray-900">4.4 Test and Validate</h3>
-          <ul className="list-disc pl-6 text-gray-700">
-            <li>Test diverse models and scenarios.</li>
-            <li>Validate with real data or expert review (<a href="https://www.datacamp.com/tutorial/genesis-physics-engine-tutorial" className="text-blue-600 underline">DataCamp</a>).</li>
+          <h3
+            className={`text-sm sm:text-base md:text-lg uppercase mb-2 ${
+              isDarkTheme ? 'text-[#00FF00]' : 'text-[#000000]'
+            }`}
+          >
+            4.4 TEST AND VALIDATE
+          </h3>
+          <ul className="list-[square] pl-6 text-sm sm:text-base">
+            <li>TEST ACROSS DIVERSE MODELS AND SCENARIOS.</li>
+            <li>VALIDATE WITH REAL DATA OR EXPERT REVIEW (<a href="https://www.datacamp.com/tutorial/genesis-physics-engine-tutorial" className="underline">DATACAMP</a>).</li>
           </ul>
-        </CardContent>
-      </Card>
+        </section>
 
-      {/* RoboGen Technical Section */}
-      <Card className="mb-8 shadow-md">
-        <CardHeader>
-          <CardTitle className="text-xl md:text-2xl font-semibold text-gray-800">5. RoboGen: Automating Task Generation</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <h3 className="text-lg font-semibold mb-2 text-gray-900">5.1 What is RoboGen?</h3>
-          <p className="text-gray-700 mb-4">
-            RoboGen, a generative robotic agent within Genesis, automates the propose-generate-learn cycle. It proposes tasks, generates environments with objects and assets, and learns policies via reinforcement learning or trajectory optimization (<a href="https://robogen-ai.github.io/" className="text-blue-600 underline">RoboGen Paper</a>).
+        {/* RoboGen Technical Section */}
+        <section className="mb-8">
+          <h2
+            className={`text-base sm:text-lg md:text-xl uppercase font-bold mb-2 ${
+              isDarkTheme ? 'text-[#00FF00]' : 'text-[#000000]'
+            }`}
+          >
+            5. ROBOGEN: AUTOMATING TASK GENERATION
+          </h2>
+          <h3
+            className={`text-sm sm:text-base md:text-lg uppercase mb-2 ${
+              isDarkTheme ? 'text-[#00FF00]' : 'text-[#000000]'
+            }`}
+          >
+            5.1 WHAT IS ROBOGEN?
+          </h3>
+          <p className="text-sm sm:text-base mb-4">
+            ROBOGEN, A GENERATIVE AGENT WITHIN GENESIS, AUTOMATES THE PROPOSE-GENERATE-LEARN CYCLE. IT PROPOSES TASKS, CREATES ENVIRONMENTS WITH OBJECTS AND ASSETS, AND LEARNS POLICIES VIA REINFORCEMENT LEARNING OR TRAJECTORY OPTIMIZATION (<a href="https://robogen-ai.github.io/" className="underline">ROBOGEN PAPER</a>).
           </p>
-          <h3 className="text-lg font-semibold mb-2 text-gray-900">5.2 Integration in Our Pipeline</h3>
-          <p className="text-gray-700 mb-4">
-            Clients specify tasks in natural language; RoboGen interprets them, generates simulation environments, and produces training data, minimizing manual effort (<a href="https://github.com/Genesis-Embodied-AI/RoboGen" className="text-blue-600 underline">GitHub</a>).
+          <h3
+            className={`text-sm sm:text-base md:text-lg uppercase mb-2 ${
+              isDarkTheme ? 'text-[#00FF00]' : 'text-[#000000]'
+            }`}
+          >
+            5.2 INTEGRATION IN OUR PIPELINE
+          </h3>
+          <p className="text-sm sm:text-base mb-4">
+            CLIENTS DEFINE TASKS IN NATURAL LANGUAGE; ROBOGEN INTERPRETS THEM, GENERATES SIMULATION ENVIRONMENTS, AND PRODUCES TRAINING DATA, REDUCING MANUAL EFFORT (<a href="https://github.com/Genesis-Embodied-AI/RoboGen" className="underline">GITHUB</a>).
           </p>
-          <h3 className="text-lg font-semibold mb-2 text-gray-900">5.3 Benefits</h3>
-          <ul className="list-disc pl-6 text-gray-700">
-            <li><strong>Automation:</strong> Reduces human intervention in task and data generation.</li>
-            <li><strong>Diversity:</strong> Generates varied skill demonstrations.</li>
-            <li><strong>Efficiency:</strong> Leverages Genesis’s speed for rapid training (<a href="https://siliconangle.com/2024/12/20/researchers-open-source-genesis-simulation-platform-training-robots/" className="text-blue-600 underline">SiliconANGLE</a>).</li>
+          <h3
+            className={`text-sm sm:text-base md:text-lg uppercase mb-2 ${
+              isDarkTheme ? 'text-[#00FF00]' : 'text-[#000000]'
+            }`}
+          >
+            5.3 BENEFITS
+          </h3>
+          <ul className="list-[square] pl-6 text-sm sm:text-base">
+            <li>AUTOMATION: MINIMIZES HUMAN INVOLVEMENT IN TASK AND DATA GENERATION.</li>
+            <li>DIVERSITY: PRODUCES VARIED SKILL DEMONSTRATIONS.</li>
+            <li>EFFICIENCY: UTILIZES GENESIS’S SPEED FOR RAPID TRAINING (<a href="https://siliconangle.com/2024/12/20/researchers-open-source-genesis-simulation-platform-training-robots/" className="underline">SILICONANGLE</a>).</li>
           </ul>
-        </CardContent>
-      </Card>
+        </section>
 
-      {/* Comparative Analysis */}
-      <Card className="mb-8 shadow-md">
-        <CardHeader>
-          <CardTitle className="text-xl md:text-2xl font-semibold text-gray-800">6. Comparative Analysis</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm md:text-base text-gray-700 border-collapse">
+        {/* Comparative Analysis */}
+        <section className="mb-8">
+          <h2
+            className={`text-base sm:text-lg md:text-xl uppercase font-bold mb-2 ${
+              isDarkTheme ? 'text-[#00FF00]' : 'text-[#000000]'
+            }`}
+          >
+            6. COMPARATIVE ANALYSIS
+          </h2>
+          <div className="overflow-x-auto mb-4">
+            <table className="w-full text-sm sm:text-base border border-[#333333]">
               <thead>
-                <tr className="bg-gray-200">
-                  <th className="border p-2">Feature</th>
-                  <th className="border p-2">Genesis</th>
-                  <th className="border p-2">RoboGen</th>
+                <tr className="bg-[#333333]">
+                  <th className="border border-[#333333] p-2 text-left text-[#00FF00]">FEATURE</th>
+                  <th className="border border-[#333333] p-2 text-left text-[#00FF00]">GENESIS</th>
+                  <th className="border border-[#333333] p-2 text-left text-[#00FF00]">ROBOGEN</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <td className="border p-2"><strong>Function</strong></td>
-                  <td className="border p-2">Ultra-fast simulation</td>
-                  <td className="border p-2">Task/skill generation</td>
+                  <td className="border border-[#333333] p-2">FUNCTION</td>
+                  <td className="border border-[#333333] p-2">ULTRA-FAST SIMULATION</td>
+                  <td className="border border-[#333333] p-2">TASK/SKILL GENERATION</td>
                 </tr>
                 <tr>
-                  <td className="border p-2"><strong>Speed</strong></td>
-                  <td className="border p-2">80x faster than Isaac Gym</td>
-                  <td className="border p-2">Leverages Genesis</td>
+                  <td className="border border-[#333333] p-2">SPEED</td>
+                  <td className="border border-[#333333] p-2">80X FASTER THAN ISAAC GYM</td>
+                  <td className="border border-[#333333] p-2">LEVERAGES GENESIS</td>
                 </tr>
                 <tr>
-                  <td className="border p-2"><strong>Use Case</strong></td>
-                  <td className="border p-2">Robotics, Embodied AI</td>
-                  <td className="border p-2">Propose-generate-learn</td>
+                  <td className="border border-[#333333] p-2">USE CASE</td>
+                  <td className="border border-[#333333] p-2">ROBOTICS, EMBODIED AI</td>
+                  <td className="border border-[#333333] p-2">PROPOSE-GENERATE-LEARN</td>
                 </tr>
                 <tr>
-                  <td className="border p-2"><strong>Client Interaction</strong></td>
-                  <td className="border p-2">Model upload, scenarios</td>
-                  <td className="border p-2">Natural language tasks</td>
+                  <td className="border border-[#333333] p-2">CLIENT INTERACTION</td>
+                  <td className="border border-[#333333] p-2">MODEL UPLOAD, SCENARIOS</td>
+                  <td className="border border-[#333333] p-2">NATURAL LANGUAGE TASKS</td>
                 </tr>
               </tbody>
             </table>
           </div>
-          <p className="text-gray-700 mt-4">
-            Genesis outperforms traditional platforms like Mujoco with its speed and versatility (<a href="https://medium.com/data-science-in-your-pocket/genesis-physics-ai-engine-for-robotic-simulation-b67176c45a7d" className="text-blue-600 underline">Medium</a>).
+          <p className="text-sm sm:text-base">
+            GENESIS SURPASSES PLATFORMS LIKE MUJOCO IN SPEED AND VERSATILITY (<a href="https://medium.com/data-science-in-your-pocket/genesis-physics-ai-engine-for-robotic-simulation-b67176c45a7d" className="underline">MEDIUM</a>).
           </p>
-        </CardContent>
-      </Card>
+        </section>
 
-      {/* Future Directions */}
-      <Card className="mb-8 shadow-md">
-        <CardHeader>
-          <CardTitle className="text-xl md:text-2xl font-semibold text-gray-800">7. Future Directions</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-gray-700">
-            We aim to expand RoboGen for soft-body manipulation and enhance Genesis’s differentiability for tactile simulations. Challenges include maintaining data quality and security (<a href="https://www.notebookcheck.net/10-years-of-training-in-one-hour-thanks-to-Genesis-The-Matrix-becomes-reality-for-robots.935352.0.html" className="text-blue-600 underline">NotebookCheck</a>).
+        {/* Future Directions */}
+        <section className="mb-8">
+          <h2
+            className={`text-base sm:text-lg md:text-xl uppercase font-bold mb-2 ${
+              isDarkTheme ? 'text-[#00FF00]' : 'text-[#000000]'
+            }`}
+          >
+            7. FUTURE DIRECTIONS
+          </h2>
+          <p className="text-sm sm:text-base">
+            WE PLAN TO ENHANCE ROBOGEN FOR SOFT-BODY MANIPULATION AND IMPROVE GENESIS’S DIFFERENTIABILITY FOR TACTILE SIMULATIONS. CHALLENGES INCLUDE ENSURING DATA QUALITY AND SECURITY (<a href="https://www.notebookcheck.net/10-years-of-training-in-one-hour-thanks-to-Genesis-The-Matrix-becomes-reality-for-robots.935352.0.html" className="underline">NOTEBOOKCHECK</a>).
           </p>
-        </CardContent>
-      </Card>
+        </section>
 
-      {/* References */}
-      <Card className="mb-8 shadow-md">
-        <CardHeader>
-          <CardTitle className="text-xl md:text-2xl font-semibold text-gray-800">8. References</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ul className="list-decimal pl-6 text-gray-700 text-sm md:text-base">
-            <li><a href="https://genesis-embodied-ai.github.io/" className="text-blue-600 underline">Genesis Docs</a></li>
-            <li><a href="https://www.datacamp.com/tutorial/genesis-physics-engine-tutorial" className="text-blue-600 underline">DataCamp Tutorial</a></li>
-            <li><a href="https://medium.com/data-science-in-your-pocket/genesis-physics-ai-engine-for-robotic-simulation-b67176c45a7d" className="text-blue-600 underline">Medium</a></li>
-            <li><a href="https://www.marktechpost.com/2024/12/19/meet-genesis-an-open-source-physics-ai-engine-redefining-robotics-with-ultra-fast-simulations-and-generative-4d-worlds/" className="text-blue-600 underline">MarkTechPost</a></li>
-            <li><a href="https://digialps.com/genesis-a-universal-physics-engine-to-build-smarter-robots-through-better-simulation/" className="text-blue-600 underline">Digialps</a></li>
-            <li><a href="https://github.com/Genesis-Embodied-AI/RoboGen" className="text-blue-600 underline">RoboGen GitHub</a></li>
-            <li><a href="https://robogen-ai.github.io/" className="text-blue-600 underline">RoboGen Paper</a></li>
-            <li><a href="https://siliconangle.com/2024/12/20/researchers-open-source-genesis-simulation-platform-training-robots/" className="text-blue-600 underline">SiliconANGLE</a></li>
-            <li><a href="https://www.notebookcheck.net/10-years-of-training-in-one-hour-thanks-to-Genesis-The-Matrix-becomes-reality-for-robots.935352.0.html" className="text-blue-600 underline">NotebookCheck</a></li>
-            <li><a href="https://arxiv.org/html/2311.01455v3" className="text-blue-600 underline">RoboGen ArXiv</a></li>
+        {/* References */}
+        <section className="mb-8">
+          <h2
+            className={`text-base sm:text-lg md:text-xl uppercase font-bold mb-2 ${
+              isDarkTheme ? 'text-[#00FF00]' : 'text-[#000000]'
+            }`}
+          >
+            8. REFERENCES
+          </h2>
+          <ul className="list-decimal pl-6 text-sm sm:text-base">
+            <li><a href="https://genesis-embodied-ai.github.io/" className="underline">GENESIS DOCS</a></li>
+            <li><a href="https://www.datacamp.com/tutorial/genesis-physics-engine-tutorial" className="underline">DATACAMP TUTORIAL</a></li>
+            <li><a href="https://medium.com/data-science-in-your-pocket/genesis-physics-ai-engine-for-robotic-simulation-b67176c45a7d" className="underline">MEDIUM</a></li>
+            <li><a href="https://www.marktechpost.com/2024/12/19/meet-genesis-an-open-source-physics-ai-engine-redefining-robotics-with-ultra-fast-simulations-and-generative-4d-worlds/" className="underline">MARKTECHPOST</a></li>
+            <li><a href="https://digialps.com/genesis-a-universal-physics-engine-to-build-smarter-robots-through-better-simulation/" className="underline">DIGIALPS</a></li>
+            <li><a href="https://github.com/Genesis-Embodied-AI/RoboGen" className="underline">ROBOGEN GITHUB</a></li>
+            <li><a href="https://robogen-ai.github.io/" className="underline">ROBOGEN PAPER</a></li>
+            <li><a href="https://siliconangle.com/2024/12/20/researchers-open-source-genesis-simulation-platform-training-robots/" className="underline">SILICONANGLE</a></li>
+            <li><a href="https://www.notebookcheck.net/10-years-of-training-in-one-hour-thanks-to-Genesis-The-Matrix-becomes-reality-for-robots.935352.0.html" className="underline">NOTEBOOKCHECK</a></li>
+            <li><a href="https://arxiv.org/html/2311.01455v3" className="underline">ROBOGEN ARXIV</a></li>
           </ul>
-        </CardContent>
-      </Card>
+        </section>
 
-      {/* Footer */}
-      <footer className="text-center text-gray-500 mt-8 text-sm md:text-base border-t-2 border-gray-300 pt-4">
-        <p>Last Updated: February 25, 2025</p>
-      </footer>
+        {/* Footer */}
+        <footer className="text-center mt-8 border-t border-[#333333] pt-4 text-sm sm:text-base">
+          <p>LAST UPDATED: FEBRUARY 25, 2025</p>
+        </footer>
+      </main>
     </div>
   );
 };
