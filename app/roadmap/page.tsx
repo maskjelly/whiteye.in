@@ -323,6 +323,11 @@ const Roadmap = () => {
             <li><a href="https://siliconangle.com/2024/12/20/researchers-open-source-genesis-simulation-platform-training-robots/" className="underline">SILICONANGLE</a></li>
             <li><a href="https://www.notebookcheck.net/10-years-of-training-in-one-hour-thanks-to-Genesis-The-Matrix-becomes-reality-for-robots.935352.0.html" className="underline">NOTEBOOKCHECK</a></li>
             <li><a href="https://arxiv.org/html/2311.01455v3" className="underline">ROBOGEN ARXIV</a></li>
+
+
+
+
+
           </ul>
         </section>
 
