@@ -22,6 +22,11 @@ export default function Home() {
           <span className="text-xs sm:text-sm tracking-wider">
             [working on shit i dont even understand]
           </span>
+          <span className="text-xs sm:text-sm tracking-wider underline text-blue-800">
+            <a href="https://src.whiteye.in">
+            [Directory to learn NN/Karpathy's trade]
+          </a>
+          </span>
           <span>
             <a href="/roadmap" className="underline">
               [current vision map]
