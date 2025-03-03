@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { Analytics } from "@vercel/analytics/react"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,10 +26,11 @@ export default function RootLayout({
   return (
 
     <html lang="en">
-     {/* <link href="https://files.ax86.net/terminus-ttf/files/4.30/TerminusMedium.ttf" rel="stylesheet"></link> */}
+      {/* <link href="https://files.ax86.net/terminus-ttf/files/4.30/TerminusMedium.ttf" rel="stylesheet"></link> */}
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-black text-white font-mono flex flex-col relative`}
       >
+        <Analytics />
         {children}
       </body>
     </html>
