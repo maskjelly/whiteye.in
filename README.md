@@ -1,4 +1,3 @@
-```markdown
 # Whiteye.in - Personal Website 🚀
 
 This is the repository for my personal website, crafted with Next.js and a sprinkle of creativity. ✨
@@ -22,7 +21,6 @@ This project is a digital canvas showcasing my portfolio, projects, and contribu
 
 ## Project Structure 📂
 
-```
 ├── .gitignore
 ├── README.md
 ├── app/
@@ -82,7 +80,7 @@ This project is a digital canvas showcasing my portfolio, projects, and contribu
 │   └── window.svg
 ├── tailwind.config.ts
 └── tsconfig.json
-```
+
 
 ## Getting Started 🏁
 
@@ -140,5 +138,11 @@ Contributions are always welcome! If you spot an issue or have ideas for improve
 ## License 📜
 
 This project is licensed under the [MIT License](LICENSE).
-```
+
+
+
+
+
+
+
 
