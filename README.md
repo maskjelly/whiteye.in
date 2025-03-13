@@ -21,7 +21,6 @@ This project is a digital canvas showcasing my portfolio, projects, and contribu
 
 ## Project Structure 📂
 
-```markdown
 ```
 ├── .gitignore
 ├── README.md
