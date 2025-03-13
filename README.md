@@ -21,28 +21,30 @@ This project is a digital canvas showcasing my portfolio, projects, and contribu
 
 ## Project Structure 📂
 
+```markdown
+```
 ├── .gitignore
 ├── README.md
 ├── app/
 │   ├── components/
-│   │   ├── ContributionsGraph.tsx       # GitHub contribution graph component 📈
-│   │   ├── ProjectSection.tsx           # Section displaying pinned projects 📌
-│   │   ├── ProjectsContainer.tsx        # Container for project sections 📦
-│   │   ├── ResponsiveSplineScrene.tsx   # Interactive 3D spline scene 🌐
-│   │   ├── RetroPopup.tsx               # Retro-style popup component 🕹️
-│   │   ├── TypewriterHeading.tsx        # Typewriter effect heading ⌨️
-│   │   ├── UpcomingProject.tsx          # Popup showing upcoming project 🚀
-│   │   └── vortex.tsx                   # Particle effect component 🌀
+│   │   ├── ContributionsGraph.tsx
+│   │   ├── ProjectSection.tsx
+│   │   ├── ProjectsContainer.tsx
+│   │   ├── ResponsiveSplineScrene.tsx
+│   │   ├── RetroPopup.tsx
+│   │   ├── TypewriterHeading.tsx
+│   │   ├── UpcomingProject.tsx
+│   │   └── vortex.tsx
 │   ├── favicon.ico
-│   ├── globals.css                      # Global CSS styles 🎨
+│   ├── globals.css
 │   ├── images/
-│   │   └── mario-pixel.png             # Pixel art image 🍄
-│   ├── layout.tsx                      # Root layout component 🏠
-│   ├── page.tsx                        # Main page component 📄
+│   │   └── mario-pixel.png
+│   ├── layout.tsx
+│   ├── page.tsx
 │   ├── read/
-│   │   └── page.tsx                    # Page for reading research papers 📚
+│   │   └── page.tsx
 │   └── roadmap/
-│       └── page.tsx                    # Roadmap page 🗺️
+│       └── page.tsx
 ├── bun.lockb
 ├── components.json
 ├── components/
@@ -80,6 +82,9 @@ This project is a digital canvas showcasing my portfolio, projects, and contribu
 │   └── window.svg
 ├── tailwind.config.ts
 └── tsconfig.json
+```
+
+
 
 
 ## Getting Started 🏁
