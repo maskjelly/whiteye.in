@@ -24,8 +24,8 @@ export default function Home() {
           </span>
           <span className="text-xs sm:text-sm tracking-wider underline text-blue-800">
             <a href="https://src.whiteye.in">
-            [Directory to learn NN/Karpathy's trade]
-          </a>
+              [Directory to learn NN/Karpathy's trade]
+            </a>
           </span>
           <span>
             <a href="/roadmap" className="underline">
@@ -58,7 +58,7 @@ export default function Home() {
 
         {/* Work */}
         <section className="mb-8">
-                    <div className="text-center mb-4">
+          <div className="text-center mb-4">
             <span className="text-xs sm:text-sm font-mono text-gray-800 tracking-wider">
               {"-".repeat(10)} Experience {"-".repeat(10)}
             </span>
@@ -67,6 +67,17 @@ export default function Home() {
             * work
           </h2>
           <ul className="list-none pl-0 text-sm sm:text-base text-gray-800">
+            <li className="mb-4">
+              <strong className="block">Hacked rice.edu</strong>
+              <span className="text-gray-600 text-xs sm:text-sm">
+                <span className="text-gray-600 text-xs sm:text-sm">
+                  infiltrated their database and sent them an audit
+                </span>
+              </span>
+              <p className="mt-1 leading-relaxed">
+                Engineered white hat hack against rice.edu's systems and gained access to their database | reported and audited their website for free for further securtiy access and flaws [everything was reported safely and nothing was used for exploits]
+                              </p>
+            </li>
             <li className="mb-4">
               <strong className="block">2x YC backed engineer</strong>
               <span className="text-gray-600 text-xs sm:text-sm">
@@ -93,7 +104,7 @@ export default function Home() {
 
         {/* Projects */}
         <section className="mb-8">
-                    <div className="text-center mb-4">
+          <div className="text-center mb-4">
             <span className="text-xs sm:text-sm font-mono text-gray-800 tracking-wider">
               {"-".repeat(10)} Projects {"-".repeat(10)}
             </span>
