@@ -75,7 +75,7 @@ export default function Home() {
                 </span>
               </span>
               <p className="mt-1 leading-relaxed">
-                Engineered white hat hack against rice.edu's systems and gained access to their database | reported and audited their website for free for further securtiy access and flaws [everything was reported safely and nothing was used for exploits]
+                Engineered (under bounty , im not a bad guy) hack against rice.edu's systems and gained access to their database | reported and audited their website for free for further securtiy access and flaws [everything was reported safely and nothing was used for exploits]
                               </p>
             </li>
             <li className="mb-4">
