@@ -103,7 +103,7 @@ export default function Home() {
         </section>
 
         {/* Projects */}
-        <section className="mb-8">
+        {/* <section className="mb-8">
           <div className="text-center mb-4">
             <span className="text-xs sm:text-sm font-mono text-gray-800 tracking-wider">
               {"-".repeat(10)} Projects {"-".repeat(10)}
@@ -156,8 +156,15 @@ export default function Home() {
               </AlertDialog>
             </li>
           </ul>
+        </section> */}
+        <section className="mb-9">
+          <h1 className="text-xs sm:text-sm uppercase mb-3 text-gray-800 tracking-wider">
+            * projects
+          </h1>
+          <ProjectsContainer />
         </section>
 
+        
         {/* Blog Section */}
         <section className="mb-8">
           {/* Retro Divider */}
@@ -216,14 +223,6 @@ export default function Home() {
             <ContributionsGraph />
           </div>
         </section>
-        {/* 
-        Projects Container
-        <section className="mb-8">
-          <h2 className="text-xs sm:text-sm uppercase mb-3 text-gray-800 tracking-wider">
-            * projects
-          </h2>
-          <ProjectsContainer />
-        </section> */}
 
         {/* Links */}
         <section className="mb-8">
