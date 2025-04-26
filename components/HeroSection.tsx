@@ -3,7 +3,7 @@
 import GlassmorphismCard from './GlassmorphismCard';
 import Loader from './Loader';
 import { FaStar, FaCodeBranch } from 'react-icons/fa';
-import { getFeaturedRepos } from '@/app/actions/route';
+import { GetFeaturedRepos } from '@/app/lib/getRepo';
 import { useTransition } from 'react';
 import { useEffect, useState, useCallback } from 'react';
 
@@ -26,7 +26,7 @@ const HeroSection = () => {
 
   const fetchRepos = useCallback(async () => {
     startTransition(async () => {
-      const data = await getFeaturedRepos();
+      const data = await GetFeaturedRepos();
       if (data) {
         setRepos(data);
       } else {

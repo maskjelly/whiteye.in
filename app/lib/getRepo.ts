@@ -15,7 +15,7 @@ interface Repository {
   topics?: string[];
 }
 
-export const getFeaturedRepos = cache(async (): Promise<Repository[]> => {
+export const GetFeaturedRepos = cache(async (): Promise<Repository[]> => {
   const githubToken = process.env.GITHUB_TOKEN; // Make sure you have this in your .env file
   const username = 'maskjelly'; // Replace with your GitHub username
   const apiUrl = `https://api.github.com/users/${username}/repos?sort=stars`;
