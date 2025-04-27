@@ -26,7 +26,8 @@ body {
 }
 
 .hero-background {
-  background-image: url('https://i.redd.it/ki7dj9dunyve1.jpeg');
+  /* background-image: url('https://i.redd.it/ki7dj9dunyve1.jpeg'); */
+  background-image: url('/bacground.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
