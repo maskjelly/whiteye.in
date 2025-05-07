@@ -22,7 +22,7 @@ const Experience = () => {
             <h3 className="text-3xl tracking-wide mb-4">2x YCombinator Dev</h3>
             <p className="text-xl text-gray-400 mb-6">O1Visa & Fridaymail</p>
             <p className="text-lg text-gray-400 leading-relaxed">
-             Maintained directory and worked on backend infra mostly . Indexing and making backend as fast as possible .<br/><br/> Built in-house email ranking engine tagging mails with AI and lifetime context for LLM's 
+             Built directory and worked on re-designing backend for scale . Worked on NextFaster making AGENTIC directories for onboarding new users<br/><br/> Built in-house email ranking engine tagging mails with AI and lifetime context for LLM's with MEM0 and custom vector updates per clients - Redis for client performance. 
 
             </p>
           </div>
@@ -31,8 +31,7 @@ const Experience = () => {
             <h3 className="text-3xl tracking-wide mb-4">FnBC</h3>
             <p className="text-xl text-gray-400 mb-6">Full-Stack Engineer</p>
             <p className="text-lg text-gray-400 leading-relaxed">
-              Built real-time presence and communication systems using t3 stack, 
-              bridging digital spaces with human connection.
+              Worked with 22+ clients building or maintaining theere MVP and business ports . 
             </p>
           </div>
         </div>
@@ -45,16 +44,16 @@ const Experience = () => {
         </div>
         <div className="space-y-12">
           <div>
-            <h3 className="text-3xl tracking-wide mb-4">FigureOutName</h3>
+            <h3 className="text-3xl tracking-wide mb-4">Decentralized Credit Based onChain leveraged loan system</h3>
             <p className="text-lg text-gray-400 leading-relaxed">
-              Developing advanced data processing systems for robotic applications.
+              Building a decentralized credit system based on onChain activity and leverage consensus mechanism. <br/><br/>
             </p>
           </div>
           
           <div>
             <h3 className="text-3xl tracking-wide mb-4">Research</h3>
             <p className="text-lg text-gray-400 leading-relaxed">
-              Exploring neural networks and machine learning architectures.
+              Working on RBDNA - [Reputation Based Dynamic Node Assignment] system from blockchain sharding.
             </p>
           </div>
         </div>      </div>
