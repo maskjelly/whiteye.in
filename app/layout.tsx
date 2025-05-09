@@ -32,7 +32,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     site: "https://whiteye.in",
-    "creator": "@LiquidZooo",
+    creator: "@LiquidZooo",
     title: "Maskjelly",
     description: "@personal portfolio - Some stuff",
     images: [
@@ -48,8 +48,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-      >
+      <body className={`${geistSans.variable} ${geistMono.variable}`}>
+        {/* Background Grid Animation Layer */}
+        <div className="background-grid"></div>
+
+        {/* Main Content Layer */}
         {children}
       </body>
     </html>

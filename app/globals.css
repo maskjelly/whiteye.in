@@ -1,42 +1,62 @@
+/* Tailwind v4 imports */
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
+/* Define CSS variables for theme */
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #ffffff;
+    --foreground: #171717;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background: #0a0a0a;
+      --foreground: #ededed;
+    }
+  }
+
+  /* Base Body Styles */
+  body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-geist-sans, sans-serif);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
-}
-
-.hero-background {
-  /* background-image: url('https://i.redd.it/ki7dj9dunyve1.jpeg'); */
-  background-image: url('/bacground.png');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+/* Animated Grid Background Layer */
+.background-grid {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
+  width: 100vw;
   height: 100vh;
-  z-index: -2;
-  opacity: 0.6;
-  filter: brightness(0.6) contrast(1);
+  pointer-events: none;
+  z-index: 0;
+
+  /* Create the grid pattern using repeating gradients */
+  background-image:
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.1) 0px, rgba(255, 255, 255, 0.1) 1px, transparent 1px, transparent 50px),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.1) 0px, rgba(255, 255, 255, 0.1) 1px, transparent 1px, transparent 50px);
+
+  background-size: 100px 100px;
+  background-position: 0 0;
+
+  /* Add the animation */
+  animation: moveGrid 90s linear infinite;
+}
+
+/* Keyframes for the animation */
+@keyframes moveGrid {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 50px 50px;
+  }
 }
