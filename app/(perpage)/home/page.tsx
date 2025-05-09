@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { useEffect, useState } from "react"
+import GitHubProjects from "@/app/(perpage)/projects/page"
 
 // Improved Animation component for the name with better performance
 const AnimatedText = ({ text }: { text: string }) => {
@@ -21,7 +22,7 @@ const AnimatedText = ({ text }: { text: string }) => {
         // Create animation frames for each character
         targetChars.forEach((targetChar, index) => {
             // Prepare character animation
-            const alphabet = "abcdefghijklmnopqrstuvwxyz "
+            const alphabet = "abcdefghijklmnopqrstuvwxyzAS "
             const charIterations = 3 + Math.floor(Math.random() * 5) // Fewer iterations for speed
             const startDelay = 10 + Math.random() * 50 + index * 20 // Staggered start for natural effect
 
@@ -112,8 +113,19 @@ export default function Home() {
                 <div className="space-y-6 md:space-y-8">
                     <header>
                         <h1 className="text-3xl sm:text-4xl font-bold text-white mb-4">
-                            {animationStarted && <AnimatedText text="aryan singh" />}
+                            {animationStarted ? (
+                                <AnimatedText text="Aryan Singh" />
+                            ) : (
+                                <span className="inline-flex items-center">
+                                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    Loading...
+                                </span>
+                            )}
                         </h1>
+
                         <div className="space-y-2">
                             <p className="flex items-center gap-2 text-sm sm:text-base">
                                 <span>📍</span> Bangalore, india
@@ -171,21 +183,8 @@ export default function Home() {
                         <h2 className="text-lg sm:text-xl font-bold text-white mb-4">
                             <span className="text-red-500 mr-2">*</span>projects
                         </h2>
-
+                        <GitHubProjects />
                         <div className="space-y-6 md:space-y-8">
-                            <div>
-                                <h3 className="text-white font-bold">create-t3-app</h3>
-                                <p className="text-xs sm:text-sm text-gray-400">creator and maintainer</p>
-                                <p className="text-sm sm:text-base">
-                                    open-source project for initializing full-stack next.js apps. 24k+ stars, 200+ contributors
-                                </p>
-                            </div>
-
-                            <div>
-                                <h3 className="text-white font-bold">mini-git</h3>
-                                <p className="text-xs sm:text-sm text-gray-400">creator</p>
-                                <p className="text-sm sm:text-base">simplified version of git from scratch</p>
-                            </div>
                         </div>
                     </section>
                 </div>

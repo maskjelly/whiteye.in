@@ -1,9 +1,10 @@
-import Home from "./lib/(perpage)/home/page";
+import Home from "./(perpage)/home/page";
 
 export default function App() {
   return (
     <div>
       <Home />
+
     </div>
   )
 }
