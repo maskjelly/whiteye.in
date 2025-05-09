@@ -84,7 +84,7 @@ export default function Home() {
         <main className="min-h-screen backdrop-blur-[2px] p-4 sm:p-6 md:p-8 w-full relative z-[1]">
 
             <div className="max-w-3xl mx-auto">
-                <nav className="mb-8 md:mb-12 overflow-x-auto whitespace-nowrap">
+                {/* <nav className="mb-8 md:mb-12 overflow-x-auto whitespace-nowrap">
                     <ul className="flex gap-4">
                         <li>
                             [
@@ -108,7 +108,7 @@ export default function Home() {
                             ] projects
                         </li>
                     </ul>
-                </nav>
+                </nav> */}
 
                 <div className="space-y-6 md:space-y-8">
                     <header>

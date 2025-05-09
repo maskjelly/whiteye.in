@@ -1,21 +1,41 @@
 /* Tailwind v4 imports */
 @import "tailwindcss";
 
-/* Define CSS variables for theme */
+/* Define CSS variables for theme and scaling */
 @layer base {
   :root {
+    /* Base scale factor for enlarged UI */
+    --scale-factor: 1.4;
+    
+    /* Theme colors */
     --background: #ffffff;
     --foreground: #171717;
+    
+    /* Grid/wave colors */
+    --grid-color-1: rgba(4, 175, 255, 0.3);
+    --grid-color-2: rgba(0, 60, 255, 0.15);
+    --grid-wave-size: calc(120px * var(--scale-factor));
+    
+    /* Typography scaled */
+    --font-size-base: calc(1rem * var(--scale-factor));
+    --line-height-base: calc(1.5 * var(--scale-factor));
+    
+    /* Spacing scaled */
+    --spacing-base: calc(1rem * var(--scale-factor));
+    --spacing-lg: calc(1.5rem * var(--scale-factor));
+    --spacing-xl: calc(2rem * var(--scale-factor));
   }
 
   @media (prefers-color-scheme: dark) {
     :root {
       --background: #0a0a0a;
       --foreground: #ededed;
+      --grid-color-1: rgba(0, 238, 255, 0.25);
+      --grid-color-2: rgba(0, 153, 255, 0.15);
     }
   }
 
-  /* Base Body Styles */
+  /* Base Body Styles with scaled sizing */
   body {
     margin: 0;
     padding: 0;
@@ -26,10 +46,34 @@
     background: var(--background);
     color: var(--foreground);
     font-family: var(--font-geist-sans, sans-serif);
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-base);
+  }
+  
+  /* Scale UI elements */
+  button, 
+  input, 
+  select, 
+  textarea {
+    font-size: var(--font-size-base);
+    padding: calc(0.5rem * var(--scale-factor)) calc(0.75rem * var(--scale-factor));
+  }
+  
+  h1 { font-size: calc(2.25rem * var(--scale-factor)); }
+  h2 { font-size: calc(1.875rem * var(--scale-factor)); }
+  h3 { font-size: calc(1.5rem * var(--scale-factor)); }
+  h4 { font-size: calc(1.25rem * var(--scale-factor)); }
+  h5 { font-size: calc(1.125rem * var(--scale-factor)); }
+  
+  .container, 
+  .section, 
+  .card {
+    padding: var(--spacing-base);
+    margin: var(--spacing-base) 0;
   }
 }
 
-/* Animated Grid Background Layer */
+/* Animated Wavy Grid Background */
 .background-grid {
   position: fixed;
   top: 0;
@@ -38,25 +82,115 @@
   height: 100vh;
   pointer-events: none;
   z-index: 0;
-
-  /* Create the grid pattern using repeating gradients */
+  
+  /* Create the grid pattern with larger sizes */
   background-image:
-    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.1) 0px, rgba(255, 255, 255, 0.1) 1px, transparent 1px, transparent 50px),
-    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.1) 0px, rgba(255, 255, 255, 0.1) 1px, transparent 1px, transparent 50px);
-
-  background-size: 100px 100px;
-  background-position: 0 0;
-
+    /* Horizontal lines */
+    repeating-linear-gradient(
+      0deg, 
+      var(--grid-color-1) 0px, 
+      var(--grid-color-1) 2px, 
+      transparent 2px, 
+      transparent var(--grid-wave-size)
+    ),
+    /* Vertical lines */
+    repeating-linear-gradient(
+      90deg, 
+      var(--grid-color-2) 0px, 
+      var(--grid-color-2) 2px, 
+      transparent 2px, 
+      transparent var(--grid-wave-size)
+    );
+  
+  background-size: var(--grid-wave-size) var(--grid-wave-size);
+  
   /* Add the animation */
-  animation: moveGrid 90s linear infinite;
+  animation: moveWavyGrid 20s infinite linear;
+  
+  /* Apply wave distortion effect using multiple layers */
+  backdrop-filter: url('#wave-distortion');
+  -webkit-backdrop-filter: url('#wave-distortion');
 }
 
-/* Keyframes for the animation */
-@keyframes moveGrid {
+/* Add SVG filter for wave effect */
+body::before {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+
+/* Create wave distortion effect with CSS animations */
+.background-grid::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    /* Wave overlay 1 - horizontal waves */
+    repeating-linear-gradient(
+      0deg,
+      transparent 0px,
+      transparent calc(var(--grid-wave-size) * 0.4),
+      rgba(0, 217, 255, 0.03) calc(var(--grid-wave-size) * 0.5),
+      transparent calc(var(--grid-wave-size) * 0.6),
+      transparent var(--grid-wave-size)
+    ),
+    /* Wave overlay 2 - diagonal waves */
+    repeating-linear-gradient(
+      45deg,
+      transparent 0px,
+      transparent calc(var(--grid-wave-size) * 1.2),
+      rgba(0, 153, 255, 0.05) calc(var(--grid-wave-size) * 1.4),
+      transparent calc(var(--grid-wave-size) * 1.6),
+      transparent calc(var(--grid-wave-size) * 3)
+    );
+  
+  /* Wave animation */
+  animation: waveEffect 15s infinite alternate ease-in-out;
+}
+
+/* Keyframes for grid movement */
+@keyframes moveWavyGrid {
   0% {
     background-position: 0 0;
   }
   100% {
-    background-position: 50px 50px;
+    background-position: var(--grid-wave-size) var(--grid-wave-size);
+  }
+}
+
+/* Keyframes for wave effect */
+@keyframes waveEffect {
+  0% {
+    transform: translateY(0) scaleY(1.02) scaleX(1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: translateY(calc(var(--grid-wave-size) * 0.1)) scaleY(0.98) scaleX(1.02);
+    opacity: 0.7;
+  }
+  100% {
+    transform: translateY(0) scaleY(1.01) scaleX(0.99);
+    opacity: 0.6;
+  }
+}
+
+/* SVG filter for wave distortion - will be inserted into the DOM via JS */
+/* Add this JavaScript to inject the SVG filter */
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  :root {
+    --scale-factor: 1.2; /* Slightly reduce on mobile */
+    --grid-wave-size: calc(90px * var(--scale-factor));
+  }
+}
+
+@media (min-width: 1920px) {
+  :root {
+    --scale-factor: 1.6; /* Larger on big screens */
   }
 }
