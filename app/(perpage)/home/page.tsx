@@ -164,7 +164,7 @@ export default function Home() {
                                     Built directory and worked on re-designing backend for scale. Worked on NextFaster making AGENTIC directories for onboarding new users
                                 </p>
                                 <br />
-                                <p>
+                                <p className="text-sm sm:text-base">
                                     Built in-house email ranking engine tagging mails with AI and lifetime context for LLM's with MEM0 and custom vector updates per clients - Redis for client performance.
                                 </p>
                             </div>
