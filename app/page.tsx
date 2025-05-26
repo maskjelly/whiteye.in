@@ -31,15 +31,17 @@ export default function App() {
             <div>
               <div className="mb-4">Dear Internet,</div>
               <div className="mb-4">
-                This digital online piece of my footprint is to showcase and
-                introduce yourself to me and what i have done and like to do ,
+                This is a digital piece of my footprint || to showcase and
+                introduce myself to you and what i have done and like to do ,
                 this is not meant to be taken as resume , but also to be taken
                 as resume casue i have never made one
                 {" <"}so this provides major insignts into what i am . {">"}
               </div>
               <div className="mb-4">
-                My plan is to distribute this information freely on the Internet
-                and to get it into as wide use as possible. I am not a crypto bro but i love the concept of agreed concenus and how it cannot be controlled and be corroupted for someone's emotional outrage . 
+                Hi , i am 19 ~~ My plan right now is to be great . I am not a
+                crypto bro but i love the concept of agreed concenus and how it
+                cannot be controlled and be corroupted for someone's emotional
+                outrage . Yes , everything here is out of context
               </div>
             </div>
 
@@ -50,53 +52,50 @@ export default function App() {
                   Date: Mon, 16 Dec 2024 14:25:33 -0800 From:
                   work-history@yourname.com
                 </div>
-                <div className="mb-2">Subject: Re: professional experience</div>
+                <div className="mb-2">Subject: Re: SIDE ACTION</div>
                 <div className="border-b border-[#cccccc] pb-2 mb-4"></div>
 
                 <div className="space-y-4">
                   <div>
                     <div className="text-[#cc6600]">
-                      {">"} YOUR STARTUP (Jan 2023 - Present)
+                      {">"} Hacked RICE.EDU at 17{" "}
+                      {"{casually sent them the audit after i did that}"}
                     </div>
-                    <div className="text-[#cc6600]">{">"} Founder and CEO</div>
+                    <div className="text-[#cc6600]">
+                      {">"} SQL Breach and DATABASE DUMP
+                    </div>
                     <div className="ml-2">
-                      Building an AI-powered collaboration platform. Raised $2M
-                      seed round from top-tier VCs. Grew from 0 to 10,000+
-                      active users in 18 months. Leading a team of 12 engineers
-                      and designers. Featured in TechCrunch and named "Startup
-                      to Watch" by Forbes.
+                      None of this was done with malicious intent , this was
+                      pure test that i was performing when i learning about
+                      security , i tried doing it for RICE and stumbled on the
+                      fact that there was a flaw , i check and there it was , i
+                      dumped their duplicated database and sent them proof and
+                      whole audit and how to fix it .
                     </div>
                   </div>
 
                   <div>
                     <div className="text-[#cc6600]">
-                      {">"} PREVIOUS COMPANY (Mar 2021 - Dec 2022)
+                      {">"} O1Visa - [Aliens of Extraordinary Abilities] 
                     </div>
                     <div className="text-[#cc6600]">
-                      {">"} Senior Software Engineer
+                      {">"}Backend Engineer 
                     </div>
                     <div className="ml-2">
-                      Led engineering team of 8 developers. Shipped 15+ major
-                      features that increased user engagement by 40%.
-                      Architected microservices handling 1M+ requests per day.
-                      Mentored junior developers and established engineering
-                      best practices.
+                      Worked on database design and user onboarding flow , make users authentication and managed B2B relations in backend .
+                      {"My time here was short but got to work on soo much "}
                     </div>
                   </div>
 
                   <div>
                     <div className="text-[#cc6600]">
-                      {">"} TECH GIANT (Jun 2019 - Feb 2021)
+                      {">"} AI EMAIL CLIENT {"YC23 companie ~wentDown"} (Jun 2019 - Feb 2021)
                     </div>
                     <div className="text-[#cc6600]">
                       {">"} Software Engineer
                     </div>
                     <div className="ml-2">
-                      Worked on distributed systems serving 100M+ users
-                      globally. Optimized database queries reducing latency by
-                      30%. Contributed to open-source projects with 10K+ stars.
-                      Collaborated with cross-functional teams across 3 time
-                      zones.
+                      Worked on making an AI Native email client for businesses and B2B customers . Made AI auto tagging system and indexing whole users emails for AI search and automation .
                     </div>
                   </div>
                 </div>
@@ -110,18 +109,17 @@ export default function App() {
                 projects@yourname.com
               </div>
               <div className="mb-2">
-                Subject: Fwd: open source contributions and side projects
+                Subject: Fwd:  Currently working on and IDEAS 
               </div>
               <div className="border-b border-[#cccccc] pb-2 mb-4"></div>
 
               <div className="space-y-4">
                 <div>
                   <div className="text-[#0066cc]">
-                    {">"} ai-productivity-suite
+                    {">"} Security Layer for AI generated code 
                   </div>
                   <div className="text-[#666666]">
-                    {">"} Creator and Maintainer | GitHub: 5.2K stars, 500+
-                    contributors
+                    {">"} Creator and Maintainer | CodeClot {"<github.com/apps/codeclot>"}
                   </div>
                   <div className="ml-2">
                     Open-source productivity tools powered by AI. Used by
