@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Navbar from "./(perpage)/navbar/page";
-
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -53,8 +51,6 @@ export default function RootLayout({
         {/* Background Grid Animation Layer */}
         <div className="background-grid"></div>
         <div>
-          <Navbar />
-          {/* Main Content Layer */}
           {children}
         </div>
       </body>

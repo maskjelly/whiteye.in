@@ -72,46 +72,6 @@
     margin: var(--spacing-base) 0;
   }
 }
-
-/* Animated Wavy Grid Background */
-.background-grid {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  pointer-events: none;
-  z-index: 0;
-  
-  /* Create the grid pattern with larger sizes */
-  background-image:
-    /* Horizontal lines */
-    repeating-linear-gradient(
-      0deg, 
-      var(--grid-color-1) 0px, 
-      var(--grid-color-1) 2px, 
-      transparent 2px, 
-      transparent var(--grid-wave-size)
-    ),
-    /* Vertical lines */
-    repeating-linear-gradient(
-      90deg, 
-      var(--grid-color-2) 0px, 
-      var(--grid-color-2) 2px, 
-      transparent 2px, 
-      transparent var(--grid-wave-size)
-    );
-  
-  background-size: var(--grid-wave-size) var(--grid-wave-size);
-  
-  /* Add the animation */
-  animation: moveWavyGrid 20s infinite linear;
-  
-  /* Apply wave distortion effect using multiple layers */
-  backdrop-filter: url('#wave-distortion');
-  -webkit-backdrop-filter: url('#wave-distortion');
-}
-
 /* Add SVG filter for wave effect */
 body::before {
   content: "";
@@ -119,64 +79,6 @@ body::before {
   width: 0;
   height: 0;
 }
-/* Create wave distortion effect with CSS animations */
-.background-grid::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: 
-    /* Wave overlay 1 - horizontal waves */
-    repeating-linear-gradient(
-      0deg,
-      transparent 0px,
-      transparent calc(var(--grid-wave-size) * 0.4),
-      rgba(0, 217, 255, 0.03) calc(var(--grid-wave-size) * 0.5),
-      transparent calc(var(--grid-wave-size) * 0.6),
-      transparent var(--grid-wave-size)
-    ),
-    /* Wave overlay 2 - diagonal waves */
-    repeating-linear-gradient(
-      45deg,
-      transparent 0px,
-      transparent calc(var(--grid-wave-size) * 1.2),
-      rgba(0, 153, 255, 0.05) calc(var(--grid-wave-size) * 1.4),
-      transparent calc(var(--grid-wave-size) * 1.6),
-      transparent calc(var(--grid-wave-size) * 3)
-    );
-  
-  /* Wave animation */
-  animation: waveEffect 15s infinite alternate ease-in-out;
-}
-
-/* Keyframes for grid movement */
-@keyframes moveWavyGrid {
-  0% {
-    background-position: 0 0;
-  }
-  100% {
-    background-position: var(--grid-wave-size) var(--grid-wave-size);
-  }
-}
-
-/* Keyframes for wave effect */
-@keyframes waveEffect {
-  0% {
-    transform: translateY(0) scaleY(1.02) scaleX(1);
-    opacity: 0.5;
-  }
-  50% {
-    transform: translateY(calc(var(--grid-wave-size) * 0.1)) scaleY(0.98) scaleX(1.02);
-    opacity: 0.7;
-  }
-  100% {
-    transform: translateY(0) scaleY(1.01) scaleX(0.99);
-    opacity: 0.6;
-  }
-}
-
 /* SVG filter for wave distortion - will be inserted into the DOM via JS */
 /* Add this JavaScript to inject the SVG filter */
 
