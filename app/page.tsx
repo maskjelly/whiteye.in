@@ -76,26 +76,28 @@ export default function App() {
 
                   <div>
                     <div className="text-[#cc6600]">
-                      {">"} O1Visa - [Aliens of Extraordinary Abilities] 
+                      {">"} O1Visa - [Aliens of Extraordinary Abilities]
                     </div>
-                    <div className="text-[#cc6600]">
-                      {">"}Backend Engineer 
-                    </div>
+                    <div className="text-[#cc6600]">{">"}Backend Engineer</div>
                     <div className="ml-2">
-                      Worked on database design and user onboarding flow , make users authentication and managed B2B relations in backend .
-                      {"My time here was short but got to work on soo much "}
+                      Worked on database design and user onboarding flow , make
+                      users authentication and managed B2B relations in backend
+                      .{"My time here was short but got to work on soo much "}
                     </div>
                   </div>
 
                   <div>
                     <div className="text-[#cc6600]">
-                      {">"} AI EMAIL CLIENT {"YC23 companie ~wentDown"} (Jun 2019 - Feb 2021)
+                      {">"} AI EMAIL CLIENT {"YC23 companie ~wentDown"} (Jun
+                      2019 - Feb 2021)
                     </div>
                     <div className="text-[#cc6600]">
                       {">"} Software Engineer
                     </div>
                     <div className="ml-2">
-                      Worked on making an AI Native email client for businesses and B2B customers . Made AI auto tagging system and indexing whole users emails for AI search and automation .
+                      Worked on making an AI Native email client for businesses
+                      and B2B customers . Made AI auto tagging system and
+                      indexing whole users emails for AI search and automation .
                     </div>
                   </div>
                 </div>
@@ -109,47 +111,62 @@ export default function App() {
                 projects@yourname.com
               </div>
               <div className="mb-2">
-                Subject: Fwd:  Currently working on and IDEAS 
+                Subject: Fwd: Currently working on and IDEAS
               </div>
               <div className="border-b border-[#cccccc] pb-2 mb-4"></div>
 
               <div className="space-y-4">
                 <div>
                   <div className="text-[#0066cc]">
-                    {">"} Security Layer for AI generated code 
+                    {">"} Security Layer for AI generated code
                   </div>
                   <div className="text-[#666666]">
-                    {">"} Creator and Maintainer | CodeClot {"<github.com/apps/codeclot>"}
+                    {">"} Creator and Maintainer | CodeClot{" "}
+                    {"<github.com/apps/codeclot>"}
                   </div>
                   <div className="ml-2">
-                    Open-source productivity tools powered by AI. Used by
-                    50,000+ developers worldwide. Featured on Hacker News front
-                    page. Weekly downloads: 10K+. Active community of
-                    contributors.
+                    in private beta right now , its an Github app that reviews
+                    every issue and has the ability to{" "}
+                    <div className="px-10">
+                      <div className="space-y-12">
+                        {">"} create PR from issues
+                      </div>
+                      <div className="space-y-8">
+                        {">"} understand Codebase and do security audits
+                      </div>
+                      <div className="space-y-8">
+                        {">"} Merge automatically when no Issues found .
+                      </div>
+                      <div className="space-y-8">
+                        {">"} Automatically discover vulnerabilites in codebase
+                        and raise an issue itself
+                      </div>
+                    </div>
                   </div>
                 </div>
 
                 <div>
-                  <div className="text-[#0066cc]">{">"} startup-toolkit</div>
+                  <div className="text-[#0066cc]">{">"} N8N-Agents</div>
                   <div className="text-[#666666]">
-                    {">"} Creator | Product Hunt: #2 Product of the Day
+                    {">"} Agentic workflow automation tool |{" "}
+                    {"<github.com/maskjelly/N8N-AGENTS>"}
                   </div>
                   <div className="ml-2">
-                    Collection of templates and tools for early-stage startups.
-                    Helped 200+ founders launch their MVPs faster. Includes
-                    pitch deck templates, financial models, and legal docs.
+                    If you have used N8N or Zapier or make.com , you would know
+                    its tought to make complex agentic automation on large scale
+                    products , it gets difficult to keep track and underdstand
+                    the workflow and where what is going . So now you would be
+                    able to use AI to make those workgflow automations
                   </div>
                 </div>
 
                 <div>
-                  <div className="text-[#0066cc]">{">"} minimal-cms</div>
-                  <div className="text-[#666666]">
-                    {">"} Creator | NPM: 1K+ weekly downloads
+                  <div className="text-[#0066cc]">
+                    On-chain prediction markets for real-world events
                   </div>
+                  <div className="text-[#666666]">{">"} Staging...</div>
                   <div className="ml-2">
-                    Lightweight headless CMS built with modern web technologies.
-                    Zero-config setup. Used by agencies and freelancers for
-                    client projects. MIT licensed.
+                    ...Staging... {"<its something like polymarket basically>"}
                   </div>
                 </div>
               </div>
@@ -167,28 +184,20 @@ export default function App() {
 
               <div className="space-y-2">
                 <div className="flex justify-between">
-                  <div className="text-[#9933cc]">
-                    {">"} Building a Startup in 2024: Lessons Learned
-                  </div>
-                  <div className="text-[#666666]">Dec 15, 2024</div>
+                  <div className="text-[#9933cc]">{">"} under work ...</div>
+                  <div className="text-[#666666]">Future...</div>
                 </div>
                 <div className="flex justify-between">
-                  <div className="text-[#9933cc]">
-                    {">"} The Future of AI in Productivity Tools
-                  </div>
-                  <div className="text-[#666666]">Nov 28, 2024</div>
+                  <div className="text-[#9933cc]">{">"} under work ...</div>
+                  <div className="text-[#666666]">Future...</div>
                 </div>
                 <div className="flex justify-between">
-                  <div className="text-[#9933cc]">
-                    {">"} How to Raise Your First Seed Round
-                  </div>
-                  <div className="text-[#666666]">Oct 12, 2024</div>
+                  <div className="text-[#9933cc]">{">"} under work ...</div>
+                  <div className="text-[#666666]">Future...</div>
                 </div>
                 <div className="flex justify-between">
-                  <div className="text-[#9933cc]">
-                    {">"} From Engineer to Founder: My Journey
-                  </div>
-                  <div className="text-[#666666]">Sep 5, 2024</div>
+                  <div className="text-[#9933cc]">{">"} under work ...</div>
+                  <div className="text-[#666666]">Future...</div>
                 </div>
               </div>
             </div>
@@ -196,23 +205,14 @@ export default function App() {
             {/* Contact Info */}
             <div className="mt-8 pt-4 border-t border-[#cccccc]">
               <div className="mb-4">
-                It would be great if we could connect. I am currently available
-                for:
+                If you ever feel like reaching me out :
               </div>
-              <div className="ml-4 space-y-1">
+              {/* <div className="ml-4 space-y-1">
                 <div>{">"} Investor meetings and partnership discussions</div>
                 <div>{">"} Technical advisory roles</div>
                 <div>{">"} Speaking engagements and podcast interviews</div>
                 <div>{">"} Open source collaborations</div>
-              </div>
-            </div>
-
-            <div className="mt-6">
-              <div>Yours sincerely,</div>
-              <div className="mt-2">Your Name {"<your.email@domain.com>"}</div>
-              <div className="text-[#666666] text-xs mt-4">
-                ... followed by contact information and social links
-              </div>
+              </div> */}
             </div>
 
             {/* Footer Links */}
@@ -221,17 +221,17 @@ export default function App() {
                 The next day, I had responses waiting in my inbox:
               </div>
               <div className="space-y-1 text-[#0066cc]">
-                <div>{">"} email: your.email@domain.com</div>
-                <div>{">"} twitter: @yourhandle</div>
-                <div>{">"} github: github.com/yourusername</div>
-                <div>{">"} linkedin: linkedin.com/in/yourname</div>
-                <div>{">"} calendar: cal.com/yourname</div>
+                <div>{">"} email: aaryan@whiteye.in</div>
+                <div>{">"} twitter: @LiquidZooo</div>
+                <div>{">"} github: github.com/maskjelly</div>
+                <div>{">"} linkedin: fuckThisShit</div>
+                {/* <div>{">"} calendar: cal.com/</div> */}
               </div>
             </div>
-
-            {/* Terminal Prompt */}
-            <div className="mt-8 pt-4">
-              <div className="text-[#0066cc]">user@macbook-pro ~ % █</div>
+            <div className="mt-6">
+              <div>Yours sincerely,</div>
+              <div className="mt-2">Your Name {"<aaryan@whiteye.in>"}</div>
+              <div className="text-[#666666] text-xs mt-4"></div>
             </div>
           </div>
         </div>
