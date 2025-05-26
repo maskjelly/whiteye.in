@@ -1,34 +1,33 @@
-'use client'
-import { createContext, useContext, ReactNode, useState } from 'react';
+// context/ThemeContext.tsx
+import React, { createContext, useState, useContext, useEffect } from 'react';
 
-type ThemeContextType = {
-  isDark: boolean;
-  toggleTheme: () => void;
-};
+interface ThemeContextProps {
+  theme: 'light' | 'dark';
+  setTheme: (theme: 'light' | 'dark') => void;
+}
 
-const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
+const ThemeContext = createContext<ThemeContextProps>({
+  theme: 'light', // Default theme
+  setTheme: () => {},
+});
 
-export function ThemeProvider({ children }: { children: ReactNode }) {
-  // Default to dark theme
-  const [isDark, setIsDark] = useState(true);
+export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
 
-  const toggleTheme = () => {
-    setIsDark(!isDark);
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme); // Use data-theme attribute for CSS
+  }, [theme]);
+
+  const value: ThemeContextProps = {
+    theme,
+    setTheme,
   };
 
   return (
-    <ThemeContext.Provider value={{ isDark, toggleTheme }}>
-      <div className={isDark ? 'dark' : 'dark'}>
-        {children}
-      </div>
+    <ThemeContext.Provider value={value}>
+      {children}
     </ThemeContext.Provider>
   );
-}
+};
 
-export function useTheme() {
-  const context = useContext(ThemeContext);
-  if (context === undefined) {
-    throw new Error('useTheme must be used within a ThemeProvider');
-  }
-  return context;
-}
+export const useTheme = () => useContext(ThemeContext);
