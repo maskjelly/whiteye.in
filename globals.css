@@ -1,0 +1,39 @@
+/* globals.css */
+
+/*  Example -  Assuming you're using CSS variables for theming */
+:root {
+  --background-color: #ffffff; /* Default background color (light mode) */
+  --text-color: #000000; /* Default text color (light mode) */
+}
+
+/* Dark mode override (assuming you have a dark mode class or data attribute) */
+[data-theme="dark"] {
+  --background-color: #121212;
+  --text-color: #ffffff;
+}
+
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+/*  Example -  If using a class instead of data attribute */
+.dark-mode {
+  --background-color: #121212;
+  --text-color: #ffffff;
+}
+
+.dark-mode body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+/*  Specific element overrides if needed */
+h1, h2, h3, h4, h5, h6, p, span, div {
+  color: var(--text-color); /* Ensure all text elements use the defined text color */
+}
+
+/*  If there are specific elements with conflicting styles, override them: */
+.some-specific-class {
+  color: var(--text-color) !important; /* Use !important cautiously */
+}
