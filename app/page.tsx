@@ -236,17 +236,6 @@ export default function App() {
           </div>
         </div>
       </div>
-
-      {/* Fixed iframe widget in bottom left */}
-      <div className="fixed bottom-4 left-4 z-50">
-        <iframe
-          src="http://127.0.0.1:5002/widget.html?orderId=5693066412313&shopId=myfrido"
-          className="w-80 h-96 border-0 rounded-lg shadow-lg"
-          title="Referral Widget"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-        />
-      </div>
     </>
   );
 }
