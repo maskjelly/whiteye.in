@@ -233,6 +233,13 @@ export default function App() {
               <div className="mt-2">Your Name {"<aaryan@whiteye.in>"}</div>
               <div className="text-[#666666] text-xs mt-4"></div>
             </div>
+            {/* <div className="fixed bottom-4 left-4 z-50">
+<iframe
+  src="https://refero1.web.app/widget.html?orderId=5693066412313&shopId=myfrido"
+  style="width: 320px; height: 384px; border: 0; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);"
+/>
+            </div> */}
+            <script src="http://localhost:3000/script.js"></script>
           </div>
         </div>
       </div>

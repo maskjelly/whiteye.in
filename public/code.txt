@@ -1,0 +1,619 @@
+<html>
+<head>
+  <title>Translate Function</title>
+</head>
+<body>
+
+<h3>Translate Text</h3>
+
+<input id="text"  >
+<button onclick="go()">Translate</button>
+
+<p id="output"></p>
+
+<script>
+const go = () =>
+  output.innerText = text.value.replace(
+    /[b-df-hj-np-tv-z]/gi,
+    c => c + "o" + c
+  );
+</script>
+
+</body>
+</html>
+
+<!DOCTYPE html>
+<html>
+<body>
+
+<input id="m" placeholder="Enter month number">
+<button onclick="show()">Convert</button>
+<p id="output"></p>
+
+<script>
+const getMonth = (() => {
+  const months = ["January","February","March","April","May","June",
+                  "July","August","September","October","November","December"];
+  return n => {
+    n = Math.floor(+n);
+    return n >= 1 && n <= 12 ? months[n - 1] : "Bad Number";
+  };
+})();
+
+const show = () =>
+  output.innerText = getMonth(m.value);
+</script>
+
+</body>
+</html>
+
+<!DOCTYPE html>
+<html>
+<body>
+
+<input id="usn" placeholder="USN"><br><br>
+<input id="code" placeholder="Subject Code"><br><br>
+<input id="subName" placeholder="Subject Name"><br><br>
+<input id="cie" placeholder="CIE Marks"><br><br>
+<input id="see" placeholder="SEE Marks"><br><br>
+
+<button onclick="show()">Display</button>
+<p id="out"></p>
+
+<script>
+const Student = (cie, see) => ({
+  total: () => +cie + +see
+});
+
+const show = () => {
+  const s = Student(cie.value, see.value);
+  out.innerHTML = `
+    USN: ${usn.value}<br>
+    Subject Code: ${code.value}<br>
+    Subject Name: ${subName.value}<br>
+    Total Marks: ${s.total()}
+  `;
+};
+</script>
+
+</body>
+</html>
+
+<!DOCTYPE html>
+<html>
+<body>
+
+<input id="n" placeholder="noun">
+<input id="c" placeholder="number">
+<button onclick="show()">Pluralize</button>
+<p id="out"></p>
+
+<script>
+const pluralize = (noun, num) =>
+  num + " " + (num == 1 ? noun : noun + "s");
+
+const show = () =>
+  out.innerText = pluralize(n.value, +c.value);
+</script>
+
+</body>
+</html>
+
+
+const rl = require("readline").createInterface({
+  input: process.stdin, output: process.stdout
+});
+
+rl.question("Enter a string: ", s => {
+  s = s.toLowerCase();
+  console.log("a:", [...s].filter(c=>c=='a').length);
+  console.log("e:", [...s].filter(c=>c=='e').length);
+  console.log("i:", [...s].filter(c=>c=='i').length);
+  console.log("o:", [...s].filter(c=>c=='o').length);
+  console.log("u:", [...s].filter(c=>c=='u').length);
+  rl.close();
+});
+
+
+<!DOCTYPE html>
+<html>
+<body>
+
+<input id="s" size="50" placeholder="Enter a sentence">
+<button onclick="go()">Check</button>
+<p id="out"></p>
+
+<script>
+const notBad = str => {
+  let n = str.indexOf("not"),
+      b = str.indexOf("bad");
+  return n != -1 && b > n
+    ? str.slice(0, n) + "good" + str.slice(b + 3)
+    : str;
+};
+
+const go = () => out.innerText = notBad(s.value);
+</script>
+
+</body>
+</html>
+
+
+
+
+<!DOCTYPE html>
+<html>
+<body>
+
+<h4>Stack</h4>
+<input id="s"><button onclick="S.push(s.value)">Push</button>
+<button onclick="S.pop()">Pop</button>
+<p id="sd"></p>
+
+<h4>Queue</h4>
+<input id="q"><button onclick="Q.enq(q.value)">Enqueue</button>
+<button onclick="Q.deq()">Dequeue</button>
+<p id="qd"></p>
+
+<script>
+const S = (() => {
+  let a = [];
+  return {
+    push:x => (a.push(x), sd.innerText = a),
+    pop:() => (a.pop(), sd.innerText = a)
+  };
+})();
+
+const Q = (() => {
+  let a = [];
+  return {
+    enq:x => (a.push(x), qd.innerText = a),
+    deq:() => (a.shift(), qd.innerText = a)
+  };
+})();
+</script>
+
+</body>
+</html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<script type="text/javascript">
+//<![CDATA[
+function req(f){ if(f.value==""){ alert(f.name+" required"); return false;} return true; }
+function age(a){ if(a<=17){ alert("Age must be greater than 17"); return false;} return true; }
+function wt(w){ if(w<45||w>75){ alert("Weight must be 45-75"); return false;} return true; }
+//]]>
+</script>
+</head>
+
+<body>
+<form onsubmit="return age(age1.value) &amp;&amp; wt(wt1.value);">
+
+First Name:
+<input type="text" name="First Name"  /><br />
+
+Middle Initial:
+<input type="text" /><br />
+
+Last Name:
+<input type="text" name="Last Name" /><br />
+
+Age:
+<input type="text" name="age1"  /><br />
+
+Weight:
+<input type="text" name="wt1"  /><br />
+
+<input type="submit" value="Submit" />
+</form>
+</body>
+</html>
+
+
+
+<!DOCTYPE html>
+<html>
+<body>
+
+<input id="a" placeholder="First number">
+<input id="b" placeholder="Second number">
+<button onclick="sumShow()">Sum</button><br><br>
+
+<input id="n" placeholder="Enter number">
+<button onclick="check()">Even / Odd</button>
+
+<p id="out"></p>
+
+<script>
+var sum = function(x,y){ return x + y; };
+var evenOdd = function(n){ return n % 2 == 0 ? "Even" : "Odd"; };
+
+function sumShow(){
+  out.innerText = "Sum = " + sum(+a.value, +b.value);
+}
+
+function check(){
+  out.innerText = "Number is " + evenOdd(+n.value);
+}
+</script>
+
+</body>
+</html>
+
+
+
+<!DOCTYPE html>
+<html>
+<body>
+
+<button onclick="bookThree()">Book Ticket</button>
+<p id="out"></p>
+
+<script>
+function ticketCounter() {
+  let tickets = 0;
+
+  return function () {
+    tickets++;
+    out.innerHTML +=
+      "Ticket booked. Total tickets: " + tickets + "<br>";
+  };
+}
+
+const book = ticketCounter();
+
+function bookThree() {
+  book();
+  book();
+  book();
+}
+</script>
+
+</body>
+</html>
+
+
+
+const express = require("express");
+const { MongoClient, ObjectId } = require("mongodb");
+const path = require("path");
+
+const app = express();
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+let col;
+MongoClient.connect("mongodb://127.0.0.1:27017")
+  .then(c => {
+    col = c.db("complaintDB").collection("complaints");
+    console.log("MongoDB connected");
+  });
+
+app.get("/", (_, res) =>
+  res.sendFile(path.join(__dirname, "index.html"))
+);
+
+app.post("/complaints", async (req, res) => {
+  await col.insertOne({ ...req.body, status: "Pending" });
+  res.redirect("/");
+});
+
+app.put("/complaints/:id", async (req, res) => {
+  await col.updateOne(
+    { _id: new ObjectId(req.params.id) },
+    { $set: { status: req.body.status } }
+  );
+  res.json({ message: "Status Updated" });
+});
+
+app.get("/complaints", async (_, res) =>
+  res.json(await col.find().toArray())
+);
+
+app.listen(3000, () => console.log("Server running")); 
+
+
+
+<!DOCTYPE html>
+<html>
+<body>
+
+<h2>Complaint Management</h2>
+
+<form action="/complaints" method="POST">
+  <input name="userName" placeholder="Name" required>
+  <input name="issue" placeholder="Issue" required>
+  <button>Submit</button>
+</form>
+
+<hr>
+
+<input id="id" placeholder="Complaint ID">
+<select id="st">
+  <option>In Progress</option>
+  <option>Resolved</option>
+</select>
+<button onclick="update()">Update</button>
+
+<hr>
+
+<button onclick="load()">Show All</button>
+<ul id="list"></ul>
+
+<script>
+const load = () =>
+  fetch("/complaints").then(r=>r.json())
+  .then(d=>list.innerHTML=d.map(c=>
+    `<li>${c._id} | ${c.userName} | ${c.issue} | ${c.status}</li>`
+  ).join(""));
+
+const update = () =>
+  fetch("/complaints/"+id.value,{
+    method:"PUT",
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({status:st.value})
+  }).then(r=>r.json()).then(a=>alert(a.message));
+</script>
+
+</body>
+</html>
+
+
+const e = require("express");
+const { MongoClient } = require("mongodb");
+const p = require("path");
+
+const app = e();
+app.use(e.urlencoded({ extended: true }));
+app.use(e.json());
+
+let col;
+MongoClient.connect("mongodb://127.0.0.1:27017")
+  .then(c => {
+    col = c.db("collegeDB").collection("students");
+    console.log("MongoDB connected");
+  });
+
+app.get("/", (_, r) =>
+  r.sendFile(p.join(__dirname, "index.html"))
+);
+
+app.post("/students", async (req, r) => {
+  const { name, usn, sem, fee } = req.body;
+  await col.insertOne({
+    Student_name: name,
+    USN: usn,
+    Semester: sem,
+    Exam_fee: +fee
+  });
+  r.redirect("/");
+});
+
+app.delete("/students/unpaid", async (_, r) => {
+  const d = await col.deleteMany({ Exam_fee: { $in: [0, null] } });
+  r.json({ message: "Unpaid students deleted", deleted: d.deletedCount });
+});
+
+app.get("/students", async (_, r) =>
+  r.json(await col.find().toArray())
+);
+
+app.listen(3000, () => console.log("Server running"));
+
+<!DOCTYPE html>
+<html>
+<body>
+
+<h2>Student Exam Fee</h2>
+
+<form action="/students" method="POST">
+  <input name="name" placeholder="Name" required>
+  <input name="usn" placeholder="USN" required>
+  <input name="sem" placeholder="Semester" required>
+  <input name="fee" placeholder="Exam Fee">
+  <button>Add</button>
+</form>
+
+<hr>
+
+<button onclick="del()">Delete Fee = 0</button>
+<button onclick="load()">Show Students</button>
+
+<ul id="list"></ul>
+
+<script>
+const load = () =>
+  fetch("/students").then(r=>r.json())
+  .then(d=>list.innerHTML=d.map(s=>
+    `<li>${s.Student_name} | ${s.USN} | Sem ${s.Semester} | Fee ${s.Exam_fee}</li>`
+  ).join(""));
+
+const del = () =>
+  fetch("/students/unpaid",{method:"DELETE"})
+  .then(r=>r.json()).then(a=>alert(a.message));
+</script>
+
+</body>
+</html>
+
+
+const e = require("express");
+const { MongoClient, ObjectId } = require("mongodb");
+const p = require("path");
+
+const app = e();
+app.use(e.urlencoded({ extended: true }));
+app.use(e.json());
+
+let col;
+MongoClient.connect("mongodb://127.0.0.1:27017")
+  .then(c => {
+    col = c.db("internshipDB").collection("internships");
+    console.log("MongoDB connected");
+  });
+
+app.get("/", (_, r) =>
+  r.sendFile(p.join(__dirname, "index.html"))
+);
+
+app.post("/internships", async (req, r) => {
+  await col.insertOne({
+    Student_ID: req.body.sid,
+    Name: req.body.name,
+    Company: req.body.company,
+    Duration: req.body.duration,
+    Status: req.body.status
+  });
+  r.redirect("/");
+});
+
+app.get("/internships/infosys", async (_, r) =>
+  r.json(await col.find({ Company: "Infosys" }).toArray())
+);
+
+app.put("/internships/:id", async (req, r) => {
+  await col.updateOne(
+    { _id: new ObjectId(req.params.id) },
+    { $set: { Status: req.body.status } }
+  );
+  r.json({ message:  "Status Updated" });
+});
+
+app.listen(3000, () => console.log("Server running"));
+
+<!DOCTYPE html>
+<html>
+<body>
+
+<h2>Internship Tracking</h2>
+
+<form action="/internships" method="POST">
+  <input name="sid" placeholder="Student ID" required>
+  <input name="name" placeholder="Name" required>
+  <input name="company" placeholder="Company" required>
+  <input name="duration" placeholder="Duration" required>
+  <input name="status" value="Ongoing">
+  <button>Add</button>
+</form>
+
+<hr>
+
+<input id="id" placeholder="Internship ID">
+<select id="st">
+  <option>Ongoing</option>
+  <option>Completed</option>
+</select>
+<button onclick="update()">Update</button>
+
+<hr>
+
+<button onclick="load()">Show Infosys Interns</button>
+<ul id="list"></ul>
+
+<script>
+const load = () =>
+  fetch("/internships/infosys").then(r=>r.json())
+  .then(d=>list.innerHTML=d.map(i=>
+    `<li>${i._id} | ${i.Student_ID} | ${i.Name} | ${i.Duration} | ${i.Status}</li>`
+  ).join(""));
+
+const update = () =>
+  fetch("/internships/"+id.value,{
+    method:"PUT",
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({status:st.value})
+  }).then(r=>r.json()).then(a=>alert(a.message));
+</script>
+
+</body>
+</html>
+
+
+const e = require("express");
+const { MongoClient } = require("mongodb");
+const p = require("path");
+
+const app = e();
+app.use(e.urlencoded({ extended: true }));
+app.use(e.json());
+
+let col;
+MongoClient.connect("mongodb://127.0.0.1:27017")
+  .then(c => {
+    col = c.db("hospitalDB").collection("hospitals");
+    console.log("MongoDB connected");
+  });
+
+app.get("/", (_, r) =>
+  r.sendFile(p.join(__dirname, "index.html"))
+);
+
+app.post("/hospitals", async (req, r) => {
+  const { hid, name, location, total, occupied } = req.body;
+  await col.insertOne({
+    Hospital_ID: hid,
+    Name: name,
+    Location: location,
+    Total_Beds: +total,
+    Occupied_Beds: +occupied
+  });
+  r.redirect("/");
+});
+
+app.post("/hospitals/admit", async (req, r) => {
+  const u = await col.updateOne(
+    { Hospital_ID: req.body.hid },
+    { $inc: { Occupied_Beds: 1 } }
+  );
+  r.send(u.matchedCount
+    ? "Patient admitted <br><a href='/'>Back</a>"
+    : "Hospital not found <br><a href='/'>Back</a>");
+});
+
+app.get("/hospitals/lowbeds", async (_, r) =>
+  r.json(await col.find({
+    $expr: { $lt: [{ $subtract: ["$Total_Beds","$Occupied_Beds"] }, 10] }
+  }).toArray())
+);
+
+app.listen(3000, () => console.log("Server running"));
+
+<!DOCTYPE html>
+<html>
+<body>
+
+<h2>Hospital Bed Management</h2>
+
+<form action="/hospitals" method="POST">
+  <input name="hid" placeholder="Hospital ID" required>
+  <input name="name" placeholder="Name" required>
+  <input name="location" placeholder="Location" required>
+  <input name="total" placeholder="Total Beds" required>
+  <input name="occupied" placeholder="Occupied Beds" required>
+  <button>Add</button>
+</form>
+
+<hr>
+
+<form action="/hospitals/admit" method="POST">
+  <input name="hid" placeholder="Hospital ID" required>
+  <button>Admit Patient</button>
+</form>
+
+<hr>
+
+<button onclick="load()">Hospitals with &lt; 10 Beds</button>
+<ul id="list"></ul>
+
+<script>
+const load = () =>
+  fetch("/hospitals/lowbeds").then(r=>r.json())
+  .then(d=>list.innerHTML=d.map(h=>
+    `<li>${h.Name} (${h.Location}) | Available: ${h.Total_Beds-h.Occupied_Beds}</li>`
+  ).join(""));
+</script>
+
+</body>
+</html>
