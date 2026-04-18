@@ -38,7 +38,7 @@ export default function App() {
                 {" <"}so this provides major insignts into what i am . {">"}
               </div>
               <div className="mb-4">
-                Hi , i am 19 ~~ My plan right now is to be great . I am not a
+                Hi , i am 20 ~~ My plan right now is to be great . I am not a
                 crypto bro but i love the concept of agreed concenus and how it
                 cannot be controlled and be corroupted for someone's emotional
                 outrage . Yes , everything here is out of context
