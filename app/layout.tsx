@@ -1,59 +1,58 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
+import type { Metadata } from "next"
+import { JetBrains_Mono } from "next/font/google"
+import "./globals.css"
+import { Navbar } from "@/components/navbar"
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
-});
+  display: "swap",
+  variable: "--font-jetbrains-mono",
+})
 
 export const metadata: Metadata = {
-  title: "Maskjelly",
-  description: "@personal portfolio - Some stuff",
+  metadataBase: new URL("https://whiteye.in"),
+  title: {
+    default: "Aryan",
+    template: "%s | Aryan",
+  },
+  description: "Founding Engineer at Referrush. Builder. Security. Systems.",
   openGraph: {
-    url: "https://whiteye.in/",
+    title: "Aryan",
+    description: "Founding Engineer at Referrush. Builder. Security. Systems.",
+    url: "https://whiteye.in",
+    siteName: "Aryan",
+    locale: "en_US",
     type: "website",
-    title: "Maskjelly",
-    description: "@personal portfolio - Some stuff",
-    images: [
-      {
-        url: "https://sdmntprwestus.oaiusercontent.com/files/00000000-a33c-6230-ab93-316ebf614dd4/raw?se=2025-04-26T20%3A55%3A05Z&sp=r&sv=2024-08-04&sr=b&scid=2ef2bc47-d834-5bad-a629-c381d99d0901&skoid=ae70be19-8043-4428-a990-27c58b478304&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-04-25T23%3A06%3A04Z&ske=2025-04-26T23%3A06%3A04Z&sks=b&skv=2024-08-04&sig=QYOL9J0s%2BEXGfYAoj/FISUdwE0lGoAADHQktS0EqIEo%3D",
-        width: 1200,
-        height: 630,
-        alt: "Maskjelly Portfolio Preview",
-      },
-    ],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    "max-video-preview": -1,
+    "max-image-preview": "large",
+    "max-snippet": -1,
   },
   twitter: {
+    title: "Aryan",
     card: "summary_large_image",
-    site: "https://whiteye.in",
     creator: "@LiquidZooo",
-    title: "Maskjelly",
-    description: "@personal portfolio - Some stuff",
-    images: [
-      "https://sdmntprwestus.oaiusercontent.com/files/00000000-a33c-6230-ab93-316ebf614dd4/raw?se=2025-04-26T20%3A55%3A05Z&sp=r&sv=2024-08-04&sr=b&scid=2ef2bc47-d834-5bad-a629-c381d99d0901&skoid=ae70be19-8043-4428-a990-27c58b478304&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-04-25T23%3A06%3A04Z&ske=2025-04-26T23%3A06%3A04Z&sks=b&skv=2024-08-04&sig=QYOL9J0s%2BEXGfYAoj/FISUdwE0lGoAADHQktS0EqIEo%3D",
-    ],
   },
-};
+}
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: {
+  children: React.ReactNode
+}) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        {/* Background Grid Animation Layer */}
-        <div className="background-grid"></div>
-        <div>
+      <body
+        className={`${jetbrainsMono.variable} antialiased min-h-screen font-mono`}
+      >
+        <div className="max-w-4xl mx-auto px-5 sm:px-4 py-8">
+          <Navbar />
           {children}
         </div>
       </body>
     </html>
-  );
+  )
 }
