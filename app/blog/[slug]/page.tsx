@@ -7,6 +7,7 @@ import StoragePost from "@/content/posts/your-storage-is-lying-to-you"
 import ConsensusPost from "@/content/posts/the-consensus-problem-and-why-raft-exists"
 import MemoryPost from "@/content/posts/memory-ordering-is-not-what-you-think"
 import BftPost from "@/content/posts/byzantine-fault-tolerance-when-nodes-lie"
+import LogPost from "@/content/posts/the-log-is-the-database"
 
 const components: Record<string, React.ComponentType> = {
   "polynomials-at-the-speed-of-silicon": PolynomialsPost,
@@ -14,6 +15,7 @@ const components: Record<string, React.ComponentType> = {
   "the-consensus-problem-and-why-raft-exists": ConsensusPost,
   "memory-ordering-is-not-what-you-think": MemoryPost,
   "byzantine-fault-tolerance-when-nodes-lie": BftPost,
+  "the-log-is-the-database": LogPost,
 }
 
 export const dynamicParams = false

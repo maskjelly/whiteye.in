@@ -18,6 +18,9 @@ type DiagramProps = {
   byzCommander?: boolean
   threeFPlusOne?: boolean
   pbft?: boolean
+  logPlusIndex?: boolean
+  lsmTree?: boolean
+  logSpine?: boolean
 }
 
 const ACCENT = "#ff6b35"
@@ -27,7 +30,7 @@ const LINE = "#262626"
 const FILL = "#181818"
 const WHITE = "#ffffff"
 
-export function Diagram({ viewBox, title, nodes, datapath, compare, stack, raidhole, merkle, splitbrain, paxos, raft, storebuffer, reorderTable, litmusMP, byzCommander, threeFPlusOne, pbft }: DiagramProps) {
+export function Diagram({ viewBox, title, nodes, datapath, compare, stack, raidhole, merkle, splitbrain, paxos, raft, storebuffer, reorderTable, litmusMP, byzCommander, threeFPlusOne, pbft, logPlusIndex, lsmTree, logSpine }: DiagramProps) {
   return (
     <svg viewBox={viewBox} role="img" aria-label={title ?? "diagram"}>
       <DiagramHeader title={title} />
@@ -46,6 +49,9 @@ export function Diagram({ viewBox, title, nodes, datapath, compare, stack, raidh
       {byzCommander && <ByzCommander />}
       {threeFPlusOne && <ThreeFPlusOne />}
       {pbft && <Pbft />}
+      {logPlusIndex && <LogPlusIndex />}
+      {lsmTree && <LsmTree />}
+      {logSpine && <LogSpine />}
     </svg>
   )
 }
@@ -1020,6 +1026,133 @@ function Pbft() {
       <text x={360} y={310} fill={DIM} fontSize={11} textAnchor="middle">
         O(n²) messages per request — the price of not trusting your peers
       </text>
+    </g>
+  )
+}
+
+function LogPlusIndex() {
+  return (
+    <g fontFamily="var(--font-mono)">
+      {/* client write */}
+      <text x={40} y={90} fill={WHITE} fontSize={12}>write</text>
+      <line x1={80} y1={85} x2={160} y2={85} stroke={ACCENT} strokeWidth={1.4} markerEnd="url(#arrow-accent)" />
+
+      {/* LOG */}
+      <rect x={170} y={60} width={160} height={60} rx={4} fill="rgba(255,107,53,0.10)" stroke={ACCENT} strokeWidth={1.4} />
+      <text x={250} y={84} fill={ACCENT} fontSize={13} textAnchor="middle">LOG (WAL)</text>
+      <text x={250} y={104} fill={ACCENT} fontSize={10} textAnchor="middle">append-only · ordered</text>
+
+      {/* fsync badge */}
+      <text x={250} y={140} fill={DIM} fontSize={10} textAnchor="middle">↑ fsync here (durable)</text>
+
+      {/* arrow to index */}
+      <line x1={330} y1={90} x2={420} y2={90} stroke={DIM} strokeWidth={1} markerEnd="url(#arrow-dim)" />
+      <text x={375} y={82} fill={DIM} fontSize={10} textAnchor="middle">replay</text>
+
+      {/* INDEX */}
+      <rect x={430} y={60} width={160} height={60} rx={4} fill={FILL} stroke={LINE} strokeWidth={1} />
+      <text x={510} y={84} fill={WHITE} fontSize={13} textAnchor="middle">INDEX (b-tree)</text>
+      <text x={510} y={104} fill={DIM} fontSize={10} textAnchor="middle">materialized view</text>
+
+      {/* crash recovery row */}
+      <text x={40} y={210} fill={WHITE} fontSize={12}>crash</text>
+      <line x1={80} y1={205} x2={160} y2={205} stroke={DIM} strokeWidth={1} markerEnd="url(#arrow-dim)" />
+      <rect x={170} y={180} width={160} height={50} rx={4} fill={FILL} stroke={LINE} strokeWidth={1} />
+      <text x={250} y={210} fill={WHITE} fontSize={11} textAnchor="middle">replay log tail</text>
+      <line x1={330} y1={205} x2={420} y2={205} stroke={ACCENT} strokeWidth={1.2} markerEnd="url(#arrow-accent)" />
+      <text x={375} y={197} fill={ACCENT} fontSize={10} textAnchor="middle">rebuild</text>
+      <rect x={430} y={180} width={160} height={50} rx={4} fill={FILL} stroke={LINE} strokeWidth={1} strokeDasharray="4 3" />
+      <text x={510} y={210} fill={WHITE} fontSize={11} textAnchor="middle">INDEX restored</text>
+
+      {/* replication row */}
+      <text x={40} y={290} fill={WHITE} fontSize={12}>replica</text>
+      <line x1={90} y1={285} x2={170} y2={285} stroke={DIM} strokeWidth={1} markerEnd="url(#arrow-dim)" />
+      <text x={250} y={290} fill={DIM} fontSize={10} textAnchor="middle">ships log → follower rebuilds same index</text>
+    </g>
+  )
+}
+
+function LsmTree() {
+  const levels = [
+    { label: "memtable", x: 60, w: 120, note: "in-memory", y: 90 },
+    { label: "L0", x: 240, w: 90, note: "flushed", y: 90 },
+    { label: "L1", x: 380, w: 130, note: "compacted", y: 90 },
+    { label: "L2", x: 560, w: 150, note: "compacted", y: 90 },
+  ]
+  return (
+    <g fontFamily="var(--font-mono)">
+      {/* write arrow */}
+      <text x={20} y={70} fill={ACCENT} fontSize={12}>write →</text>
+      <line x1={20} y1={78} x2={60} y2={90} stroke={ACCENT} strokeWidth={1.2} markerEnd="url(#arrow-accent)" />
+
+      {levels.map((l, i) => {
+        const next = levels[i + 1]
+        return (
+          <g key={i}>
+            <rect x={l.x} y={l.y} width={l.w} height={44} rx={4} fill={i === 0 ? "rgba(255,107,53,0.10)" : FILL} stroke={i === 0 ? ACCENT : LINE} strokeWidth={1} />
+            <text x={l.x + l.w / 2} y={l.y + 19} fill={i === 0 ? ACCENT : WHITE} fontSize={12} textAnchor="middle">{l.label}</text>
+            <text x={l.x + l.w / 2} y={l.y + 35} fill={DIM} fontSize={9} textAnchor="middle">{l.note}</text>
+            {next && (
+              <line x1={l.x + l.w} y1={l.y + 22} x2={next.x} y2={next.y + 22} stroke={DIM} strokeWidth={1} markerEnd="url(#arrow-dim)" />
+            )}
+          </g>
+        )
+      })}
+
+      {/* compaction label */}
+      <text x={400} y={160} fill={ACCENT} fontSize={11} textAnchor="middle">↑ background compaction merges + sorts</text>
+
+      {/* read path */}
+      <text x={20} y={220} fill={WHITE} fontSize={12}>read →</text>
+      <line x1={20} y1={228} x2={60} y2={240} stroke={WHITE} strokeWidth={1} markerEnd="url(#arrow-dim)" />
+      <rect x={60} y={226} width={120} height={36} rx={4} fill={FILL} stroke={LINE} strokeWidth={1} />
+      <text x={120} y={249} fill={WHITE} fontSize={11} textAnchor="middle">memtable?</text>
+      <line x1={180} y1={244} x2={240} y2={244} stroke={DIM} strokeWidth={1} markerEnd="url(#arrow-dim)" />
+      <rect x={240} y={226} width={90} height={36} rx={4} fill={FILL} stroke={LINE} strokeWidth={1} />
+      <text x={285} y={249} fill={WHITE} fontSize={11} textAnchor="middle">L0</text>
+      <line x1={330} y1={244} x2={380} y2={244} stroke={DIM} strokeWidth={1} markerEnd="url(#arrow-dim)" />
+      <rect x={380} y={226} width={130} height={36} rx={4} fill={FILL} stroke={LINE} strokeWidth={1} />
+      <text x={445} y={249} fill={WHITE} fontSize={11} textAnchor="middle">L1 ...</text>
+      <line x1={510} y1={244} x2={560} y2={244} stroke={DIM} strokeWidth={1} markerEnd="url(#arrow-dim)" />
+      <rect x={560} y={226} width={150} height={36} rx={4} fill={FILL} stroke={LINE} strokeWidth={1} />
+      <text x={635} y={249} fill={WHITE} fontSize={11} textAnchor="middle">L2 (bloom skip)</text>
+
+      <text x={360} y={300} fill={DIM} fontSize={11} textAnchor="middle">
+        writes: one append · reads: check several (bloom filters skip empties)
+      </text>
+      <text x={360} y={318} fill={DIM} fontSize={11} textAnchor="middle">
+        compaction rewrites files to discard overwritten / deleted keys
+      </text>
+    </g>
+  )
+}
+
+function LogSpine() {
+  const views = [
+    { label: "Postgres table", x: 80 },
+    { label: "Raft log (cluster)", x: 280 },
+    { label: "Kafka topic (org)", x: 500 },
+  ]
+  const spineY = 200
+  return (
+    <g fontFamily="var(--font-mono)">
+      <text x={40} y={60} fill={DIM} fontSize={11}>one committed history · different scopes</text>
+
+      {views.map((v, i) => (
+        <g key={i}>
+          <rect x={v.x} y={90} width={160} height={44} rx={4} fill={FILL} stroke={LINE} strokeWidth={1} />
+          <text x={v.x + 80} y={117} fill={WHITE} fontSize={11} textAnchor="middle">{v.label}</text>
+          <line x1={v.x + 80} y1={134} x2={v.x + 80} y2={spineY - 20} stroke={DIM} strokeWidth={1} strokeDasharray="3 3" />
+        </g>
+      ))}
+
+      {/* the spine */}
+      <rect x={60} y={spineY - 16} width={600} height={32} rx={4} fill="rgba(255,107,53,0.10)" stroke={ACCENT} strokeWidth={1.4} />
+      <text x={360} y={spineY + 5} fill={ACCENT} fontSize={13} textAnchor="middle">the log · append-only · totally ordered</text>
+
+      <text x={160} y={250} fill={DIM} fontSize={10} textAnchor="middle">one machine&apos;s durability</text>
+      <text x={360} y={250} fill={DIM} fontSize={10} textAnchor="middle">a cluster&apos;s agreement</text>
+      <text x={580} y={250} fill={DIM} fontSize={10} textAnchor="middle">an org&apos;s event backbone</text>
     </g>
   )
 }

@@ -3,6 +3,7 @@ import { meta as storageMeta } from "@/content/posts/your-storage-is-lying-to-yo
 import { meta as consensusMeta } from "@/content/posts/the-consensus-problem-and-why-raft-exists"
 import { meta as memoryMeta } from "@/content/posts/memory-ordering-is-not-what-you-think"
 import { meta as bftMeta } from "@/content/posts/byzantine-fault-tolerance-when-nodes-lie"
+import { meta as logMeta } from "@/content/posts/the-log-is-the-database"
 
 export type PostMeta = {
   slug: string
@@ -18,6 +19,7 @@ export const posts: PostMeta[] = [
   bftMeta,
   consensusMeta,
   memoryMeta,
+  logMeta,
 ]
 
 export function getPostMeta(slug: string): PostMeta | undefined {
