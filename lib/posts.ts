@@ -4,6 +4,7 @@ import { meta as consensusMeta } from "@/content/posts/the-consensus-problem-and
 import { meta as memoryMeta } from "@/content/posts/memory-ordering-is-not-what-you-think"
 import { meta as bftMeta } from "@/content/posts/byzantine-fault-tolerance-when-nodes-lie"
 import { meta as logMeta } from "@/content/posts/the-log-is-the-database"
+import { meta as networkMeta } from "@/content/posts/the-network-is-not-a-wire"
 
 export type PostMeta = {
   slug: string
@@ -20,6 +21,7 @@ export const posts: PostMeta[] = [
   consensusMeta,
   memoryMeta,
   logMeta,
+  networkMeta,
 ]
 
 export function getPostMeta(slug: string): PostMeta | undefined {

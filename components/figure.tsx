@@ -21,6 +21,9 @@ type DiagramProps = {
   logPlusIndex?: boolean
   lsmTree?: boolean
   logSpine?: boolean
+  packetHops?: boolean
+  aimdVsBbr?: boolean
+  bufferbloat?: boolean
 }
 
 const ACCENT = "#ff6b35"
@@ -30,7 +33,7 @@ const LINE = "#262626"
 const FILL = "#181818"
 const WHITE = "#ffffff"
 
-export function Diagram({ viewBox, title, nodes, datapath, compare, stack, raidhole, merkle, splitbrain, paxos, raft, storebuffer, reorderTable, litmusMP, byzCommander, threeFPlusOne, pbft, logPlusIndex, lsmTree, logSpine }: DiagramProps) {
+export function Diagram({ viewBox, title, nodes, datapath, compare, stack, raidhole, merkle, splitbrain, paxos, raft, storebuffer, reorderTable, litmusMP, byzCommander, threeFPlusOne, pbft, logPlusIndex, lsmTree, logSpine, packetHops, aimdVsBbr, bufferbloat }: DiagramProps) {
   return (
     <svg viewBox={viewBox} role="img" aria-label={title ?? "diagram"}>
       <DiagramHeader title={title} />
@@ -52,6 +55,9 @@ export function Diagram({ viewBox, title, nodes, datapath, compare, stack, raidh
       {logPlusIndex && <LogPlusIndex />}
       {lsmTree && <LsmTree />}
       {logSpine && <LogSpine />}
+      {packetHops && <PacketHops />}
+      {aimdVsBbr && <AimdVsBbr />}
+      {bufferbloat && <Bufferbloat />}
     </svg>
   )
 }
@@ -1153,6 +1159,132 @@ function LogSpine() {
       <text x={160} y={250} fill={DIM} fontSize={10} textAnchor="middle">one machine&apos;s durability</text>
       <text x={360} y={250} fill={DIM} fontSize={10} textAnchor="middle">a cluster&apos;s agreement</text>
       <text x={580} y={250} fill={DIM} fontSize={10} textAnchor="middle">an org&apos;s event backbone</text>
+    </g>
+  )
+}
+
+function PacketHops() {
+  const hops = [
+    { label: "app", x: 40 },
+    { label: "socket", x: 140 },
+    { label: "NIC", x: 240 },
+    { label: "switch", x: 340 },
+    { label: "router", x: 440 },
+    { label: "link", x: 540 },
+    { label: "recv", x: 640 },
+  ]
+  const y = 130
+  const w = 70
+  const qH = 30
+  return (
+    <g fontFamily="var(--font-mono)">
+      {hops.map((h, i) => {
+        const next = hops[i + 1]
+        return (
+          <g key={i}>
+            {/* queue above */}
+            {i < hops.length - 1 && (
+              <rect x={h.x + w / 2 - 14} y={y - qH - 8} width={28} height={qH} fill="rgba(255,107,53,0.10)" stroke={ACCENT} strokeWidth={1} />
+            )}
+            {/* node */}
+            <rect x={h.x} y={y} width={w} height={36} rx={4} fill={FILL} stroke={LINE} strokeWidth={1} />
+            <text x={h.x + w / 2} y={y + 22} fill={WHITE} fontSize={10} textAnchor="middle">{h.label}</text>
+            {/* arrow to next */}
+            {next && (
+              <line x1={h.x + w} y1={y + 18} x2={next.x} y2={y + 18} stroke={DIM} strokeWidth={1} markerEnd="url(#arrow-dim)" />
+            )}
+          </g>
+        )
+      })}
+      {/* queue label */}
+      <text x={174} y={y - qH - 14} fill={ACCENT} fontSize={10} textAnchor="middle">queue</text>
+      <line x1={160} y1={y - qH - 10} x2={160} y2={y - qH - 2} stroke={ACCENT} strokeWidth={1} />
+
+      <text x={360} y={210} fill={DIM} fontSize={11} textAnchor="middle">
+        a queue at every hop — necessary for bursts, fatal when full
+      </text>
+      <text x={360} y={228} fill={DIM} fontSize={11} textAnchor="middle">
+        latency = sum of service time + sum of queueing delay ahead of you
+      </text>
+    </g>
+  )
+}
+
+function AimdVsBbr() {
+  const y0 = 100
+  const h = 120
+  const x0 = 60
+  const x1 = 680
+  return (
+    <g fontFamily="var(--font-mono)">
+      {/* axes */}
+      <line x1={x0} y1={y0} x2={x0} y2={y0 + h} stroke={DIM} strokeWidth={1} />
+      <line x1={x0} y1={y0 + h} x2={x1} y2={y0 + h} stroke={DIM} strokeWidth={1} />
+      <text x={x0 - 8} y={y0 + 8} fill={DIM} fontSize={10} textAnchor="end">window</text>
+      <text x={x1} y={y0 + h + 18} fill={DIM} fontSize={10} textAnchor="end">time →</text>
+
+      {/* AIMD sawtooth (top half) */}
+      <text x={x0 + 10} y={y0 - 8} fill={ACCENT} fontSize={11}>AIMD (Reno/CUBIC)</text>
+      {[
+        [60, 100, 220, 40],
+        [220, 100, 360, 40],
+        [360, 100, 480, 40],
+      ].map(([x1s, y1s, x2s, y2s], i) => (
+        <g key={i}>
+          <line x1={x0 + x1s} y1={y0 + y2s} x2={x0 + x2s} y2={y0 + y1s} stroke={ACCENT} strokeWidth={1.6} />
+          <line x1={x0 + x2s} y1={y0 + y1s} x2={x0 + x2s + 4} y2={y0 + y2s} stroke={ACCENT} strokeWidth={1.6} />
+        </g>
+      ))}
+      <text x={x0 + 250} y={y0 + 60} fill={DIM} fontSize={9}>loss → halve</text>
+
+      {/* BBR steady (bottom strip) */}
+      <text x={x0 + 10} y={y0 + h + 36} fill={ACCENT} fontSize={11}>BBR (model-based)</text>
+      <line x1={x0 + 60} y1={y0 + h + 56} x2={x0 + 480} y2={y0 + h + 56} stroke={ACCENT} strokeWidth={1.6} />
+      <text x={x0 + 250} y={y0 + h + 50} fill={DIM} fontSize={9}>steady at BDP · no loss needed</text>
+    </g>
+  )
+}
+
+function Bufferbloat() {
+  const y0 = 90
+  const h = 100
+  const x0 = 60
+  const x1 = 660
+  return (
+    <g fontFamily="var(--font-mono)">
+      <line x1={x0} y1={y0} x2={x0} y2={y0 + h} stroke={DIM} strokeWidth={1} />
+      <line x1={x0} y1={y0 + h} x2={x1} y2={y0 + h} stroke={DIM} strokeWidth={1} />
+      <text x={x0 - 8} y={y0 + 6} fill={DIM} fontSize={10} textAnchor="end">load →</text>
+
+      {/* queue depth (fills before overflow) */}
+      <path
+        d={`M ${x0} ${y0 + h} L ${x0 + 120} ${y0 + h - 6} L ${x0 + 220} ${y0 + 30} L ${x0 + 460} ${y0 + 22} L ${x0 + 480} ${y0 + 18} L ${x0 + 480} ${y0 + 12}`}
+        fill="none"
+        stroke={ACCENT}
+        strokeWidth={1.6}
+      />
+      <text x={x0 + 300} y={y0 + 36} fill={ACCENT} fontSize={11}>queue depth</text>
+
+      {/* latency tracks queue */}
+      <path
+        d={`M ${x0} ${y0 + h - 2} L ${x0 + 120} ${y0 + h - 10} L ${x0 + 220} ${y0 + 44} L ${x0 + 460} ${y0 + 36} L ${x0 + 480} ${y0 + 30}`}
+        fill="none"
+        stroke={DIM}
+        strokeWidth={1.2}
+        strokeDasharray="4 3"
+      />
+      <text x={x0 + 300} y={y0 + 60} fill={DIM} fontSize={11}>latency (tracks queue)</text>
+
+      {/* loss event */}
+      <line x1={x0 + 480} y1={y0} x2={x0 + 480} y2={y0 + h} stroke={WHITE} strokeWidth={1} strokeDasharray="2 2" />
+      <circle cx={x0 + 480} cy={y0 + 8} r={4} fill={WHITE} />
+      <text x={x0 + 490} y={y0 + 12} fill={WHITE} fontSize={10}>loss (queue full)</text>
+
+      {/* the gap = bufferbloat */}
+      <rect x={x0 + 220} y={y0 + 10} width={260} height={h - 12} fill="rgba(255,107,53,0.06)" />
+      <text x={x0 + 350} y={y0 + h + 22} fill={ACCENT} fontSize={11} textAnchor="middle">
+        bufferbloat: latency high long before loss
+      </text>
     </g>
   )
 }
