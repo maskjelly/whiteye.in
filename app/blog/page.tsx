@@ -21,6 +21,9 @@ export default function BlogIndex() {
           found. mostly security, infrastructure, and the math underneath
           both.
         </p>
+        <p className="text-sm text-gray-600 mt-3 animate-fade-in-up">
+          {posts.length} posts · updated jun 21, 2026
+        </p>
       </header>
 
       <div className="space-y-3 border-t border-neutral-800 pt-8">

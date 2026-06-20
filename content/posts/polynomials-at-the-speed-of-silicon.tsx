@@ -1,4 +1,5 @@
 import { Figure, Diagram, Caption } from "@/components/figure"
+import { Code } from "@/components/code"
 
 export const meta = {
   slug: "polynomials-at-the-speed-of-silicon",
@@ -146,13 +147,9 @@ export default function Post() {
       <p>
         Horner&apos;s method rewrites a univariate polynomial
       </p>
-      <pre>
-        <code>{`p(x) = a₀ + a₁x + a₂x² + a₃x³ + a₄x⁴`}</code>
-      </pre>
+      <Code lang="text">{`p(x) = a₀ + a₁x + a₂x² + a₃x³ + a₄x⁴`}</Code>
       <p>as the nested form</p>
-      <pre>
-        <code>{`p(x) = a₀ + x·(a₁ + x·(a₂ + x·(a₃ + x·a₄)))`}</code>
-      </pre>
+      <Code lang="text">{`p(x) = a₀ + x·(a₁ + x·(a₂ + x·(a₃ + x·a₄)))`}</Code>
       <p>
         Same value, but a degree-<code>n</code> polynomial is now{" "}
         <code>n</code> multiplies and <code>n</code> adds, with a dependency

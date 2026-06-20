@@ -1,4 +1,5 @@
 import { Figure, Diagram, Caption } from "@/components/figure"
+import { Code } from "@/components/code"
 
 export const meta = {
   slug: "memory-ordering-is-not-what-you-think",
@@ -161,13 +162,11 @@ export default function Post() {
         Stop reading for a second and look at this. Two threads, two shared
         variables, both initialized to zero.
       </p>
-      <pre>
-        <code>{`// x and y initially 0
+      <Code lang="c">{`// x and y initially 0
 
 // Thread 0            // Thread 1
 x = 1;                 r1 = y;
-y = 1;                 r2 = x;`}</code>
-      </pre>
+y = 1;                 r2 = x;`}</Code>
       <p>
         Question: can <code>r1 = 1, r2 = 0</code> ever happen? That is, can
         Thread 1 see the write to <code>y</code> but miss the write to{" "}
@@ -266,21 +265,17 @@ y = 1;                 r2 = x;`}</code>
         mostly-read data where readers don&apos;t want to take a lock. The
         writer does:
       </p>
-      <pre>
-        <code>{`seq++;          // odd: write in progress
+      <Code lang="c">{`seq++;          // odd: write in progress
 write(data);
-seq++;          // even: write done`}</code>
-      </pre>
+seq++;          // even: write done`}</Code>
       <p>
         The reader does:
       </p>
-      <pre>
-        <code>{`do {
+      <Code lang="c">{`do {
   s1 = seq;              // must be acquire-ish
   read(data);
   s2 = seq;              // must be acquire-ish
-} while (s1 != s2 || s1 & 1);`}</code>
-      </pre>
+} while (s1 != s2 || s1 & 1);`}</Code>
       <p>
         If <code>s1 == s2</code> and even, no write happened during the read,
         and the data is consistent. The subtlety: on x86, this works as

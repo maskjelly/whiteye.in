@@ -2,6 +2,7 @@ import Link from "next/link"
 import { notFound } from "next/navigation"
 import type { Metadata } from "next"
 import { getPostMeta, posts } from "@/lib/posts"
+import { TableOfContents } from "@/components/table-of-contents"
 import PolynomialsPost from "@/content/posts/polynomials-at-the-speed-of-silicon"
 import StoragePost from "@/content/posts/your-storage-is-lying-to-you"
 import ConsensusPost from "@/content/posts/the-consensus-problem-and-why-raft-exists"
@@ -94,46 +95,52 @@ export default async function PostPage({
           </p>
         </header>
 
-        <Content />
+        <div className="post-layout">
+          <div className="post-content min-w-0">
+            <Content />
 
-        {prevNext && (
-          <nav className="mt-16 pt-8 border-t border-neutral-800 grid grid-cols-2 gap-4">
-            {prevNext.prev ? (
-              <Link
-                href={`/blog/${prevNext.prev.slug}`}
-                className="group block rounded-lg p-4 -mx-4 hover:bg-neutral-900/50 transition-colors"
-              >
-                <p className="text-xs text-gray-600 mb-1">← previous</p>
-                <p className="text-gray-200 group-hover:text-accent transition-colors text-sm">
-                  {prevNext.prev.title}
-                </p>
-              </Link>
-            ) : (
-              <span />
+            {prevNext && (
+              <nav className="mt-16 pt-8 border-t border-neutral-800 grid grid-cols-2 gap-4">
+                {prevNext.prev ? (
+                  <Link
+                    href={`/blog/${prevNext.prev.slug}`}
+                    className="group block rounded-lg p-4 -mx-4 hover:bg-neutral-900/50 transition-colors"
+                  >
+                    <p className="text-xs text-gray-600 mb-1">← previous</p>
+                    <p className="text-gray-200 group-hover:text-accent transition-colors text-sm">
+                      {prevNext.prev.title}
+                    </p>
+                  </Link>
+                ) : (
+                  <span />
+                )}
+                {prevNext.next ? (
+                  <Link
+                    href={`/blog/${prevNext.next.slug}`}
+                    className="group block rounded-lg p-4 -mx-4 hover:bg-neutral-900/50 transition-colors text-right"
+                  >
+                    <p className="text-xs text-gray-600 mb-1">next →</p>
+                    <p className="text-gray-200 group-hover:text-accent transition-colors text-sm">
+                      {prevNext.next.title}
+                    </p>
+                  </Link>
+                ) : (
+                  <span />
+                )}
+              </nav>
             )}
-            {prevNext.next ? (
-              <Link
-                href={`/blog/${prevNext.next.slug}`}
-                className="group block rounded-lg p-4 -mx-4 hover:bg-neutral-900/50 transition-colors text-right"
-              >
-                <p className="text-xs text-gray-600 mb-1">next →</p>
-                <p className="text-gray-200 group-hover:text-accent transition-colors text-sm">
-                  {prevNext.next.title}
-                </p>
-              </Link>
-            ) : (
-              <span />
-            )}
-          </nav>
-        )}
 
-        <div className="mt-8 pt-8 border-t border-neutral-800 text-sm flex items-center justify-between">
-          <Link href="/blog" className="text-gray-500 hover:text-accent transition-colors">
-            ← back to writing
-          </Link>
-          <Link href="/" className="text-gray-500 hover:text-accent transition-colors">
-            home
-          </Link>
+            <div className="mt-8 pt-8 border-t border-neutral-800 text-sm flex items-center justify-between">
+              <Link href="/blog" className="text-gray-500 hover:text-accent transition-colors">
+                ← back to writing
+              </Link>
+              <Link href="/" className="text-gray-500 hover:text-accent transition-colors">
+                home
+              </Link>
+            </div>
+          </div>
+
+          <TableOfContents />
         </div>
       </article>
     </>
