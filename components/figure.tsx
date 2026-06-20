@@ -9,6 +9,12 @@ type DiagramProps = {
   stack?: boolean
   raidhole?: boolean
   merkle?: boolean
+  splitbrain?: boolean
+  paxos?: boolean
+  raft?: boolean
+  storebuffer?: boolean
+  reorderTable?: boolean
+  litmusMP?: boolean
 }
 
 const ACCENT = "#ff6b35"
@@ -18,7 +24,7 @@ const LINE = "#262626"
 const FILL = "#181818"
 const WHITE = "#ffffff"
 
-export function Diagram({ viewBox, title, nodes, datapath, compare, stack, raidhole, merkle }: DiagramProps) {
+export function Diagram({ viewBox, title, nodes, datapath, compare, stack, raidhole, merkle, splitbrain, paxos, raft, storebuffer, reorderTable, litmusMP }: DiagramProps) {
   return (
     <svg viewBox={viewBox} role="img" aria-label={title ?? "diagram"}>
       <DiagramHeader title={title} />
@@ -28,6 +34,12 @@ export function Diagram({ viewBox, title, nodes, datapath, compare, stack, raidh
       {stack && <StorageStack />}
       {raidhole && <RaidWriteHole />}
       {merkle && <MerkleTree />}
+      {splitbrain && <SplitBrain />}
+      {paxos && <Paxos />}
+      {raft && <RaftTimeline />}
+      {storebuffer && <StoreBuffer />}
+      {reorderTable && <ReorderTable />}
+      {litmusMP && <LitmusMP />}
     </svg>
   )
 }
@@ -554,6 +566,318 @@ function MerkleTree() {
 
       <text x={490} y={106} fill={DIM} fontSize={11}>
         ← one bad leaf flips the root
+      </text>
+    </g>
+  )
+}
+
+function SplitBrain() {
+  const nodes = [
+    { label: "A", x: 130 },
+    { label: "B", x: 250 },
+    { label: "C", x: 370 },
+    { label: "D", x: 490 },
+    { label: "E", x: 610 },
+  ]
+  const y = 110
+  const r = 22
+  const partA = [0, 1, 2]
+  return (
+    <g fontFamily="var(--font-mono)">
+      {/* partition line */}
+      <line x1={430} y1={70} x2={430} y2={300} stroke={ACCENT} strokeWidth={1} strokeDasharray="4 4" opacity={0.6} />
+      <text x={430} y={62} fill={ACCENT} fontSize={11} textAnchor="middle">
+        network partition
+      </text>
+      {nodes.map((n, i) => {
+        const inA = partA.includes(i)
+        const leader = i === 0
+        return (
+          <g key={i}>
+            <circle cx={n.x} cy={y} r={r} fill={FILL} stroke={leader ? ACCENT : LINE} strokeWidth={leader ? 1.5 : 1} />
+            <text x={n.x} y={y + 5} fill={leader ? ACCENT : WHITE} fontSize={13} textAnchor="middle">
+              {n.label}
+            </text>
+            <text x={n.x} y={y + r + 18} fill={DIM} fontSize={10} textAnchor="middle">
+              {leader ? "leader 1" : inA ? "follower" : "stale"}
+            </text>
+          </g>
+        )
+      })}
+      {/* second leader after partition: assume D becomes leader in partition B */}
+      <g>
+        <circle cx={nodes[3].x} cy={y} r={r} fill="none" stroke={ACCENT} strokeWidth={1.5} strokeDasharray="3 2" />
+        <text x={nodes[3].x} y={y + 5} fill={ACCENT} fontSize={13} textAnchor="middle">
+          D
+        </text>
+        <text x={nodes[3].x} y={y + r + 18} fill={ACCENT} fontSize={10} textAnchor="middle">
+          leader 2
+        </text>
+      </g>
+      {/* quorum brackets */}
+      <line x1={108} y1={y - r - 14} x2={392} y2={y - r - 14} stroke={DIM} strokeWidth={1} />
+      <text x={250} y={y - r - 22} fill={DIM} fontSize={11} textAnchor="middle">
+        majority of partition A · writes v1
+      </text>
+      <line x1={468} y1={y - r - 14} x2={632} y2={y - r - 14} stroke={ACCENT} strokeWidth={1} />
+      <text x={550} y={y - r - 22} fill={ACCENT} fontSize={11} textAnchor="middle">
+        majority of B · writes v2
+      </text>
+      {/* conflict */}
+      <text x={360} y={200} fill={ACCENT} fontSize={12} textAnchor="middle">
+        v1 ≠ v2 · both &quot;decided&quot; · no overlap
+      </text>
+      <text x={360} y={230} fill={DIM} fontSize={11} textAnchor="middle">
+        5-node cluster partitions 3–2 · each side elects its own leader
+      </text>
+    </g>
+  )
+}
+
+function Paxos() {
+  const yP = 90
+  const yA = [170, 210, 250]
+  const yL = 320
+  const px = 80
+  const ax = [260, 360, 460]
+  const lx = 620
+  return (
+    <g fontFamily="var(--font-mono)">
+      {/* role labels */}
+      <text x={px} y={60} fill={WHITE} fontSize={12}>Proposer</text>
+      {ax.map((x, i) => (
+        <text key={i} x={x} y={yA[i] - 18} fill={WHITE} fontSize={12} textAnchor="middle">Acceptor {i + 1}</text>
+      ))}
+      <text x={lx} y={yL - 18} fill={WHITE} fontSize={12} textAnchor="middle">Learner</text>
+
+      {/* nodes */}
+      <circle cx={px} cy={yP} r={20} fill={FILL} stroke={ACCENT} strokeWidth={1.4} />
+      <text x={px} y={yP + 5} fill={ACCENT} fontSize={11} textAnchor="middle">P</text>
+      {ax.map((x, i) => (
+        <g key={i}>
+          <circle cx={x} cy={yA[i]} r={18} fill={FILL} stroke={LINE} strokeWidth={1} />
+          <text x={x} y={yA[i] + 5} fill={WHITE} fontSize={10} textAnchor="middle">A{i + 1}</text>
+        </g>
+      ))}
+      <circle cx={lx} cy={yL} r={20} fill={FILL} stroke={LINE} strokeWidth={1} />
+      <text x={lx} y={yL + 5} fill={WHITE} fontSize={11} textAnchor="middle">L</text>
+
+      {/* Phase 1 arrows: Prepare → Acceptors */}
+      {ax.map((x, i) => (
+        <g key={`p1-${i}`}>
+          <line x1={px + 20} y1={yP + 4} x2={x - 18} y2={yA[i] - 4} stroke={ACCENT} strokeWidth={1} markerEnd="url(#arrow-accent)" />
+        </g>
+      ))}
+      <text x={150} y={yP + 30} fill={ACCENT} fontSize={11}>Prepare(n)</text>
+
+      {/* Promise arrows back */}
+      {ax.map((x, i) => (
+        <line key={`pr-${i}`} x1={x - 18} y1={yA[i] + 4} x2={px + 20} y2={yP + 14} stroke={DIM} strokeWidth={1} markerEnd="url(#arrow-dim)" strokeDasharray="3 3" />
+      ))}
+      <text x={150} y={yP + 60} fill={DIM} fontSize={11}>Promise(n, v_prev)</text>
+
+      {/* Phase 2 arrows: Accept → Acceptors */}
+      {ax.map((x, i) => (
+        <line key={`p2-${i}`} x1={px + 20} y1={yP + 22} x2={x - 18} y2={yA[i] + 8} stroke={ACCENT} strokeWidth={1} markerEnd="url(#arrow-accent)" />
+      ))}
+      <text x={150} y={yP + 90} fill={ACCENT} fontSize={11}>Accept(n, v)</text>
+
+      {/* Accepted → Learner */}
+      {ax.map((x, i) => (
+        <line key={`ac-${i}`} x1={x + 18} y1={yA[i]} x2={lx - 20} y2={yL} stroke={DIM} strokeWidth={1} markerEnd="url(#arrow-dim)" strokeDasharray="3 3" />
+      ))}
+      <text x={520} y={yL - 8} fill={DIM} fontSize={11}>Accepted(n)</text>
+
+      {/* phase labels */}
+      <text x={10} y={130} fill={ACCENT} fontSize={10} opacity={0.85}>phase 1</text>
+      <text x={10} y={200} fill={ACCENT} fontSize={10} opacity={0.85}>phase 2</text>
+    </g>
+  )
+}
+
+function RaftTimeline() {
+  const terms = [
+    { x: 60, w: 160, label: "term 1", note: "S1 leader" },
+    { x: 220, w: 140, label: "term 2", note: "S2 leader (split vote → S3 wins)" },
+    { x: 360, w: 180, label: "term 3", note: "S5 leader (S2 down)" },
+    { x: 540, w: 160, label: "term 4", note: "S2 re-elected" },
+  ]
+  const y = 120
+  const h = 40
+  return (
+    <g fontFamily="var(--font-mono)">
+      {/* time axis */}
+      <line x1={40} y1={y - 30} x2={710} y2={y - 30} stroke={DIM} strokeWidth={1} />
+      <text x={40} y={y - 38} fill={DIM} fontSize={11}>time →</text>
+
+      {terms.map((t, i) => (
+        <g key={i}>
+          <rect x={t.x} y={y} width={t.w} height={h} rx={4} fill={FILL} stroke={i === 2 ? ACCENT : LINE} strokeWidth={1} />
+          <text x={t.x + t.w / 2} y={y + 18} fill={i === 2 ? ACCENT : WHITE} fontSize={12} textAnchor="middle">
+            {t.label}
+          </text>
+          <text x={t.x + t.w / 2} y={y + 33} fill={i === 2 ? ACCENT : DIM} fontSize={9} textAnchor="middle">
+            {t.note.length > 22 ? t.note.slice(0, 22) + "…" : t.note}
+          </text>
+          {i < terms.length - 1 && (
+            <line x1={t.x + t.w} y1={y - 6} x2={t.x + t.w} y2={y + h + 6} stroke={LINE} strokeWidth={1} />
+          )}
+        </g>
+      ))}
+
+      {/* log replication row under term 3 */}
+      <text x={40} y={200} fill={WHITE} fontSize={11}>S5 log (term 3):</text>
+      {["i=1 v=a", "i=2 v=b", "i=3 v=c"].map((cell, i) => {
+        const cx = 200 + i * 110
+        return (
+          <g key={i}>
+            <rect x={cx} y={186} width={100} height={28} rx={3} fill={FILL} stroke={ACCENT} strokeWidth={1} />
+            <text x={cx + 50} y={204} fill={WHITE} fontSize={10} textAnchor="middle">{cell}</text>
+          </g>
+        )
+      })}
+      <text x={540} y={204} fill={ACCENT} fontSize={11}>↑ committed at idx 3</text>
+
+      {/* safety callout */}
+      <text x={40} y={260} fill={DIM} fontSize={11}>
+        term 4&apos;s leader (S2) must already contain entries 1–3 from term 3
+      </text>
+      <text x={40} y={278} fill={DIM} fontSize={11}>
+        before it can commit anything new — the election restriction guarantees this
+      </text>
+    </g>
+  )
+}
+
+function StoreBuffer() {
+  return (
+    <g fontFamily="var(--font-mono)">
+      {/* Core */}
+      <rect x={40} y={60} width={110} height={50} rx={4} fill={FILL} stroke={LINE} strokeWidth={1} />
+      <text x={95} y={90} fill={WHITE} fontSize={13} textAnchor="middle">core</text>
+
+      {/* Store buffer */}
+      <rect x={200} y={60} width={140} height={50} rx={4} fill="rgba(255,107,53,0.08)" stroke={ACCENT} strokeWidth={1.2} />
+      <text x={270} y={84} fill={ACCENT} fontSize={12} textAnchor="middle">store buffer</text>
+      <text x={270} y={100} fill={ACCENT} fontSize={10} textAnchor="middle">[ x ← 1 ]</text>
+
+      {/* Cache / coherence */}
+      <rect x={420} y={60} width={140} height={50} rx={4} fill={FILL} stroke={LINE} strokeWidth={1} />
+      <text x={490} y={84} fill={WHITE} fontSize={12} textAnchor="middle">L1 / cache</text>
+      <text x={490} y={100} fill={DIM} fontSize={10} textAnchor="middle">MESI coherence</text>
+
+      {/* Memory */}
+      <rect x={620} y={60} width={90} height={50} rx={4} fill={FILL} stroke={LINE} strokeWidth={1} />
+      <text x={665} y={90} fill={WHITE} fontSize={12} textAnchor="middle">memory</text>
+
+      {/* arrows core -> buffer -> cache -> memory */}
+      <line x1={150} y1={85} x2={200} y2={85} stroke={ACCENT} strokeWidth={1.4} markerEnd="url(#arrow-accent)" />
+      <line x1={340} y1={85} x2={420} y2={85} stroke={DIM} strokeWidth={1} strokeDasharray="4 4" markerEnd="url(#arrow-dim)" />
+      <text x={380} y={78} fill={DIM} fontSize={10} textAnchor="middle">drain</text>
+      <line x1={560} y1={85} x2={620} y2={85} stroke={DIM} strokeWidth={1} markerEnd="url(#arrow-dim)" />
+
+      {/* load, bypassing */}
+      <rect x={200} y={170} width={140} height={36} rx={4} fill={FILL} stroke={LINE} strokeWidth={1} />
+      <text x={270} y={192} fill={WHITE} fontSize={11} textAnchor="middle">load y</text>
+      <line x1={150} y1={150} x2={150} y2={188} stroke={ACCENT} strokeWidth={1.2} />
+      <line x1={150} y1={188} x2={200} y2={188} stroke={ACCENT} strokeWidth={1.4} markerEnd="url(#arrow-accent)" />
+      <text x={175} y={180} fill={ACCENT} fontSize={10}>runs now</text>
+
+      {/* other core */}
+      <rect x={420} y={170} width={140} height={36} rx={4} fill={FILL} stroke={LINE} strokeWidth={1} />
+      <text x={490} y={192} fill={DIM} fontSize={11} textAnchor="middle">other core&apos;s view</text>
+      <line x1={560} y1={188} x2={620} y2={110} stroke={DIM} strokeWidth={1} strokeDasharray="3 3" />
+      <text x={590} y={150} fill={DIM} fontSize={10}>reads memory</text>
+
+      <text x={40} y={250} fill={DIM} fontSize={11}>
+        load y executes immediately — does NOT wait for &quot;x ← 1&quot; to drain.
+      </text>
+      <text x={40} y={268} fill={DIM} fontSize={11}>
+        to the core itself, order is preserved (store-buffer forwarding). to
+      </text>
+      <text x={40} y={284} fill={DIM} fontSize={11}>
+        the other core, the store is not visible yet. that is the gap.
+      </text>
+    </g>
+  )
+}
+
+function ReorderTable() {
+  const rows = ["Store → Store", "Load → Load", "Load → Store", "Store → Load*"]
+  const x86 = [false, false, false, true]
+  const arm = [true, true, true, true]
+  const cellW = 130
+  const labelW = 150
+  const tableX = 60
+  const tableY = 80
+  const rowH = 44
+  return (
+    <g fontFamily="var(--font-mono)">
+      {/* header */}
+      <text x={tableX} y={tableY - 14} fill={DIM} fontSize={11}>first op → second op</text>
+      <rect x={tableX + labelW} y={tableY} width={cellW} height={36} fill={FILL} stroke={LINE} strokeWidth={1} />
+      <text x={tableX + labelW + cellW / 2} y={tableY + 23} fill={WHITE} fontSize={12} textAnchor="middle">x86 (TSO)</text>
+      <rect x={tableX + labelW + cellW} y={tableY} width={cellW} height={36} fill={FILL} stroke={LINE} strokeWidth={1} />
+      <text x={tableX + labelW + cellW + cellW / 2} y={tableY + 23} fill={WHITE} fontSize={12} textAnchor="middle">ARM (relaxed)</text>
+
+      {rows.map((r, i) => {
+        const y = tableY + 36 + i * rowH
+        return (
+          <g key={i}>
+            <rect x={tableX} y={y} width={labelW} height={rowH} fill={FILL} stroke={LINE} strokeWidth={1} />
+            <text x={tableX + 12} y={y + rowH / 2 + 4} fill={WHITE} fontSize={11}>{r}</text>
+
+            <rect x={tableX + labelW} y={y} width={cellW} height={rowH} fill="rgba(255,107,53,0.06)" stroke={LINE} strokeWidth={1} />
+            <text x={tableX + labelW + cellW / 2} y={y + rowH / 2 + 4} fill={x86[i] ? ACCENT : DIM} fontSize={13} textAnchor="middle">
+              {x86[i] ? "✗ reorder" : "✓ ordered"}
+            </text>
+
+            <rect x={tableX + labelW + cellW} y={y} width={cellW} height={rowH} fill="rgba(255,107,53,0.06)" stroke={LINE} strokeWidth={1} />
+            <text x={tableX + labelW + cellW + cellW / 2} y={y + rowH / 2 + 4} fill={arm[i] ? ACCENT : DIM} fontSize={13} textAnchor="middle">
+              {arm[i] ? "✗ reorder" : "✓ ordered"}
+            </text>
+          </g>
+        )
+      })}
+      <text x={tableX} y={tableY + 36 + rows.length * rowH + 22} fill={DIM} fontSize={10}>
+        * Store → Load: a later load may pass an earlier store to a different address.
+      </text>
+    </g>
+  )
+}
+
+function LitmusMP() {
+  const colX = [80, 360]
+  const storeY = 90
+  const loadY = 200
+  const rowH = 34
+
+  return (
+    <g fontFamily="var(--font-mono)">
+      {/* Thread 0 column */}
+      <text x={colX[0]} y={60} fill={WHITE} fontSize={12}>Thread 0 (producer)</text>
+      <rect x={colX[0]} y={storeY} width={200} height={rowH} fill={FILL} stroke={LINE} strokeWidth={1} />
+      <text x={colX[0] + 12} y={storeY + 22} fill={WHITE} fontSize={12}>x = 1   (data)</text>
+      <rect x={colX[0]} y={storeY + rowH + 6} width={200} height={rowH} fill="rgba(255,107,53,0.08)" stroke={ACCENT} strokeWidth={1.2} />
+      <text x={colX[0] + 12} y={storeY + rowH + 28} fill={ACCENT} fontSize={12}>y = 1   (flag)</text>
+      <text x={colX[0]} y={storeY + 2 * rowH + 60} fill={DIM} fontSize={10}>
+        on ARM: these two stores may
+      </text>
+      <text x={colX[0]} y={storeY + 2 * rowH + 74} fill={DIM} fontSize={10}>
+        appear reordered to Thread 1
+      </text>
+
+      {/* Thread 1 column */}
+      <text x={colX[1]} y={60} fill={WHITE} fontSize={12}>Thread 1 (consumer)</text>
+      <rect x={colX[1]} y={loadY} width={240} height={rowH} fill="rgba(255,107,53,0.08)" stroke={ACCENT} strokeWidth={1.2} />
+      <text x={colX[1] + 12} y={loadY + 22} fill={ACCENT} fontSize={12}>r1 = y   → 1</text>
+      <rect x={colX[1]} y={loadY + rowH + 6} width={240} height={rowH} fill={FILL} stroke={LINE} strokeWidth={1} />
+      <text x={colX[1] + 12} y={loadY + rowH + 28} fill={WHITE} fontSize={12}>r2 = x   → 0  ✗</text>
+
+      {/* forbidden callout */}
+      <rect x={80} y={285} width={520} height={32} rx={4} fill="none" stroke={ACCENT} strokeWidth={1} strokeDasharray="4 3" />
+      <text x={340} y={306} fill={ACCENT} fontSize={12} textAnchor="middle">
+        forbidden outcome: r1 = 1, r2 = 0 — saw the flag but not the data
       </text>
     </g>
   )

@@ -4,10 +4,14 @@ import type { Metadata } from "next"
 import { getPostMeta, posts } from "@/lib/posts"
 import PolynomialsPost from "@/content/posts/polynomials-at-the-speed-of-silicon"
 import StoragePost from "@/content/posts/your-storage-is-lying-to-you"
+import ConsensusPost from "@/content/posts/the-consensus-problem-and-why-raft-exists"
+import MemoryPost from "@/content/posts/memory-ordering-is-not-what-you-think"
 
 const components: Record<string, React.ComponentType> = {
   "polynomials-at-the-speed-of-silicon": PolynomialsPost,
   "your-storage-is-lying-to-you": StoragePost,
+  "the-consensus-problem-and-why-raft-exists": ConsensusPost,
+  "memory-ordering-is-not-what-you-think": MemoryPost,
 }
 
 export const dynamicParams = false
