@@ -9,18 +9,20 @@ export default function HomePage() {
     <>
       <header className="mb-16 space-y-4">
         <h1 className="text-5xl font-semibold tracking-tight text-white text-balance mb-4 animate-fade-in">
-          Aryan
+          aaryan
         </h1>
         <p className="text-gray-500 animate-fade-in">
-          founding engineer at referrush · bangalore, india
+          20 y/o · 2x yc · founding engineer at referrush · bangalore, india
         </p>
         <p className="text-pretty max-w-[52ch] animate-fade-in-up">
-          i&apos;m a 20 y/o engineer. i love building things that stay calm under
-          pressure. i enjoy security, infrastructure, and systems that are hard
-          to corrupt. i live in the terminal and get pulled into rabbit holes
-          easily. if i&apos;m not coding, i&apos;m probably obsessing over
-          mechanical keyboards, reading about distributed systems, or finding
-          bugs in things that shouldn&apos;t have them.
+          i build systems that stay calm under pressure. i care about security,
+          infrastructure, and things that are hard to corrupt. i live in the
+          terminal and fall into rabbit holes for a living. past lives include
+          shipping an ai email indexing pipeline at a yc&apos;23 company,
+          finding a sql injection in rice.edu at 17, and building developer
+          tooling that people actually use. if i&apos;m not coding, i&apos;m
+          obsessing over mechanical keyboards or reading about distributed
+          systems.
         </p>
       </header>
 
@@ -29,9 +31,7 @@ export default function HomePage() {
       <div id="work">
         <SectionList
           title="work"
-          items={workItems.slice(0, 3)}
-          viewAllHref="#"
-          viewAllText="all work"
+          items={workItems}
         />
       </div>
 
@@ -39,7 +39,7 @@ export default function HomePage() {
         <SectionList
           title="projects"
           items={projectItems}
-          viewAllHref="#"
+          viewAllHref="https://github.com/maskjelly"
           viewAllText="all projects"
         />
       </div>

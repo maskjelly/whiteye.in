@@ -3,7 +3,7 @@ import { ArrowUpRight } from "lucide-react"
 
 export type Item = {
   title: string
-  href: string
+  href?: string
   role: string
   period?: string
   description: string
@@ -33,7 +33,7 @@ export function SectionList({
           <h2 className="text-2xl font-semibold flex items-center text-white">
             <span className="text-accent accent-glow mr-2">*</span> {title}
           </h2>
-          {viewAllHref && (
+          {viewAllHref && viewAllHref !== "#" && (
             <Link
               href={viewAllHref}
               className="inline-flex items-center gap-1 text-sm text-accent hover:underline group"
@@ -45,8 +45,9 @@ export function SectionList({
         </div>
       )}
       <div className="space-y-2">
-        {items.map((item) => (
-          <Link key={item.title} href={item.href} target="_blank" className="group block rounded-lg p-4 -mx-4 hover:bg-neutral-900/50">
+        {items.map((item) => {
+          const hasLink = item.href && item.href !== "#"
+          const inner = (
             <div className="flex items-start justify-between gap-4">
               <div className="min-w-0">
                 <h3 className="text-xl font-semibold text-white group-hover:text-accent transition-colors duration-200">
@@ -60,12 +61,37 @@ export function SectionList({
                 </p>
                 <p className="text-gray-300 mt-2 text-pretty">{item.description}</p>
               </div>
-              <ArrowUpRight className="w-4 h-4 mt-1.5 text-gray-600 group-hover:text-accent transition-colors shrink-0" />
+              {hasLink && (
+                <ArrowUpRight className="w-4 h-4 mt-1.5 text-gray-600 group-hover:text-accent transition-colors shrink-0" />
+              )}
             </div>
-          </Link>
-        ))}
+          )
+
+          if (hasLink) {
+            return (
+              <Link
+                key={item.title}
+                href={item.href!}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group block rounded-lg p-4 -mx-4 hover:bg-neutral-900/50 transition-colors"
+              >
+                {inner}
+              </Link>
+            )
+          }
+
+          return (
+            <div
+              key={item.title}
+              className="group block rounded-lg p-4 -mx-4"
+            >
+              {inner}
+            </div>
+          )
+        })}
       </div>
-      {viewAllHref && !showTitle && (
+      {viewAllHref && viewAllHref !== "#" && !showTitle && (
         <Link
           href={viewAllHref}
           className="inline-flex items-center gap-1 mt-6 text-accent hover:underline group"

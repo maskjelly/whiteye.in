@@ -4,19 +4,25 @@ export const projectItems: Item[] = [
   {
     title: "codeclot",
     role: "creator",
-    description: "github app that reviews issues, creates prs, understands codebases for security audits, auto-merges when clean, and proactively surfaces vulnerabilities.",
+    description: "a github app that reviews issues, writes prs, understands codebases for security audits, auto-merges when clean, and proactively surfaces vulnerabilities. the thing i wanted to exist, so i built it.",
     href: "https://github.com/apps/codeclot",
   },
   {
     title: "n8n-agents",
     role: "creator",
-    description: "natural-language workflow orchestration for n8n. describe what you want, ai builds the workflow.",
+    description: "natural-language workflow orchestration for n8n. describe what you want in plain english, the agent assembles the workflow. open source.",
     href: "https://github.com/maskjelly/N8N-AGENTS",
   },
   {
-    title: "prediction markets",
+    title: "firescope",
     role: "creator",
-    description: "on-chain prediction markets for real-world events. decentralized oracle feeds, automated resolution.",
-    href: "#",
+    description: "minimal, fast firebase framework. cut the fat, keep the realtime primitives. built because the existing client sdk was too heavy for what i needed.",
+    href: "https://github.com/maskjelly/firescope",
+  },
+  {
+    title: "kopywriter",
+    role: "creator",
+    description: "a cursor-style editor built for writing — with ai assists and detection-resilient prose tooling. an experiment in whether the 'ai editor' loop works outside of code.",
+    href: "https://github.com/maskjelly/kopywriter",
   },
 ]

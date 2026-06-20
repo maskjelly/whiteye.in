@@ -12,15 +12,15 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL("https://whiteye.in"),
   title: {
-    default: "Aryan",
-    template: "%s | Aryan",
+    default: "aaryan",
+    template: "%s | aaryan",
   },
-  description: "Founding Engineer at Referrush. Builder. Security. Systems.",
+  description: "20 y/o engineer. 2x YC. Founding engineer at Referrush. Security, infrastructure, and systems that are hard to corrupt.",
   openGraph: {
-    title: "Aryan",
-    description: "Founding Engineer at Referrush. Builder. Security. Systems.",
+    title: "aaryan",
+    description: "20 y/o engineer. 2x YC. Founding engineer at Referrush. Security, infrastructure, and systems that are hard to corrupt.",
     url: "https://whiteye.in",
-    siteName: "Aryan",
+    siteName: "aaryan",
     locale: "en_US",
     type: "website",
   },
@@ -32,9 +32,9 @@ export const metadata: Metadata = {
     "max-snippet": -1,
   },
   twitter: {
-    title: "Aryan",
+    title: "aaryan",
     card: "summary_large_image",
-    creator: "@LiquidZooo",
+    creator: "@aaryantwt",
   },
 }
 

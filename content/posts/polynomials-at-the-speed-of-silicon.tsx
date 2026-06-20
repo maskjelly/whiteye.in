@@ -1,0 +1,337 @@
+import { Figure, Diagram, Caption } from "@/components/figure"
+
+export const meta = {
+  slug: "polynomials-at-the-speed-of-silicon",
+  title: "polynomials at the speed of silicon",
+  date: "jun 21, 2026",
+  description:
+    "How multivariate polynomial evaluation on an FPGA — paired with a physical edge — lets an HFT desk turn a few hundred nanoseconds into money. And why the honest version of this story is about latency arbitrage, not front-running.",
+  readingTime: "11 min",
+}
+
+export default function Post() {
+  return (
+    <article className="prose-mono">
+      <p className="lead">
+        The edge in modern high-frequency trading is not a smarter model. It is
+        a model evaluated a few hundred nanoseconds sooner than the person on
+        the other side of the book — on hardware that never hesitates, fed by a
+        radio link that cuts a straighter line through the air than light can
+        take through glass.
+      </p>
+
+      <p>
+        I want to walk through one specific shape of that edge: where{" "}
+        <strong>multivariate polynomial systems</strong> meet{" "}
+        <strong>FPGA fabric</strong> meet <strong>a microwave dish</strong>.
+        Not because it is glamorous, but because it is one of the few places
+        where you can watch a piece of pure mathematics get compressed into
+        silicon and then into money, with the physics of light as the
+        multiplier. It is also a place where the line between{" "}
+        <em>legal</em> and <em>illegal</em> is thin and worth understanding
+        precisely.
+      </p>
+
+      <h2>the stakes, in nanoseconds</h2>
+      <p>
+        A modern exchange matches orders in a data center in Carteret, New
+        Jersey (for NASDAQ) or Aurora, Illinois (for CME). If you are in that
+        building, your order book is a few meters of fiber away. If you are
+        not, you are somewhere across the country, and by the time you see a
+        price, someone inside the building has already seen it and acted.
+      </p>
+      <p>
+        The difference is not milliseconds. It is hundreds of nanoseconds —
+        sometimes tens. To put that in perspective: at a 10 Gbps interface,
+        one byte takes about 0.8 ns to serialize onto the wire. A cache miss
+        to main memory on a fast CPU is ~100 ns. A branch mispredict costs you
+        ~15–20 cycles. In a software path, you will hit all of these. On an
+        FPGA with a fixed pipeline, you hit none of them. That is the whole
+        game.
+      </p>
+
+      <Figure>
+        <Diagram
+          viewBox="0 0 720 470"
+          title="latency budget"
+          nodes={[
+            { y: 30, label: "exchange tick (ITCH)", time: "—" },
+            { y: 80, label: "microwave direct link", time: "~4.2 ms NJ → IL" },
+            { y: 150, label: "FPGA NIC (kernel bypass)", time: "~100 ns" },
+            { y: 210, label: "ITCH decode in fabric", time: "~30 ns" },
+            { y: 270, label: "orderbook update", time: "~20 ns" },
+            { y: 330, label: "polynomial model eval (DSP)", time: "~10–40 ns" },
+            { y: 390, label: "signal → OUCH order out", time: "~15 ns" },
+          ]}
+        />
+        <Caption>
+          A rough, qualitative latency budget for a co-located FPGA path. The
+          cross-country hop dominates everything else combined by four orders
+          of magnitude — which is why the dish, not the chip, is the first
+          thing desks spend on.
+        </Caption>
+      </Figure>
+
+      <h2>where the polynomials live</h2>
+      <p>
+        People imagine HFT models as neural networks. Some are, but neural
+        nets are awkward in fabric: the multiply-accumulate pattern is fine,
+        but the indirection and dynamic shapes fight you. The models that
+        actually win on latency are <strong>cheap and closed-form</strong>,
+        and a huge fraction of them are polynomials.
+      </p>
+      <p>
+        A few examples that show up for real:
+      </p>
+      <ul>
+        <li>
+          <strong>Implied volatility surfaces.</strong> Given a grid of option
+          prices across strikes <code>K</code> and maturities <code>T</code>,
+          you fit a smooth surface{" "}
+          <code>σ(K,T) = Σ cᵢⱼ · fᵢ(K) · gⱼ(T)</code>. SVI and its cousins
+          are parametric; a polynomial basis (e.g. Laguerre or plain monomial)
+          is what you reach for when you want to evaluate it in single-digit
+          nanoseconds. You fit the coefficients offline. Online, as the
+          underlying moves, you re-evaluate.
+        </li>
+        <li>
+          <strong>Cross-venue no-arbitrage conditions.</strong> The boundary
+          where a set of quotes becomes arbitrageable is the zero set of a
+          system of polynomial inequalities in the prices. Offline, you
+          characterize the regions. Online, you evaluate which region you are
+          in.
+        </li>
+        <li>
+          <strong>Curve fitting for fixed income.</strong> Nelson–Siegel,
+          cubic splines, cubic B-splines — all polynomials. Recomputing a
+          discount curve as quotes move is polynomial evaluation.
+        </li>
+        <li>
+          <strong> Greeks for risk.</strong> Many sensitivities are derived
+          polynomials of the pricing polynomial. If price is a polynomial in
+          <code>S</code>, then delta is a polynomial in <code>S</code> for
+          free.
+        </li>
+      </ul>
+      <p>
+        The common shape: a multivariate polynomial{" "}
+        <code>p(x₁,…,xₙ) = Σ cᵢ · x₁^a · x₂^b … xₙ^z</code> that you need to
+        evaluate, very fast, with inputs that change every time the book
+        moves.
+      </p>
+
+      <h2>solving is not the same as evaluating</h2>
+      <p>
+        Here is the distinction that matters and that a lot of pop-Finance
+        writing gets wrong. <strong>Solving</strong> a multivariate polynomial
+        system — finding the common zeros, inverting the map — is expensive.
+        Gröbner bases (Buchberger, F4, F5), resultants, homotopy continuation:
+        these are beautiful and slow. They are not happening in the hot path
+        of a trading system. They are <em>NP-hard in the worst case</em> and
+        frequently dreadful in practice.
+      </p>
+      <p>
+        What happens in the hot path is <strong>evaluation</strong>: given
+        fixed coefficients (computed offline, refreshed on a slower clock),
+        plug in live inputs and get a number out. Evaluation is cheap and
+        wildly parallelizable. The entire art is in restructuring the
+        polynomial so that evaluation is a fixed, pipelined computation with
+        no data-dependent branching.
+      </p>
+      <p>
+        That restructuring has a name.
+      </p>
+
+      <h2>Horner, and why it loves silicon</h2>
+      <p>
+        Horner&apos;s method rewrites a univariate polynomial
+      </p>
+      <pre>
+        <code>{`p(x) = a₀ + a₁x + a₂x² + a₃x³ + a₄x⁴`}</code>
+      </pre>
+      <p>as the nested form</p>
+      <pre>
+        <code>{`p(x) = a₀ + x·(a₁ + x·(a₂ + x·(a₃ + x·a₄)))`}</code>
+      </pre>
+      <p>
+        Same value, but a degree-<code>n</code> polynomial is now{" "}
+        <code>n</code> multiplies and <code>n</code> adds, with a dependency
+        chain of length <code>n</code>. For multivariates you nest one
+        variable at a time. The dependency chain is the catch — each stage
+        needs the previous result — but each stage is a single{" "}
+        <strong>multiply-accumulate</strong>, and that is exactly the
+        operation silicon is best at.
+      </p>
+
+      <Figure>
+        <Diagram
+          viewBox="0 0 720 360"
+          title="Horner datapath — degree 4, pipelined"
+          datapath
+        />
+        <Caption>
+          Four pipelined MAC stages. Each stage multiplies the running
+          accumulator by <code>x</code> and adds the next coefficient. One MAC
+          per cycle, one register between stages, fully deterministic
+          latency. A Xilinx UltraScale+ DSP slice does this MAC in one cycle
+          at hundreds of MHz.
+        </Caption>
+      </Figure>
+
+      <p>
+        On a modern FPGA (say a Xilinx UltraScale+), the DSP48E2 slice is
+        literally a 27×18-bit multiplier feeding an accumulator, and it can
+        do one MAC per clock cycle once pipelined. A degree-8 Horner chain is
+        eight DSP slices in a row, eight pipeline registers, and a fixed
+        eight-cycle latency from input to result. No cache. No predictor. No
+        operating system. The latency is a number you can write down and
+        trust.
+      </p>
+      <p>
+        Two more things make this fit:
+      </p>
+      <ul>
+        <li>
+          <strong>Fixed-point, not floating.</strong> Floating point on an
+          FPGA is possible but burns resources and adds latency for
+          normalization. Fixed-point with enough headroom is deterministic,
+          cheap, and good enough for the precision a vol surface actually
+          needs.
+        </li>
+        <li>
+          <strong>No data-dependent branches.</strong> Horner is a straight
+          pipeline. The same cycles run every time. That is what makes the
+          latency <em>predictable</em>, which matters more than making it
+          <em>low</em>. A path that is usually 40 ns but occasionally 400 ns
+          is useless here; a path that is always 48 ns is gold.
+        </li>
+      </ul>
+
+      <h2>the pipeline in the fabric</h2>
+      <p>
+        Stitch it together and the whole hot path lives on one chip:
+      </p>
+      <ol>
+        <li>
+          A <strong>kernel-bypass NIC</strong> (or the FPGA itself acting as
+          the NIC) pulls raw ITCH bytes off the wire in hardware.
+        </li>
+        <li>
+          A <strong>protocol decoder</strong> in fabric parses the multicast
+          feed and emits order-book deltas.
+        </li>
+        <li>
+          The <strong>order book</strong> is an FPGA block — usually a
+          BRAM-backed sorted array of price levels.
+        </li>
+        <li>
+          The book&apos;s top-of-book and a few depth levels feed the{" "}
+          <strong>model</strong>: the Horner chain in the DSP slices,
+          evaluating your polynomial in a handful of cycles.
+        </li>
+        <li>
+          The model output crosses a <strong>threshold</strong> (also just
+          a comparator) and emits an <strong>OUCH</strong> order, which goes
+          straight back onto the wire.
+        </li>
+      </ol>
+      <p>
+        At no point does a CPU see any of this. At no point does a cache miss
+        happen. The entire loop from &quot;the book moved&quot; to &quot;I
+        have a new order on the wire&quot; can be a few tens of nanoseconds.
+      </p>
+
+      <h2>the physical edge: line of sight, and the speed of light</h2>
+      <p>
+        Now the multiplier. Light in a fiber travels at roughly{" "}
+        <code>~0.67c</code> — the refractive index of silica is about 1.5, and
+        <code>v = c/n</code>. A radio wave through air travels at{" "}
+        <code>~0.97c</code> or better. So for the ~1,100 km between Carteret
+        and Aurora, a fiber path takes roughly 5.5 ms one-way, and a
+        microwave path along the same route — if you can build it, tower by
+        tower, line-of-sight — takes roughly 3.8 ms.
+      </p>
+      <p>
+        That ~1.7 ms is not a margin. It is an <em>eternity</em>. It is larger
+        than the entire in-fabric pipeline by about four orders of magnitude.
+        The reason HFT desks lease mountaintops and build dedicated
+        millimeter-wave links across the Midwest is that no amount of silicon
+        cleverness recovers a 1.7 ms physics deficit.
+      </p>
+
+      <Figure>
+        <Diagram
+          viewBox="0 0 720 280"
+          title="fiber vs. microwave — Carteret → Aurora (~1,100 km)"
+          compare
+        />
+        <Caption>
+          Same endpoints, different media. The ~50% propagation advantage of
+          air over glass becomes ~1.7 ms over a continental hop. Real routes
+          land closer to ~30% faster end-to-end once you account for repeater
+          towers and terrain, but the floor is set by physics, not
+          engineering.
+        </Caption>
+      </Figure>
+
+      <p>
+        This is the &quot;direct line&quot; part. The FPGA is the second
+        derivative; the dish is the first. Together they form a moat that is
+        genuinely hard to copy: you cannot buy a faster law of physics, and
+        you cannot get a county zoning board to approve your tower any
+        faster.
+      </p>
+
+      <h2>the part nobody likes to say out loud</h2>
+      <p>
+        Two words that get used interchangeably and absolutely should not be:
+      </p>
+      <ul>
+        <li>
+          <strong>Latency arbitrage</strong> is when a price on one venue
+          moves and you act on a slower venue before that venue&apos;s quote
+          updates. You are not ahead of anyone&apos;s order. You are ahead of
+          a <em>price</em>. It is controversial, it is arguably a
+          negative-sum tax on slower participants, but it is legal.
+        </li>
+        <li>
+          <strong>Front-running</strong> is when you learn of a{" "}
+          <em>specific pending order</em> (usually a client&apos;s) and trade
+          ahead of it. That is illegal, and it should be. The hardware is
+          identical; the <em>information</em> is different.
+        </li>
+      </ul>
+      <p>
+        The FPGA-and-dish stack I just described is the machinery of latency
+        arbitrage. It is not, by itself, front-running. Conflating the two is
+        either sloppy or dishonest. If you want to argue that latency
+        arbitrage should be regulated, argue that — but argue it on its own
+        terms, not by relabeling it.
+      </p>
+      <p>
+        My interest in this stuff is not &quot;how do I build a desk.&quot; It
+        is that the design problem is unusually pure: a hard real-time
+        budget, a closed-form mathematical core, and a physical layer you can
+        reason about from first principles. Systems that are hard to corrupt
+        are interesting to me, and a deterministic pipeline is the extreme
+        case of that.
+      </p>
+
+      <h2>what it generalizes to</h2>
+      <p>
+        Strip away the trading and the lesson is broader. Whenever you have a
+        computation that (a) can be expressed as a fixed arithmetic DAG and
+        (b) must run with a hard, predictable latency, the CPU is the wrong
+        answer and the FPGA is the right one. That shows up in radar DSP, in
+        packet inspection, in any control loop where &quot;usually fast&quot;
+        is not fast enough.
+      </p>
+      <p>
+        The trick, every time, is the same one Horner teaches:{" "}
+        <strong>restructure the math to match the hardware</strong>, not the
+        other way around. The polynomial doesn&apos;t change. Your
+        appreciation of how it evaluates does.
+      </p>
+    </article>
+  )
+}

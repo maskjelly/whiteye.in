@@ -28,7 +28,7 @@ export function Navbar() {
           router.push("/")
           break
         case "b":
-          document.getElementById("blog")?.scrollIntoView({ behavior: "smooth" })
+          router.push("/blog")
           break
         case "p":
           document.getElementById("projects")?.scrollIntoView({ behavior: "smooth" })
@@ -55,7 +55,7 @@ export function Navbar() {
           <span className="hidden sm:inline">[h] </span>home
         </Link>
         <Link
-          href="/#blog"
+          href="/blog"
           className="hover:text-accent transition-colors duration-200 py-2 px-1.5 sm:px-0 sm:py-0"
         >
           <span className="hidden sm:inline">[b] </span>blog
