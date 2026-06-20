@@ -257,6 +257,72 @@ body {
     content: "#";
   }
 
+  .prose-mono .references {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #1f1f1f;
+  }
+
+  .prose-mono .references h2 {
+    font-size: 1rem;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 1rem;
+  }
+
+  .prose-mono .references ol {
+    list-style: decimal;
+    padding-left: 1.5rem;
+    font-size: 0.85rem;
+  }
+
+  .prose-mono .references li {
+    color: #9ca3af;
+    line-height: 1.6;
+    margin-bottom: 0.5rem;
+    padding-left: 0.25rem;
+  }
+
+  .prose-mono .references a {
+    color: #9ca3af;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    text-decoration-color: #333;
+  }
+
+  .prose-mono .references a:hover {
+    color: var(--color-accent);
+    text-decoration-color: var(--color-accent);
+  }
+
+  .prose-mono .footnote-ref {
+    color: var(--color-accent);
+    text-decoration: none;
+    font-size: 0.75em;
+    vertical-align: super;
+    line-height: 0;
+  }
+
+  .prose-mono .footnote-ref:hover {
+    text-decoration: underline;
+  }
+
+  .prose-mono .correction {
+    border-left: 2px solid #4b5563;
+    padding: 0.5rem 1rem;
+    margin: 1.5rem 0;
+    font-size: 0.85rem;
+    color: #9ca3af;
+    font-style: italic;
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+  .prose-mono .correction strong {
+    color: #d1d5db;
+    font-style: normal;
+  }
+
   .prose-mono .figure {
     margin: 2.25rem 0 0.5rem;
   }
