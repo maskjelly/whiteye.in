@@ -6,12 +6,14 @@ import PolynomialsPost from "@/content/posts/polynomials-at-the-speed-of-silicon
 import StoragePost from "@/content/posts/your-storage-is-lying-to-you"
 import ConsensusPost from "@/content/posts/the-consensus-problem-and-why-raft-exists"
 import MemoryPost from "@/content/posts/memory-ordering-is-not-what-you-think"
+import BftPost from "@/content/posts/byzantine-fault-tolerance-when-nodes-lie"
 
 const components: Record<string, React.ComponentType> = {
   "polynomials-at-the-speed-of-silicon": PolynomialsPost,
   "your-storage-is-lying-to-you": StoragePost,
   "the-consensus-problem-and-why-raft-exists": ConsensusPost,
   "memory-ordering-is-not-what-you-think": MemoryPost,
+  "byzantine-fault-tolerance-when-nodes-lie": BftPost,
 }
 
 export const dynamicParams = false
@@ -63,6 +65,12 @@ export default async function PostPage({
     notFound()
   }
 
+  const index = posts.findIndex((p) => p.slug === slug)
+  const prevNext = {
+    prev: index > 0 ? posts[index - 1] : null,
+    next: index < posts.length - 1 ? posts[index + 1] : null,
+  }
+
   return (
     <>
       <article className="pt-6">
@@ -84,7 +92,38 @@ export default async function PostPage({
 
         <Content />
 
-        <div className="mt-16 pt-8 border-t border-neutral-800 text-sm flex items-center justify-between">
+        {prevNext && (
+          <nav className="mt-16 pt-8 border-t border-neutral-800 grid grid-cols-2 gap-4">
+            {prevNext.prev ? (
+              <Link
+                href={`/blog/${prevNext.prev.slug}`}
+                className="group block rounded-lg p-4 -mx-4 hover:bg-neutral-900/50 transition-colors"
+              >
+                <p className="text-xs text-gray-600 mb-1">← previous</p>
+                <p className="text-gray-200 group-hover:text-accent transition-colors text-sm">
+                  {prevNext.prev.title}
+                </p>
+              </Link>
+            ) : (
+              <span />
+            )}
+            {prevNext.next ? (
+              <Link
+                href={`/blog/${prevNext.next.slug}`}
+                className="group block rounded-lg p-4 -mx-4 hover:bg-neutral-900/50 transition-colors text-right"
+              >
+                <p className="text-xs text-gray-600 mb-1">next →</p>
+                <p className="text-gray-200 group-hover:text-accent transition-colors text-sm">
+                  {prevNext.next.title}
+                </p>
+              </Link>
+            ) : (
+              <span />
+            )}
+          </nav>
+        )}
+
+        <div className="mt-8 pt-8 border-t border-neutral-800 text-sm flex items-center justify-between">
           <Link href="/blog" className="text-gray-500 hover:text-accent transition-colors">
             ← back to writing
           </Link>

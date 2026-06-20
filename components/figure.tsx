@@ -15,6 +15,9 @@ type DiagramProps = {
   storebuffer?: boolean
   reorderTable?: boolean
   litmusMP?: boolean
+  byzCommander?: boolean
+  threeFPlusOne?: boolean
+  pbft?: boolean
 }
 
 const ACCENT = "#ff6b35"
@@ -24,7 +27,7 @@ const LINE = "#262626"
 const FILL = "#181818"
 const WHITE = "#ffffff"
 
-export function Diagram({ viewBox, title, nodes, datapath, compare, stack, raidhole, merkle, splitbrain, paxos, raft, storebuffer, reorderTable, litmusMP }: DiagramProps) {
+export function Diagram({ viewBox, title, nodes, datapath, compare, stack, raidhole, merkle, splitbrain, paxos, raft, storebuffer, reorderTable, litmusMP, byzCommander, threeFPlusOne, pbft }: DiagramProps) {
   return (
     <svg viewBox={viewBox} role="img" aria-label={title ?? "diagram"}>
       <DiagramHeader title={title} />
@@ -40,6 +43,9 @@ export function Diagram({ viewBox, title, nodes, datapath, compare, stack, raidh
       {storebuffer && <StoreBuffer />}
       {reorderTable && <ReorderTable />}
       {litmusMP && <LitmusMP />}
+      {byzCommander && <ByzCommander />}
+      {threeFPlusOne && <ThreeFPlusOne />}
+      {pbft && <Pbft />}
     </svg>
   )
 }
@@ -878,6 +884,141 @@ function LitmusMP() {
       <rect x={80} y={285} width={520} height={32} rx={4} fill="none" stroke={ACCENT} strokeWidth={1} strokeDasharray="4 3" />
       <text x={340} y={306} fill={ACCENT} fontSize={12} textAnchor="middle">
         forbidden outcome: r1 = 1, r2 = 0 — saw the flag but not the data
+      </text>
+    </g>
+  )
+}
+
+function ByzCommander() {
+  const cx = 130
+  const cy = 130
+  const lx = [490, 490]
+  const ly = [90, 190]
+  return (
+    <g fontFamily="var(--font-mono)">
+      {/* commander (traitor) */}
+      <circle cx={cx} cy={cy} r={26} fill="rgba(255,107,53,0.10)" stroke={ACCENT} strokeWidth={1.5} strokeDasharray="4 3" />
+      <text x={cx} y={cy + 5} fill={ACCENT} fontSize={13} textAnchor="middle">C</text>
+      <text x={cx} y={cy + 46} fill={ACCENT} fontSize={10} textAnchor="middle">traitor</text>
+
+      {/* lieutenants */}
+      <circle cx={lx[0]} cy={ly[0]} r={22} fill={FILL} stroke={LINE} strokeWidth={1} />
+      <text x={lx[0]} y={ly[0] + 5} fill={WHITE} fontSize={12} textAnchor="middle">L1</text>
+      <text x={lx[0]} y={ly[0] + 40} fill={DIM} fontSize={10} textAnchor="middle">honest</text>
+
+      <circle cx={lx[1]} cy={ly[1]} r={22} fill={FILL} stroke={LINE} strokeWidth={1} />
+      <text x={lx[1]} y={ly[1] + 5} fill={WHITE} fontSize={12} textAnchor="middle">L2</text>
+      <text x={lx[1]} y={ly[1] + 40} fill={DIM} fontSize={10} textAnchor="middle">honest</text>
+
+      {/* contradictory messages */}
+      <line x1={cx + 24} y1={cy - 10} x2={lx[0] - 22} y2={ly[0] + 4} stroke={ACCENT} strokeWidth={1.4} markerEnd="url(#arrow-accent)" />
+      <text x={300} y={100} fill={ACCENT} fontSize={12}>&quot;attack&quot;</text>
+
+      <line x1={cx + 24} y1={cy + 10} x2={lx[1] - 22} y2={ly[1] - 4} stroke={ACCENT} strokeWidth={1.4} markerEnd="url(#arrow-accent)" />
+      <text x={300} y={180} fill={ACCENT} fontSize={12}>&quot;retreat&quot;</text>
+
+      <text x={360} y={270} fill={DIM} fontSize={11} textAnchor="middle">
+        same commander, two honest lieutenants, two different orders → no agreement
+      </text>
+    </g>
+  )
+}
+
+function ThreeFPlusOne() {
+  const cols = [
+    { label: "N = 3f", x: 80, valid: false },
+    { label: "N = 3f + 1", x: 420, valid: true },
+  ]
+  const y = 100
+  const cellW = 60
+  const cellH = 40
+  return (
+    <g fontFamily="var(--font-mono)">
+      {cols.map((c, ci) => (
+        <g key={ci}>
+          <text x={c.x + 120} y={y - 20} fill={c.valid ? ACCENT : DIM} fontSize={13} textAnchor="middle">
+            {c.label}{c.valid ? " ✓" : " ✗"}
+          </text>
+          {/* rows: liars (f), crashed (f), honest (rest) */}
+          {[0, 1, 2].map((ri) => {
+            const ry = y + ri * (cellH + 4)
+            const kind = ri === 0 ? "liar" : ri === 1 ? "crashed" : "honest"
+            const fillC = kind === "liar" ? "rgba(255,107,53,0.25)" : kind === "crashed" ? "#222" : "rgba(255,255,255,0.04)"
+            const strokeC = kind === "liar" ? ACCENT : kind === "crashed" ? DIM : LINE
+            const txtC = kind === "liar" ? ACCENT : kind === "crashed" ? DIM : WHITE
+            const count = c.valid ? (ri === 0 ? "f" : ri === 1 ? "f" : "f+1") : (ri === 0 ? "f" : ri === 1 ? "f" : "f")
+            return (
+              <g key={ri}>
+                <rect x={c.x} y={ry} width={cellW} height={cellH} fill={fillC} stroke={strokeC} strokeWidth={1} />
+                <text x={c.x + cellW / 2} y={ry + cellH / 2 + 4} fill={txtC} fontSize={12} textAnchor="middle">{count}</text>
+                <text x={c.x - 8} y={ry + cellH / 2 + 4} fill={DIM} fontSize={10} textAnchor="end">{kind}</text>
+                {/* second cell to visualize overlap */}
+                <rect x={c.x + cellW + 8} y={ry} width={cellW} height={cellH} fill={fillC} stroke={strokeC} strokeWidth={1} />
+                <text x={c.x + cellW + 8 + cellW / 2} y={ry + cellH / 2 + 4} fill={txtC} fontSize={12} textAnchor="middle">{count}</text>
+              </g>
+            )
+          })}
+          <text x={c.x + 120} y={y + 3 * (cellH + 4) + 20} fill={c.valid ? ACCENT : DIM} fontSize={11} textAnchor="middle">
+            {c.valid ? "honest f+1 > liars f among active 2f+1" : "honest f = liars f → tie, can't decide"}
+          </text>
+        </g>
+      ))}
+    </g>
+  )
+}
+
+function Pbft() {
+  const primary = { x: 100, y: 160, label: "primary" }
+  const reps = [
+    { x: 320, y: 90, label: "R1" },
+    { x: 320, y: 160, label: "R2" },
+    { x: 320, y: 230, label: "R3" },
+  ]
+  const r = 22
+  return (
+    <g fontFamily="var(--font-mono)">
+      {/* primary */}
+      <circle cx={primary.x} cy={primary.y} r={r} fill="rgba(255,107,53,0.10)" stroke={ACCENT} strokeWidth={1.4} />
+      <text x={primary.x} y={primary.y + 5} fill={ACCENT} fontSize={11} textAnchor="middle">P</text>
+      <text x={primary.x} y={primary.y + 40} fill={ACCENT} fontSize={10} textAnchor="middle">primary</text>
+
+      {/* replicas */}
+      {reps.map((rep, i) => (
+        <g key={i}>
+          <circle cx={rep.x} cy={rep.y} r={r} fill={FILL} stroke={LINE} strokeWidth={1} />
+          <text x={rep.x} y={rep.y + 5} fill={WHITE} fontSize={10} textAnchor="middle">{rep.label}</text>
+        </g>
+      ))}
+      <text x={reps[reps.length - 1].x} y={reps[reps.length - 1].y + 40} fill={DIM} fontSize={10} textAnchor="middle">replicas</text>
+
+      {/* Phase 1: pre-prepare (primary → all) */}
+      {reps.map((rep, i) => (
+        <line key={`pp-${i}`} x1={primary.x + r} y1={primary.y} x2={rep.x - r} y2={rep.y} stroke={ACCENT} strokeWidth={1.2} markerEnd="url(#arrow-accent)" />
+      ))}
+      <text x={200} y={120} fill={ACCENT} fontSize={11}>pre-prepare</text>
+
+      {/* Phase 2: prepare (all-to-all) */}
+      {reps.map((a, i) =>
+        reps.map((b, j) =>
+          i < j ? (
+            <line key={`pr-${i}-${j}`} x1={a.x + r} y1={a.y} x2={b.x + r} y2={b.y} stroke={DIM} strokeWidth={1} strokeDasharray="3 3" />
+          ) : null
+        )
+      )}
+      <text x={400} y={160} fill={DIM} fontSize={11}>prepare (all ↔ all)</text>
+
+      {/* Phase 3: commit (all-to-all, draw as a cluster on the right) */}
+      {reps.map((rep, i) => (
+        <g key={`cm-${i}`}>
+          <line x1={rep.x + r} y1={rep.y} x2={560} y2={rep.y} stroke={DIM} strokeWidth={1} strokeDasharray="2 4" />
+          <circle cx={580} cy={rep.y} r={14} fill={FILL} stroke={ACCENT} strokeWidth={1} />
+          <text x={580} y={rep.y + 4} fill={ACCENT} fontSize={9} textAnchor="middle">C{i + 1}</text>
+        </g>
+      ))}
+      <text x={580} y={270} fill={ACCENT} fontSize={11} textAnchor="middle">commit</text>
+
+      <text x={360} y={310} fill={DIM} fontSize={11} textAnchor="middle">
+        O(n²) messages per request — the price of not trusting your peers
       </text>
     </g>
   )
