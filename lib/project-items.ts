@@ -2,6 +2,11 @@ import type { Item } from "@/components/section-list"
 
 export const projectItems: Item[] = [
   {
+    title: "jurius",
+    role: "creator",
+    description: "an ai workspace for lawyers. upload a case, and it structures the facts, finds similar past cases on an intelligence graph, and stress-tests strategy with multi-agent litigation simulations. turns legal history into legal strategy. the side thing i'm building right now.",
+  },
+  {
     title: "codeclot",
     role: "creator",
     description: "a github app that reviews issues, writes prs, understands codebases for security audits, auto-merges when clean, and proactively surfaces vulnerabilities. the thing i wanted to exist, so i built it.",

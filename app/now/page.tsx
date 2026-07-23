@@ -14,7 +14,7 @@ export default function NowPage() {
           what i&apos;m doing now
         </h1>
         <p className="text-sm text-gray-600 mt-3 animate-fade-in-up">
-          last updated jun 21, 2026
+          last updated jul 23, 2026
         </p>
       </header>
 
@@ -25,9 +25,11 @@ export default function NowPage() {
           Most of my days are in the terminal.
         </p>
         <p>
-          On the side I&apos;m shipping <strong>codeclot</strong>, a github
-          app that does security audits and proactive review. It is the thing
-          I wanted to exist, so I am building it.
+          On the side I&apos;m building <strong>jurius</strong> — an ai
+          workspace for lawyers. Upload a case, it structures the facts and
+          legal signals, finds similar past cases on an intelligence graph,
+          and stress-tests strategy with multi-agent litigation simulations.
+          The core idea: turn legal history into legal strategy.
         </p>
         <p>
           Reading: <em>Designing Data-Intensive Applications</em> (re-reading
