@@ -25,7 +25,11 @@ export default function NowPage() {
           Most of my days are in the terminal.
         </p>
         <p>
-          On the side I&apos;m building <strong>jurius</strong> — litigation
+          On the side I&apos;m building{" "}
+          <Link href="https://lawjurius.com" className="text-accent hover:underline">
+            <strong>jurius</strong>
+          </Link>{" "}
+          — litigation
           intelligence for lawyers. Upload a case, and it maps the matter
           against past judgments — similar facts, evidence, judges, outcomes —
           on a precedent graph, so strategy comes from what has actually

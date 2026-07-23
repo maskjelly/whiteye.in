@@ -5,6 +5,7 @@ export const projectItems: Item[] = [
     title: "jurius",
     role: "creator",
     description: "litigation intelligence for lawyers. upload a case, and it maps the matter against past judgments — similar facts, evidence, judges, outcomes — on a precedent graph you can explore and build strategy from. turns legal history into legal strategy. the side thing i'm building right now.",
+    href: "https://lawjurius.com",
   },
   {
     title: "codeclot",
