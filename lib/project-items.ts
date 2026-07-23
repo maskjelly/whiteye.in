@@ -4,7 +4,7 @@ export const projectItems: Item[] = [
   {
     title: "jurius",
     role: "creator",
-    description: "an ai workspace for lawyers. upload a case, and it structures the facts, finds similar past cases on an intelligence graph, and stress-tests strategy with multi-agent litigation simulations. turns legal history into legal strategy. the side thing i'm building right now.",
+    description: "litigation intelligence for lawyers. upload a case, and it maps the matter against past judgments — similar facts, evidence, judges, outcomes — on a precedent graph you can explore and build strategy from. turns legal history into legal strategy. the side thing i'm building right now.",
   },
   {
     title: "codeclot",
