@@ -8,55 +8,40 @@ export const metadata = {
 export default function NowPage() {
   return (
     <>
-      <header className="mb-10 pt-6">
-        <p className="text-gray-500 mb-3 animate-fade-in">/ now</p>
-        <h1 className="text-4xl font-semibold tracking-tight text-white text-balance animate-fade-in">
-          what i&apos;m doing now
+      <header className="page-header">
+        <p className="page-kicker animate-fade-in">now</p>
+        <h1 className="page-title animate-fade-in">
+          lately.
         </h1>
-        <p className="text-sm text-gray-600 mt-3 animate-fade-in-up">
+        <p className="page-meta animate-fade-in-up">
           last updated jul 23, 2026
         </p>
       </header>
 
       <div className="prose-mono">
         <p>
-          Building <strong>referrush</strong> as a founding engineer — the
-          core systems, the late-night infra, the things that have to stay up.
-          Most of my days are in the terminal.
+          Building <strong>referrush</strong>. Mostly systems that need to stay up.
         </p>
         <p>
-          On the side I&apos;m building{" "}
+          Also building{" "}
           <Link href="https://lawjurius.com" className="text-accent hover:underline">
             <strong>jurius</strong>
           </Link>{" "}
-          — litigation
-          intelligence for lawyers. Upload a case, and it maps the matter
-          against past judgments — similar facts, evidence, judges, outcomes —
-          on a precedent graph, so strategy comes from what has actually
-          happened in court. The core idea: turn legal history into legal
-          strategy.
+          — litigation intelligence for lawyers.
         </p>
         <p>
-          Reading: <em>Designing Data-Intensive Applications</em> (re-reading
-          the replication chapters), and Paul McKenney&apos;s memory-model
-          papers when I have the patience for them.
+          Reading <em>Designing Data-Intensive Applications</em>. Again.
         </p>
         <p>
-          Writing more here. The posts are long because the topics deserve
-          long. If you read one and want to argue, my{" "}
+          Writing here. Arguments welcome in my{" "}
           <Link href="https://twitter.com/aaryantwt" className="text-accent hover:underline">
             dms
-          </Link>{" "}
-          are open.
-        </p>
-        <p>
-          Not currently looking for work — but always open to talk to people
-          who care about the same things.
+          </Link>.
         </p>
       </div>
 
-      <div className="mt-12 pt-8 border-t border-neutral-800 text-sm">
-        <Link href="/" className="text-gray-500 hover:text-accent transition-colors">
+      <div className="back-row">
+        <Link href="/" className="back-link">
           ← back home
         </Link>
       </div>

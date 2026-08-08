@@ -4,8 +4,7 @@ export const meta = {
   slug: "the-consensus-problem-and-why-raft-exists",
   title: "the consensus problem, and why raft exists",
   date: "may 28, 2026",
-  description:
-    "From naive majority vote to FLP to Paxos to Raft. How distributed agreement got from impossible, to correct-but-unteachable, to the thing etcd actually runs.",
+  description: "how machines agree.",
   readingTime: "12 min",
 }
 

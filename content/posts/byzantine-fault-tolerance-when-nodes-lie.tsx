@@ -4,8 +4,7 @@ export const meta = {
   slug: "byzantine-fault-tolerance-when-nodes-lie",
   title: "byzantine fault tolerance, and when nodes lie",
   date: "jun 02, 2026",
-  description:
-    "The consensus post assumed nodes crash. This one assumes they lie. From the Byzantine Generals Problem to the 3f+1 bound to PBFT to HotStuff, and when you actually need any of this.",
+  description: "what happens when distributed nodes lie.",
   readingTime: "11 min",
 }
 

@@ -7,22 +7,16 @@ import { workItems } from "@/lib/work-items"
 export default function HomePage() {
   return (
     <>
-      <header className="mb-16 space-y-4">
-        <h1 className="text-5xl font-semibold tracking-tight text-white text-balance mb-4 animate-fade-in">
-          aaryan
+      <header className="home-hero">
+        <p className="eyebrow animate-fade-in">engineer · bangalore</p>
+        <h1 className="display-title animate-fade-in">
+          aaryan.
         </h1>
-        <p className="text-gray-500 animate-fade-in">
-          20 y/o · 2x yc · founding engineer at referrush · bangalore, india
+        <p className="hero-copy animate-fade-in-up">
+          i make software and write about the parts that break.
         </p>
-        <p className="text-pretty max-w-[52ch] animate-fade-in-up">
-          i build systems that stay calm under pressure. i care about security,
-          infrastructure, and things that are hard to corrupt. i live in the
-          terminal and fall into rabbit holes for a living. past lives include
-          shipping an ai email indexing pipeline at a yc&apos;23 company,
-          finding a sql injection in rice.edu at 17, and building developer
-          tooling that people actually use. if i&apos;m not coding, i&apos;m
-          obsessing over mechanical keyboards or reading about distributed
-          systems.
+        <p className="hero-note animate-fade-in-up">
+          currently at referrush · two-time yc alum.
         </p>
       </header>
 
@@ -38,7 +32,7 @@ export default function HomePage() {
       <div id="projects">
         <SectionList
           title="projects"
-          items={projectItems}
+          items={projectItems.slice(0, 3)}
           viewAllHref="https://github.com/maskjelly"
           viewAllText="all projects"
         />

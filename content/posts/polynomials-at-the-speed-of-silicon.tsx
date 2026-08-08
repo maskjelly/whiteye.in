@@ -5,8 +5,7 @@ export const meta = {
   slug: "polynomials-at-the-speed-of-silicon",
   title: "polynomials at the speed of silicon",
   date: "jun 21, 2026",
-  description:
-    "On multivariate polynomial evaluation, Horner's method on FPGA DSP slices, microwave vs fiber propagation, and the difference between latency arbitrage and front-running.",
+  description: "fast polynomial evaluation, from silicon to markets.",
   readingTime: "11 min",
 }
 

@@ -27,16 +27,14 @@ export function SectionList({
   showSectionBorder = true,
 }: SectionListProps) {
   return (
-    <section className={`mb-12 animate-fade-in-up ${showSectionBorder ? "pt-10 border-t border-neutral-800" : ""}`}>
+    <section className={`section-block animate-fade-in-up ${showSectionBorder ? "" : "border-none"}`}>
       {showTitle && (
-        <div className="flex items-baseline justify-between mb-6">
-          <h2 className="text-2xl font-semibold flex items-center text-white">
-            <span className="text-accent accent-glow mr-2">*</span> {title}
-          </h2>
+        <div className="section-heading">
+          <h2 className="section-title">{title}</h2>
           {viewAllHref && viewAllHref !== "#" && (
             <Link
               href={viewAllHref}
-              className="inline-flex items-center gap-1 text-sm text-accent hover:underline group"
+              className="section-link group"
             >
               {viewAllText}{" "}
               <ArrowUpRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1 group-hover:-translate-y-1" />
@@ -44,25 +42,25 @@ export function SectionList({
           )}
         </div>
       )}
-      <div className="space-y-2">
+      <div className="entry-list">
         {items.map((item) => {
           const hasLink = item.href && item.href !== "#"
           const inner = (
-            <div className="flex items-start justify-between gap-4">
+            <div className="entry-body">
               <div className="min-w-0">
-                <h3 className="text-xl font-semibold text-white group-hover:text-accent transition-colors duration-200">
+                <h3 className="entry-title">
                   {item.title}
                 </h3>
-                <p className="text-sm text-gray-500 mt-1">
+                <p className="entry-meta mt-1">
                   {item.role}
                   {item.period && (
-                    <span className="text-gray-600"> · {item.period}</span>
+                    <span> · {item.period}</span>
                   )}
                 </p>
-                <p className="text-gray-300 mt-2 text-pretty">{item.description}</p>
+                <p className="entry-description">{item.description}</p>
               </div>
               {hasLink && (
-                <ArrowUpRight className="w-4 h-4 mt-1.5 text-gray-600 group-hover:text-accent transition-colors shrink-0" />
+                <ArrowUpRight className="entry-arrow" />
               )}
             </div>
           )
@@ -74,7 +72,7 @@ export function SectionList({
                 href={item.href!}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group block rounded-lg p-4 -mx-4 hover:bg-neutral-900/50 transition-colors"
+                className="entry-card group"
               >
                 {inner}
               </Link>
@@ -84,7 +82,7 @@ export function SectionList({
           return (
             <div
               key={item.title}
-              className="group block rounded-lg p-4 -mx-4"
+              className="entry-card group"
             >
               {inner}
             </div>
@@ -94,7 +92,7 @@ export function SectionList({
       {viewAllHref && viewAllHref !== "#" && !showTitle && (
         <Link
           href={viewAllHref}
-          className="inline-flex items-center gap-1 mt-6 text-accent hover:underline group"
+          className="section-link group mt-6"
         >
           {viewAllText}{" "}
           <ArrowUpRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1 group-hover:-translate-y-1" />

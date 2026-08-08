@@ -26,12 +26,12 @@ type DiagramProps = {
   bufferbloat?: boolean
 }
 
-const ACCENT = "#ff6b35"
-const TEXT = "#9ca3af"
-const DIM = "#6b7280"
-const LINE = "#262626"
-const FILL = "#181818"
-const WHITE = "#ffffff"
+const ACCENT = "#244b80"
+const TEXT = "#514b40"
+const DIM = "#817867"
+const LINE = "#cfc5b2"
+const FILL = "#e9e2d3"
+const WHITE = "#242119"
 
 export function Diagram({ viewBox, title, nodes, datapath, compare, stack, raidhole, merkle, splitbrain, paxos, raft, storebuffer, reorderTable, litmusMP, byzCommander, threeFPlusOne, pbft, logPlusIndex, lsmTree, logSpine, packetHops, aimdVsBbr, bufferbloat }: DiagramProps) {
   return (
@@ -315,7 +315,7 @@ function FiberVsMicrowave() {
       </text>
 
       {/* fiber bar */}
-      <rect x={start} y={fiberY} width={fiberEnd - start} height={h} rx={3} fill="#262626" />
+      <rect x={start} y={fiberY} width={fiberEnd - start} height={h} rx={3} fill="#cfc5b2" />
       <text x={fiberEnd + 10} y={fiberY + 18} fill={TEXT} fontSize={13}>
         fiber · ~5.5 ms
       </text>
@@ -566,7 +566,7 @@ function MerkleTree() {
             width={w}
             height={ih}
             rx={4}
-            fill={n.onPath ? "rgba(255,107,53,0.10)" : FILL}
+            fill={n.onPath ? "rgba(36,75,128,0.10)" : FILL}
             stroke={n.onPath ? ACCENT : LINE}
             strokeWidth={1}
           />
@@ -577,7 +577,7 @@ function MerkleTree() {
       ))}
 
       {/* root */}
-      <rect x={root.x} y={rootY} width={w} height={rh} rx={4} fill="rgba(255,107,53,0.12)" stroke={ACCENT} strokeWidth={1.2} />
+      <rect x={root.x} y={rootY} width={w} height={rh} rx={4} fill="rgba(36,75,128,0.12)" stroke={ACCENT} strokeWidth={1.2} />
       <text x={root.x + w / 2} y={rootY + 28} fill={ACCENT} fontSize={13} textAnchor="middle">
         {root.label}
       </text>
@@ -775,7 +775,7 @@ function StoreBuffer() {
       <text x={95} y={90} fill={WHITE} fontSize={13} textAnchor="middle">core</text>
 
       {/* Store buffer */}
-      <rect x={200} y={60} width={140} height={50} rx={4} fill="rgba(255,107,53,0.08)" stroke={ACCENT} strokeWidth={1.2} />
+      <rect x={200} y={60} width={140} height={50} rx={4} fill="rgba(36,75,128,0.08)" stroke={ACCENT} strokeWidth={1.2} />
       <text x={270} y={84} fill={ACCENT} fontSize={12} textAnchor="middle">store buffer</text>
       <text x={270} y={100} fill={ACCENT} fontSize={10} textAnchor="middle">[ x ← 1 ]</text>
 
@@ -845,12 +845,12 @@ function ReorderTable() {
             <rect x={tableX} y={y} width={labelW} height={rowH} fill={FILL} stroke={LINE} strokeWidth={1} />
             <text x={tableX + 12} y={y + rowH / 2 + 4} fill={WHITE} fontSize={11}>{r}</text>
 
-            <rect x={tableX + labelW} y={y} width={cellW} height={rowH} fill="rgba(255,107,53,0.06)" stroke={LINE} strokeWidth={1} />
+            <rect x={tableX + labelW} y={y} width={cellW} height={rowH} fill="rgba(36,75,128,0.06)" stroke={LINE} strokeWidth={1} />
             <text x={tableX + labelW + cellW / 2} y={y + rowH / 2 + 4} fill={x86[i] ? ACCENT : DIM} fontSize={13} textAnchor="middle">
               {x86[i] ? "✗ reorder" : "✓ ordered"}
             </text>
 
-            <rect x={tableX + labelW + cellW} y={y} width={cellW} height={rowH} fill="rgba(255,107,53,0.06)" stroke={LINE} strokeWidth={1} />
+            <rect x={tableX + labelW + cellW} y={y} width={cellW} height={rowH} fill="rgba(36,75,128,0.06)" stroke={LINE} strokeWidth={1} />
             <text x={tableX + labelW + cellW + cellW / 2} y={y + rowH / 2 + 4} fill={arm[i] ? ACCENT : DIM} fontSize={13} textAnchor="middle">
               {arm[i] ? "✗ reorder" : "✓ ordered"}
             </text>
@@ -876,7 +876,7 @@ function LitmusMP() {
       <text x={colX[0]} y={60} fill={WHITE} fontSize={12}>Thread 0 (producer)</text>
       <rect x={colX[0]} y={storeY} width={200} height={rowH} fill={FILL} stroke={LINE} strokeWidth={1} />
       <text x={colX[0] + 12} y={storeY + 22} fill={WHITE} fontSize={12}>x = 1   (data)</text>
-      <rect x={colX[0]} y={storeY + rowH + 6} width={200} height={rowH} fill="rgba(255,107,53,0.08)" stroke={ACCENT} strokeWidth={1.2} />
+      <rect x={colX[0]} y={storeY + rowH + 6} width={200} height={rowH} fill="rgba(36,75,128,0.08)" stroke={ACCENT} strokeWidth={1.2} />
       <text x={colX[0] + 12} y={storeY + rowH + 28} fill={ACCENT} fontSize={12}>y = 1   (flag)</text>
       <text x={colX[0]} y={storeY + 2 * rowH + 60} fill={DIM} fontSize={10}>
         on ARM: these two stores may
@@ -887,7 +887,7 @@ function LitmusMP() {
 
       {/* Thread 1 column */}
       <text x={colX[1]} y={60} fill={WHITE} fontSize={12}>Thread 1 (consumer)</text>
-      <rect x={colX[1]} y={loadY} width={240} height={rowH} fill="rgba(255,107,53,0.08)" stroke={ACCENT} strokeWidth={1.2} />
+      <rect x={colX[1]} y={loadY} width={240} height={rowH} fill="rgba(36,75,128,0.08)" stroke={ACCENT} strokeWidth={1.2} />
       <text x={colX[1] + 12} y={loadY + 22} fill={ACCENT} fontSize={12}>r1 = y   → 1</text>
       <rect x={colX[1]} y={loadY + rowH + 6} width={240} height={rowH} fill={FILL} stroke={LINE} strokeWidth={1} />
       <text x={colX[1] + 12} y={loadY + rowH + 28} fill={WHITE} fontSize={12}>r2 = x   → 0  ✗</text>
@@ -909,7 +909,7 @@ function ByzCommander() {
   return (
     <g fontFamily="var(--font-mono)">
       {/* commander (traitor) */}
-      <circle cx={cx} cy={cy} r={26} fill="rgba(255,107,53,0.10)" stroke={ACCENT} strokeWidth={1.5} strokeDasharray="4 3" />
+      <circle cx={cx} cy={cy} r={26} fill="rgba(36,75,128,0.10)" stroke={ACCENT} strokeWidth={1.5} strokeDasharray="4 3" />
       <text x={cx} y={cy + 5} fill={ACCENT} fontSize={13} textAnchor="middle">C</text>
       <text x={cx} y={cy + 46} fill={ACCENT} fontSize={10} textAnchor="middle">traitor</text>
 
@@ -955,7 +955,7 @@ function ThreeFPlusOne() {
           {[0, 1, 2].map((ri) => {
             const ry = y + ri * (cellH + 4)
             const kind = ri === 0 ? "liar" : ri === 1 ? "crashed" : "honest"
-            const fillC = kind === "liar" ? "rgba(255,107,53,0.25)" : kind === "crashed" ? "#222" : "rgba(255,255,255,0.04)"
+            const fillC = kind === "liar" ? "rgba(36,75,128,0.25)" : kind === "crashed" ? "#d7cdbc" : "rgba(36,33,25,0.04)"
             const strokeC = kind === "liar" ? ACCENT : kind === "crashed" ? DIM : LINE
             const txtC = kind === "liar" ? ACCENT : kind === "crashed" ? DIM : WHITE
             const count = c.valid ? (ri === 0 ? "f" : ri === 1 ? "f" : "f+1") : (ri === 0 ? "f" : ri === 1 ? "f" : "f")
@@ -990,7 +990,7 @@ function Pbft() {
   return (
     <g fontFamily="var(--font-mono)">
       {/* primary */}
-      <circle cx={primary.x} cy={primary.y} r={r} fill="rgba(255,107,53,0.10)" stroke={ACCENT} strokeWidth={1.4} />
+      <circle cx={primary.x} cy={primary.y} r={r} fill="rgba(36,75,128,0.10)" stroke={ACCENT} strokeWidth={1.4} />
       <text x={primary.x} y={primary.y + 5} fill={ACCENT} fontSize={11} textAnchor="middle">P</text>
       <text x={primary.x} y={primary.y + 40} fill={ACCENT} fontSize={10} textAnchor="middle">primary</text>
 
@@ -1044,7 +1044,7 @@ function LogPlusIndex() {
       <line x1={80} y1={85} x2={160} y2={85} stroke={ACCENT} strokeWidth={1.4} markerEnd="url(#arrow-accent)" />
 
       {/* LOG */}
-      <rect x={170} y={60} width={160} height={60} rx={4} fill="rgba(255,107,53,0.10)" stroke={ACCENT} strokeWidth={1.4} />
+      <rect x={170} y={60} width={160} height={60} rx={4} fill="rgba(36,75,128,0.10)" stroke={ACCENT} strokeWidth={1.4} />
       <text x={250} y={84} fill={ACCENT} fontSize={13} textAnchor="middle">LOG (WAL)</text>
       <text x={250} y={104} fill={ACCENT} fontSize={10} textAnchor="middle">append-only · ordered</text>
 
@@ -1095,7 +1095,7 @@ function LsmTree() {
         const next = levels[i + 1]
         return (
           <g key={i}>
-            <rect x={l.x} y={l.y} width={l.w} height={44} rx={4} fill={i === 0 ? "rgba(255,107,53,0.10)" : FILL} stroke={i === 0 ? ACCENT : LINE} strokeWidth={1} />
+            <rect x={l.x} y={l.y} width={l.w} height={44} rx={4} fill={i === 0 ? "rgba(36,75,128,0.10)" : FILL} stroke={i === 0 ? ACCENT : LINE} strokeWidth={1} />
             <text x={l.x + l.w / 2} y={l.y + 19} fill={i === 0 ? ACCENT : WHITE} fontSize={12} textAnchor="middle">{l.label}</text>
             <text x={l.x + l.w / 2} y={l.y + 35} fill={DIM} fontSize={9} textAnchor="middle">{l.note}</text>
             {next && (
@@ -1153,7 +1153,7 @@ function LogSpine() {
       ))}
 
       {/* the spine */}
-      <rect x={60} y={spineY - 16} width={600} height={32} rx={4} fill="rgba(255,107,53,0.10)" stroke={ACCENT} strokeWidth={1.4} />
+      <rect x={60} y={spineY - 16} width={600} height={32} rx={4} fill="rgba(36,75,128,0.10)" stroke={ACCENT} strokeWidth={1.4} />
       <text x={360} y={spineY + 5} fill={ACCENT} fontSize={13} textAnchor="middle">the log · append-only · totally ordered</text>
 
       <text x={160} y={250} fill={DIM} fontSize={10} textAnchor="middle">one machine&apos;s durability</text>
@@ -1184,7 +1184,7 @@ function PacketHops() {
           <g key={i}>
             {/* queue above */}
             {i < hops.length - 1 && (
-              <rect x={h.x + w / 2 - 14} y={y - qH - 8} width={28} height={qH} fill="rgba(255,107,53,0.10)" stroke={ACCENT} strokeWidth={1} />
+              <rect x={h.x + w / 2 - 14} y={y - qH - 8} width={28} height={qH} fill="rgba(36,75,128,0.10)" stroke={ACCENT} strokeWidth={1} />
             )}
             {/* node */}
             <rect x={h.x} y={y} width={w} height={36} rx={4} fill={FILL} stroke={LINE} strokeWidth={1} />
@@ -1281,7 +1281,7 @@ function Bufferbloat() {
       <text x={x0 + 490} y={y0 + 12} fill={WHITE} fontSize={10}>loss (queue full)</text>
 
       {/* the gap = bufferbloat */}
-      <rect x={x0 + 220} y={y0 + 10} width={260} height={h - 12} fill="rgba(255,107,53,0.06)" />
+      <rect x={x0 + 220} y={y0 + 10} width={260} height={h - 12} fill="rgba(36,75,128,0.06)" />
       <text x={x0 + 350} y={y0 + h + 22} fill={ACCENT} fontSize={11} textAnchor="middle">
         bufferbloat: latency high long before loss
       </text>

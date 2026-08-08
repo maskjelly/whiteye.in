@@ -4,8 +4,7 @@ export const meta = {
   slug: "the-log-is-the-database",
   title: "the log is the database",
   date: "may 03, 2026",
-  description:
-    "On the write-ahead log, the LSM tree, Kafka, and CDC. The one abstraction that ties storage, consensus, and streaming together.",
+  description: "one abstraction behind storage and streaming.",
   readingTime: "11 min",
 }
 

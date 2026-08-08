@@ -11,37 +11,26 @@ export default function OG() {
         style={{
           width: "100%",
           height: "100%",
-          backgroundColor: "#111",
-          color: "#d1d5db",
+          backgroundColor: "#f3efe4",
+          color: "#242119",
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
           padding: "80px",
-          fontFamily: "monospace",
+          fontFamily: "serif",
         }}
       >
         <div style={{ display: "flex", alignItems: "center", marginBottom: 24 }}>
-          <span style={{ color: "#ff6b35", fontSize: 40, marginRight: 16 }}>*</span>
-          <span style={{ color: "#6b7280", fontSize: 28, letterSpacing: 2 }}>whiteye.in</span>
+          <span style={{ color: "#244b80", fontSize: 28, letterSpacing: 2 }}>WHITEYE.IN</span>
         </div>
-        <div style={{ display: "flex", fontSize: 110, fontWeight: 700, color: "#ffffff", letterSpacing: -2 }}>
-          aaryan
+        <div style={{ display: "flex", fontSize: 126, fontWeight: 500, color: "#242119", letterSpacing: -5 }}>
+          aaryan.
         </div>
-        <div style={{ display: "flex", fontSize: 32, color: "#9ca3af", marginTop: 20, maxWidth: 900 }}>
-          20 y/o · 2x yc · founding engineer at referrush
+        <div style={{ display: "flex", fontSize: 36, color: "#242119", marginTop: 20, maxWidth: 900 }}>
+          software, systems, and notes.
         </div>
-        <div style={{ display: "flex", fontSize: 26, color: "#6b7280", marginTop: 16, maxWidth: 900 }}>
-          security, infrastructure, and systems that are hard to corrupt.
-        </div>
-        <div
-          style={{
-            display: "flex",
-            marginTop: 60,
-            fontSize: 22,
-            color: "#ff6b35",
-          }}
-        >
-          ↳ notes on systems that are hard to corrupt
+        <div style={{ display: "flex", fontSize: 24, color: "#716a5d", marginTop: 24, maxWidth: 900 }}>
+          a personal site from bangalore
         </div>
       </div>
     ),

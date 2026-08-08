@@ -4,8 +4,7 @@ export const meta = {
   slug: "the-network-is-not-a-wire",
   title: "the network is not a wire",
   date: "apr 22, 2026",
-  description:
-    "On queues at every hop, AIMD, BBR, bufferbloat, the power of two choices, and why your p99 has been lying to you.",
+  description: "why network latency gets weird.",
   readingTime: "12 min",
 }
 

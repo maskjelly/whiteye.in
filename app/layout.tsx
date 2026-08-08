@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import { JetBrains_Mono } from "next/font/google"
+import { Cormorant_Garamond, JetBrains_Mono } from "next/font/google"
 import "./globals.css"
 import { Navbar } from "@/components/navbar"
 import { KeyboardHelp } from "@/components/keyboard-help"
@@ -11,16 +11,23 @@ const jetbrainsMono = JetBrains_Mono({
   variable: "--font-jetbrains-mono",
 })
 
+const cormorant = Cormorant_Garamond({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-cormorant",
+  weight: ["400", "500", "600"],
+})
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://whiteye.in"),
   title: {
     default: "aaryan",
     template: "%s | aaryan",
   },
-  description: "20 y/o engineer. 2x YC. Founding engineer at Referrush. Security, infrastructure, and systems that are hard to corrupt.",
+  description: "Aaryan's personal site. Software, systems, and notes.",
   openGraph: {
     title: "aaryan",
-    description: "20 y/o engineer. 2x YC. Founding engineer at Referrush. Security, infrastructure, and systems that are hard to corrupt.",
+    description: "Aaryan's personal site. Software, systems, and notes.",
     url: "https://whiteye.in",
     siteName: "aaryan",
     locale: "en_US",
@@ -48,25 +55,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${jetbrainsMono.variable} antialiased min-h-screen font-mono`}
+        className={`${jetbrainsMono.variable} ${cormorant.variable} antialiased min-h-screen`}
       >
-        <div className="max-w-4xl mx-auto px-5 sm:px-4 py-8">
+        <div className="site-shell">
           <Navbar />
           {children}
           <footer className="site-footer">
-            <span>
-              <Link href="/">aaryan</Link> · built with next.js · press{" "}
-              <kbd style={{
-                display: "inline-block",
-                background: "#111",
-                border: "1px solid #2a2a2a",
-                borderRadius: "0.2rem",
-                padding: "0.05rem 0.3rem",
-                fontSize: "0.7rem",
-                color: "#9ca3af",
-              }}>?</kbd> for shortcuts
-            </span>
-            <span>© {new Date().getFullYear()}</span>
+            <Link href="/">aaryan</Link>
+            <span>{new Date().getFullYear()}</span>
           </footer>
         </div>
         <KeyboardHelp />

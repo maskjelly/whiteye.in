@@ -25,25 +25,24 @@ export default async function OG({ params }: { params: { slug: string } }) {
         style={{
           width: "100%",
           height: "100%",
-          backgroundColor: "#111",
-          color: "#d1d5db",
+          backgroundColor: "#f3efe4",
+          color: "#242119",
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
           padding: "80px",
-          fontFamily: "monospace",
+          fontFamily: "serif",
         }}
       >
         <div style={{ display: "flex", alignItems: "center", marginBottom: 28 }}>
-          <span style={{ color: "#ff6b35", fontSize: 36, marginRight: 14 }}>*</span>
-          <span style={{ color: "#6b7280", fontSize: 26, letterSpacing: 1 }}>aaryan / writing</span>
+          <span style={{ color: "#244b80", fontSize: 24, letterSpacing: 2 }}>AARYAN / WRITING</span>
         </div>
         <div
           style={{
             display: "flex",
             fontSize: 72,
-            fontWeight: 700,
-            color: "#ffffff",
+            fontWeight: 500,
+            color: "#242119",
             letterSpacing: -1.5,
             lineHeight: 1.1,
             maxWidth: 1000,
@@ -51,11 +50,11 @@ export default async function OG({ params }: { params: { slug: string } }) {
         >
           {title}
         </div>
-        <div style={{ display: "flex", fontSize: 26, color: "#6b7280", marginTop: 36 }}>
+        <div style={{ display: "flex", fontSize: 26, color: "#716a5d", marginTop: 36 }}>
           {date}
           {reading ? `  ·  ${reading} read` : ""}
         </div>
-        <div style={{ display: "flex", marginTop: 48, fontSize: 22, color: "#ff6b35" }}>
+        <div style={{ display: "flex", marginTop: 48, fontSize: 22, color: "#244b80" }}>
           whiteye.in/blog
         </div>
       </div>

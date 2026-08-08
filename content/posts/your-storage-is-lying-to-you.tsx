@@ -4,8 +4,7 @@ export const meta = {
   slug: "your-storage-is-lying-to-you",
   title: "your storage is lying to you",
   date: "jun 07, 2026",
-  description:
-    "On bit rot, cosmic rays, the RAID5 write hole, the fsync contract that is not as airtight as you think, and how ZFS and Btrfs actually stay honest.",
+  description: "how storage keeps its promises.",
   readingTime: "13 min",
 }
 

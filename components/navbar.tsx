@@ -49,37 +49,22 @@ export function Navbar() {
   }, [router])
 
   return (
-    <nav className="flex items-center justify-between mb-12 text-sm">
-      <div className="flex space-x-1 sm:space-x-4">
-        <Link
-          href="/"
-          className="hover:text-accent transition-colors duration-200 py-2 px-1.5 sm:px-0 sm:py-0"
-        >
-          <span className="hidden sm:inline">[h] </span>home
-        </Link>
+    <nav className="site-nav" aria-label="Main navigation">
+      <Link href="/" className="site-wordmark" aria-label="Aaryan, home">
+        aaryan.
+      </Link>
+      <div className="site-nav-links">
         <Link
           href="/blog"
-          className="hover:text-accent transition-colors duration-200 py-2 px-1.5 sm:px-0 sm:py-0"
+          className="site-nav-link"
         >
-          <span className="hidden sm:inline">[b] </span>blog
+          writing
         </Link>
         <Link
           href="/now"
-          className="hover:text-accent transition-colors duration-200 py-2 px-1.5 sm:px-0 sm:py-0"
+          className="site-nav-link"
         >
-          <span className="hidden sm:inline">[n] </span>now
-        </Link>
-        <Link
-          href="/#work"
-          className="hover:text-accent transition-colors duration-200 py-2 px-1.5 sm:px-0 sm:py-0"
-        >
-          <span className="hidden sm:inline">[w] </span>work
-        </Link>
-        <Link
-          href="/#projects"
-          className="hover:text-accent transition-colors duration-200 py-2 px-1.5 sm:px-0 sm:py-0"
-        >
-          <span className="hidden sm:inline">[p] </span>projects
+          now
         </Link>
       </div>
     </nav>

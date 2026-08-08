@@ -5,8 +5,7 @@ export const meta = {
   slug: "memory-ordering-is-not-what-you-think",
   title: "memory ordering is not what you think",
   date: "may 14, 2026",
-  description:
-    "On store buffers, x86 TSO vs ARM relaxed, the message-passing litmus test, and why code that worked fine on Intel for a decade breaks on Graviton.",
+  description: "why working code breaks on different cpus.",
   readingTime: "12 min",
 }
 

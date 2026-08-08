@@ -78,19 +78,17 @@ export default async function PostPage({
 
   return (
     <>
-      <article className="pt-6">
-        <header className="mb-12">
-          <p className="text-gray-500 mb-3 animate-fade-in">
-            <Link href="/blog" className="hover:text-accent transition-colors">
-              / writing
+      <article>
+        <header className="page-header">
+          <p className="page-kicker animate-fade-in">
+            <Link href="/blog" className="hover:underline">
+              writing
             </Link>
-            <span className="text-gray-700"> / </span>
-            <span className="text-gray-400">{post.slug}</span>
           </p>
-          <h1 className="text-4xl sm:text-5xl font-semibold tracking-tight text-white text-balance animate-fade-in">
+          <h1 className="page-title animate-fade-in">
             {post.title}
           </h1>
-          <p className="text-sm text-gray-600 mt-4 animate-fade-in-up">
+          <p className="page-meta animate-fade-in-up">
             {post.date} · {post.readingTime} read
           </p>
         </header>
@@ -100,14 +98,14 @@ export default async function PostPage({
             <Content />
 
             {prevNext && (
-              <nav className="mt-16 pt-8 border-t border-neutral-800 grid grid-cols-2 gap-4">
+              <nav className="back-row grid grid-cols-2 gap-8">
                 {prevNext.prev ? (
                   <Link
                     href={`/blog/${prevNext.prev.slug}`}
-                    className="group block rounded-lg p-4 -mx-4 hover:bg-neutral-900/50 transition-colors"
+                    className="group block no-underline"
                   >
-                    <p className="text-xs text-gray-600 mb-1">← previous</p>
-                    <p className="text-gray-200 group-hover:text-accent transition-colors text-sm">
+                    <p className="entry-meta mb-1">previous</p>
+                    <p className="entry-name group-hover:text-accent">
                       {prevNext.prev.title}
                     </p>
                   </Link>
@@ -117,10 +115,10 @@ export default async function PostPage({
                 {prevNext.next ? (
                   <Link
                     href={`/blog/${prevNext.next.slug}`}
-                    className="group block rounded-lg p-4 -mx-4 hover:bg-neutral-900/50 transition-colors text-right"
+                    className="group block text-right no-underline"
                   >
-                    <p className="text-xs text-gray-600 mb-1">next →</p>
-                    <p className="text-gray-200 group-hover:text-accent transition-colors text-sm">
+                    <p className="entry-meta mb-1">next</p>
+                    <p className="entry-name group-hover:text-accent">
                       {prevNext.next.title}
                     </p>
                   </Link>
@@ -130,11 +128,11 @@ export default async function PostPage({
               </nav>
             )}
 
-            <div className="mt-8 pt-8 border-t border-neutral-800 text-sm flex items-center justify-between">
-              <Link href="/blog" className="text-gray-500 hover:text-accent transition-colors">
+            <div className="back-row flex items-center justify-between">
+              <Link href="/blog" className="back-link">
                 ← back to writing
               </Link>
-              <Link href="/" className="text-gray-500 hover:text-accent transition-colors">
+              <Link href="/" className="back-link">
                 home
               </Link>
             </div>
