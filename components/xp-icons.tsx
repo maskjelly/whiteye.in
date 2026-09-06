@@ -1,5 +1,7 @@
 /* Small, native-size raster icons preserve the original XP desktop appearance. */
 /* eslint-disable @next/next/no-img-element */
+import { SiGithub } from "react-icons/si"
+
 export function XpIcon({
   name,
   size = 32,
@@ -9,6 +11,16 @@ export function XpIcon({
   size?: number
   className?: string
 }) {
+  if (name === "github")
+    return (
+      <SiGithub
+        className={`xp-icon ${className}`}
+        size={size}
+        style={{ color: "#24292f", background: "white", borderRadius: "50%" }}
+        aria-hidden="true"
+        focusable="false"
+      />
+    )
   if (name === "recycle")
     return (
       <svg

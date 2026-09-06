@@ -321,7 +321,7 @@ export function XpDesktop({
             title="Open GitHub"
           >
             <div className="shortcut-icon">
-              <XpIcon name="ie" size={44} />
+              <XpIcon name="github" size={44} />
               <span className="shortcut-arrow">↗</span>
             </div>
             <span>GitHub</span>
@@ -460,7 +460,7 @@ export function XpDesktop({
                   rel="noreferrer"
                   onClick={() => setStartOpen(false)}
                 >
-                  <XpIcon name="network" size={24} />
+                  <XpIcon name="github" size={24} />
                   GitHub
                 </a>
                 <a
