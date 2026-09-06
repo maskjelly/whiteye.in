@@ -1,50 +1,15 @@
-import { ImageResponse } from "next/og"
+import { xpSocialImage } from "@/components/xp-social-image"
 import { posts } from "@/lib/posts"
 
-export const alt = "aaryan — writing"
+export const alt = "Aaryan’s writing — notes from the machine room"
 export const size = { width: 1200, height: 630 }
 export const contentType = "image/png"
 
 export default function OG() {
-  return new ImageResponse(
-    (
-      <div
-        style={{
-          width: "100%",
-          height: "100%",
-          backgroundColor: "#f3efe4",
-          color: "#242119",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          padding: "80px",
-          fontFamily: "serif",
-        }}
-      >
-        <div style={{ display: "flex", alignItems: "center", marginBottom: 28 }}>
-          <span style={{ color: "#244b80", fontSize: 24, letterSpacing: 2 }}>AARYAN / WRITING</span>
-        </div>
-        <div
-          style={{
-            display: "flex",
-            fontSize: 64,
-            fontWeight: 500,
-            color: "#242119",
-            letterSpacing: -1.5,
-            lineHeight: 1.1,
-            maxWidth: 1000,
-          }}
-        >
-          notes from the machine room.
-        </div>
-        <div style={{ display: "flex", fontSize: 26, color: "#716a5d", marginTop: 32 }}>
-          {posts.length} posts · infrastructure · security · rabbit holes
-        </div>
-        <div style={{ display: "flex", marginTop: 44, fontSize: 22, color: "#244b80" }}>
-          whiteye.in/blog
-        </div>
-      </div>
-    ),
-    size
-  )
+  return xpSocialImage({
+    title: "Notes from the machine room.",
+    subtitle: `${posts.length} posts · infrastructure · security · rabbit holes`,
+    windowTitle: "My Writing — Aaryan’s computer",
+    path: "whiteye.in/blog",
+  })
 }

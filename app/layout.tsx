@@ -1,22 +1,10 @@
 import type { Metadata } from "next"
-import { Cormorant_Garamond, JetBrains_Mono } from "next/font/google"
 import "./globals.css"
-import { Navbar } from "@/components/navbar"
-import { KeyboardHelp } from "@/components/keyboard-help"
-import Link from "next/link"
-
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-jetbrains-mono",
-})
-
-const cormorant = Cormorant_Garamond({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-cormorant",
-  weight: ["400", "500", "600"],
-})
+import "./xp.css"
+import "./games.css"
+import "./browser.css"
+import { XpDesktop } from "@/components/xp-desktop"
+import { posts } from "@/lib/posts"
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://whiteye.in"),
@@ -54,18 +42,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body
-        className={`${jetbrainsMono.variable} ${cormorant.variable} antialiased min-h-screen`}
-      >
-        <div className="site-shell">
-          <Navbar />
-          {children}
-          <footer className="site-footer">
-            <Link href="/">aaryan</Link>
-            <span>{new Date().getFullYear()}</span>
-          </footer>
-        </div>
-        <KeyboardHelp />
+      <body>
+        <XpDesktop posts={posts}>{children}</XpDesktop>
       </body>
     </html>
   )

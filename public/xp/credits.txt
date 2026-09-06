@@ -1,0 +1,10 @@
+Windows XP desktop tribute for Aaryan's personal website.
+
+Windows XP, its icons, and associated imagery are the property of Microsoft.
+Bliss photograph by Charles O'Rear. Wallpaper reference: https://i.imgur.com/Zk6TR5k.jpg
+
+Desktop icon assets sourced from Shizuku Yang's winXP project:
+https://github.com/ShizukuIchi/winXP
+The project's MIT license is included in ASSET-LICENSE.txt.
+
+Desktop implementation and personal content are part of whiteye.in.

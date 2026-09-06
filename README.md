@@ -1,36 +1,33 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# whiteye.in
 
-## Getting Started
+Aaryan’s personal website as a Windows XP desktop. Built with Next.js, React, and TypeScript.
 
-First, run the development server:
+The homepage starts with a clear desktop. All shortcuts fit without scrolling: they wrap into columns on desktop and a compact grid on phones. Open folders and apps by clicking their icons; use Show desktop to return to the wallpaper.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+The desktop includes movable and resizable windows, a Start menu, taskbar, search, project and work folders, and the original writing, now, and setup pages. Games includes beginner Minesweeper and draw-one Klondike Solitaire with hints and undo. Games keep their state while minimized; closing or refreshing starts over.
+
+Internet Explorer opens real websites in a sandboxed iframe, with an address bar, bookmarks, refresh, and back/forward for addresses opened from its controls. Links within external pages keep their own browser history; cross-origin rules prevent reading their current address. Sites that forbid embedding can be opened using the external-tab link. HTTP pages require opening separately when the portfolio is served over HTTPS. No proxy is used to bypass site restrictions.
+
+## Development
+
+```sh
+bun install
+bun run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000. The desktop lives in `components/xp-desktop.tsx`, its content in `components/xp-apps.tsx`, and its styles in `app/xp.css`. Games use `components/xp-games.tsx`, `lib/xp-games.ts`, and `app/games.css`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Work history and projects are maintained in `lib/work-items.ts` and `lib/project-items.ts`. Essays live in `content/posts`; the now page is `app/now/page.tsx`.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Checks
 
-## Learn More
+```sh
+bun test
+bun run build
+```
 
-To learn more about Next.js, take a look at the following resources:
+Tests cover first-click safety, flags, flood reveal, wins and losses, dealing, stock recycling, legal card moves, hints, Solitaire completion, browser URL validation, and navigation history.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Assets
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Wallpaper and icon credits are in `public/xp/credits.txt`. The reference asset license is included in `public/xp/ASSET-LICENSE.txt`.

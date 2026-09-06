@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 @theme inline {
-  --font-mono: var(--font-jetbrains-mono), monospace;
-  --font-serif: var(--font-cormorant), Georgia, serif;
+  --font-mono: "Courier New", monospace;
+  --font-serif: Georgia, "Times New Roman", serif;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-accent: var(--accent);

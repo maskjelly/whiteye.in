@@ -1,0 +1,616 @@
+/* XP's built-in games live in the same movable windows as the rest of the site. */
+.window-games:not(.is-maximized) {
+  width: 570px;
+  height: min(470px, calc(100% - 60px));
+  left: max(125px, calc(50% - 285px));
+  top: max(30px, calc(50% - 235px));
+}
+.window-minesweeper:not(.is-maximized) {
+  width: 356px;
+  height: min(580px, calc(100% - 40px));
+  left: max(125px, calc(50% - 178px));
+  top: max(20px, calc(50% - 290px));
+}
+.window-solitaire:not(.is-maximized) {
+  width: 790px;
+  height: min(650px, calc(100% - 42px));
+  left: max(125px, calc(50% - 370px));
+  top: max(20px, calc(50% - 325px));
+}
+.games-library {
+  padding: 28px;
+}
+.games-library .folder-heading {
+  margin-bottom: 20px;
+}
+.games-library .folder-heading h1 {
+  font-size: 25px;
+}
+.game-launch {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 18px 14px;
+  width: 100%;
+  text-align: left;
+  border: 1px solid #d9e2ef;
+  margin-bottom: 12px;
+  background: #f7faff;
+}
+.game-launch:hover,
+.game-launch:focus-visible {
+  background: #e9f2ff;
+  border-color: #85a7d2;
+}
+.game-launch strong {
+  display: block;
+  font-size: 17px;
+  color: #20549f;
+}
+.game-launch small {
+  display: block;
+  font-size: 11px;
+  color: #788596;
+  margin-top: 5px;
+}
+.game-launch-link {
+  display: block;
+  font-size: 11px;
+  color: #2762b3;
+  margin-top: 9px;
+}
+.games-library-note {
+  color: #8a929d;
+  font-size: 10px;
+  margin-top: 20px;
+}
+.game-controls {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-bottom: 14px;
+}
+.game-controls .xp-button {
+  padding-inline: 10px;
+  min-width: 68px;
+}
+.game-controls .xp-button:disabled {
+  color: #8b8a80;
+  border-color: #b6b4a7;
+  box-shadow: inset 0 0 0 1px #f9f8f2;
+}
+.game-controls .game-button-selected {
+  background: #dbe8f9;
+  box-shadow: inset 1px 1px 2px #a4b6d5;
+}
+.game-help-button {
+  color: #285494;
+  font-size: 11px;
+  margin-left: auto;
+  padding: 5px 0;
+  text-decoration: underline;
+}
+.game-rules {
+  font-size: 11px;
+  line-height: 1.65;
+  background: #ffffe1;
+  border: 1px solid #c6c4a1;
+  color: #4c5260;
+  padding: 11px 13px;
+  margin-bottom: 15px;
+}
+.game-rules strong {
+  font-weight: bold;
+}
+.minesweeper-app {
+  min-height: 100%;
+  padding: 16px;
+  background: #ece9d8;
+}
+.mine-machine {
+  width: min(100%, 286px);
+  margin: 0 auto;
+  background: #c0c0c0;
+  padding: 11px;
+  border: 3px solid;
+  border-color: #fff #808080 #808080 #fff;
+}
+.mine-dashboard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #808080 #fff #fff #808080;
+  padding: 7px;
+  margin-bottom: 10px;
+}
+.mine-counter {
+  display: block;
+  background: #140000;
+  color: #f52b25;
+  font-family: "Courier New", monospace;
+  font-size: 30px;
+  font-weight: bold;
+  line-height: 32px;
+  letter-spacing: 1px;
+  min-width: 59px;
+  height: 34px;
+  border: 1px solid;
+  border-color: #808080 #ddd #ddd #808080;
+  padding: 0 2px;
+  text-align: center;
+  text-shadow: 0 0 2px #f22728;
+}
+.mine-face {
+  width: 35px;
+  height: 35px;
+  display: grid;
+  place-items: center;
+  background: #c0c0c0;
+  border: 3px solid;
+  border-color: white #808080 #808080 white;
+}
+.mine-face:active {
+  border-color: #808080 white white #808080;
+}
+.mine-grid {
+  display: grid;
+  grid-template-columns: repeat(9, minmax(0, 1fr));
+  border: 3px solid;
+  border-color: #808080 white white #808080;
+  user-select: none;
+  touch-action: manipulation;
+}
+.mine-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  aspect-ratio: 1;
+  min-width: 0;
+  padding: 0;
+  background: #c0c0c0;
+  border: 3px solid;
+  border-color: white #808080 #808080 white;
+  font-family: "Courier New", monospace;
+  font-size: 19px;
+  font-weight: bold;
+  line-height: 1;
+}
+.mine-cell:not(.is-open):active {
+  border: 1px solid #888;
+}
+.mine-cell.is-open {
+  border: 1px solid #999;
+}
+.mine-cell[data-number="1"] {
+  color: #0000e7;
+}
+.mine-cell[data-number="2"] {
+  color: #008000;
+}
+.mine-cell[data-number="3"] {
+  color: #e00000;
+}
+.mine-cell[data-number="4"] {
+  color: #000080;
+}
+.mine-cell[data-number="5"] {
+  color: #800000;
+}
+.mine-cell[data-number="6"] {
+  color: #008080;
+}
+.mine-cell[data-number="7"] {
+  color: #111;
+}
+.mine-cell[data-number="8"] {
+  color: #808080;
+}
+.mine-cell.is-exploded {
+  background: #ff3832;
+}
+.mine-cell:focus-visible {
+  position: relative;
+  z-index: 1;
+  outline: 2px solid #0955ba;
+  outline-offset: -3px;
+}
+.mine-wrong-flag {
+  color: #e00000;
+  font-size: 24px;
+}
+.mine-message {
+  max-width: 286px;
+  text-align: center;
+  margin: 15px auto 0;
+  color: #535d68;
+  font-size: 11px;
+  line-height: 1.7;
+  min-height: 38px;
+}
+.game-won-message {
+  color: #29712b;
+  font-weight: bold;
+}
+.game-small-print {
+  text-align: center;
+  color: #8d8d81;
+  font-size: 10px;
+  margin-top: 7px;
+}
+.solitaire-app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  background: #087c39;
+}
+.solitaire-controls {
+  flex: none;
+  background: #ece9d8;
+  padding: 7px 9px;
+  margin: 0;
+  border-bottom: 1px solid #b5b19d;
+}
+.solitaire-moves {
+  color: #5f625a;
+  font-size: 11px;
+  margin-left: 11px;
+}
+.solitaire-app .game-rules {
+  margin: 0;
+  border-width: 0 0 1px;
+}
+.solitaire-table {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  background: #087c39;
+  background-image: radial-gradient(
+    ellipse at 50% 0%,
+    #118743,
+    transparent 85%
+  );
+}
+.solitaire-board {
+  --card-height: clamp(60px, 10vw, 110px);
+  --card-stack-step: 27px;
+  --card-hidden-step: 16px;
+  position: relative;
+  padding: 22px 20px;
+  flex: 1;
+}
+.solitaire-top-row,
+.solitaire-columns {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 16px;
+}
+.solitaire-top-row {
+  margin-bottom: 29px;
+}
+.solitaire-pile {
+  position: relative;
+  min-width: 0;
+}
+.playing-card,
+.card-slot {
+  width: 100%;
+  height: var(--card-height);
+  min-width: 0;
+  border-radius: 5px;
+}
+.card-slot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #004724;
+  background: #036e32;
+  box-shadow: inset 1px 1px 3px #034b27;
+  color: #61ab7e;
+  font-family: Georgia, serif;
+  font-size: 35px;
+}
+.card-slot:disabled {
+  cursor: default;
+}
+.playing-card {
+  display: block;
+  position: relative;
+  background: #fffdf5;
+  border: 1px solid #152d20;
+  box-shadow: 1px 2px 1px #003b2380;
+  font-family: Georgia, "Times New Roman", serif;
+  color: #171d21;
+  text-align: left;
+  padding: 0;
+  touch-action: manipulation;
+  user-select: none;
+}
+.playing-card[draggable="true"] {
+  cursor: grab;
+}
+.playing-card[draggable="true"]:active {
+  cursor: grabbing;
+}
+.playing-card.red-card {
+  color: #c51b2b;
+}
+.card-corner {
+  position: absolute;
+  top: 5px;
+  left: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 16px;
+  line-height: 1;
+  gap: 1px;
+}
+.card-corner strong {
+  font-size: 19px;
+  font-weight: bold;
+}
+.card-corner-bottom {
+  top: auto;
+  left: auto;
+  right: 6px;
+  bottom: 5px;
+  transform: rotate(180deg);
+}
+.card-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 38px;
+}
+.card-back {
+  border: 3px solid #fffdf5;
+  outline: 1px solid #193c2b;
+  outline-offset: -1px;
+  background-color: #254eb0;
+  background-image:
+    repeating-linear-gradient(45deg, transparent 0 3px, #729add 3px 4px),
+    repeating-linear-gradient(-45deg, transparent 0 3px, #7595d7 3px 4px);
+  box-shadow: 1px 2px 1px #003b2380;
+}
+.card-back-emblem {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: grid;
+  place-items: center;
+  width: 65%;
+  height: 60%;
+  color: #dce8ff;
+  border: 1px solid #d5e2ff;
+  border-radius: 50%;
+  font-size: 32px;
+  background: #2852ab;
+}
+.stock-pile {
+  position: relative;
+}
+.stock-pile.card-back {
+  cursor: pointer;
+}
+.recycle-stock {
+  font-family: Arial, sans-serif;
+  font-size: 44px;
+  line-height: 1;
+}
+.pile-label {
+  display: block;
+  color: #a0ceb0;
+  font-size: 10px;
+  line-height: 15px;
+  text-align: center;
+  margin-top: 6px;
+}
+.solitaire-column {
+  position: relative;
+}
+.solitaire-column .playing-card,
+.tableau-slot {
+  position: absolute;
+  left: 0;
+}
+.tableau-slot {
+  top: 0;
+}
+.card-selected {
+  background-color: #fff9d8;
+  outline: 3px solid #ffdf60;
+  outline-offset: -3px;
+}
+.playing-card:focus-visible,
+.card-slot:focus-visible {
+  outline: 2px solid #ffeb91;
+  outline-offset: 2px;
+  z-index: 2;
+}
+.hinted-pile > .card-slot,
+.hinted-pile > .playing-card:last-of-type {
+  box-shadow:
+    0 0 0 3px #ffdf60,
+    0 0 15px #ffe57580;
+}
+.solitaire-message {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 12px 20px;
+  font-size: 11px;
+  line-height: 1.6;
+  color: #c6e5d0;
+  background: #005e2c;
+  border-top: 1px solid #29864d;
+}
+.solitaire-message p {
+  flex: 1;
+}
+.solitaire-message > span {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  color: #97cba8;
+}
+.solitaire-victory {
+  position: absolute;
+  inset: 0;
+  background: #066132eb;
+  color: #fff8c9;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  text-align: center;
+  padding: 20px;
+  z-index: 10;
+}
+.solitaire-victory > span {
+  font-size: 33px;
+  letter-spacing: 5px;
+}
+.solitaire-victory h2 {
+  font-family: Georgia, serif;
+  font-size: 45px;
+}
+.solitaire-victory p {
+  font-size: 13px;
+}
+@media (max-width: 950px) {
+  .solitaire-top-row,
+  .solitaire-columns {
+    gap: 9px;
+  }
+  .solitaire-board {
+    padding: 17px 13px;
+  }
+}
+@media (max-width: 680px) {
+  .window-games:not(.is-maximized),
+  .window-minesweeper:not(.is-maximized),
+  .window-solitaire:not(.is-maximized) {
+    left: 8px !important;
+    top: 12px !important;
+    width: calc(100% - 16px) !important;
+    height: calc(100% - 24px) !important;
+  }
+  .games-library {
+    padding: 23px 20px;
+  }
+  .games-library .folder-heading {
+    gap: 12px;
+  }
+  .games-library .folder-heading h1 {
+    font-size: 22px;
+  }
+  .games-library .folder-heading > .xp-icon {
+    width: 36px;
+    height: 36px;
+  }
+  .game-launch {
+    gap: 13px;
+    padding: 17px 10px;
+  }
+  .game-launch > .xp-icon {
+    width: 40px;
+    height: 40px;
+  }
+  .game-launch strong {
+    font-size: 16px;
+  }
+  .game-launch small {
+    font-size: 10px;
+    line-height: 1.6;
+  }
+  .minesweeper-app {
+    padding: 14px 12px;
+  }
+  .mine-machine {
+    width: min(100%, 290px);
+  }
+  .solitaire-controls {
+    gap: 5px;
+    padding: 7px;
+  }
+  .solitaire-controls .xp-button {
+    font-size: 10px;
+    min-width: 49px;
+    padding-inline: 8px;
+    min-height: 28px;
+  }
+  .solitaire-controls .game-help-button {
+    font-size: 10px;
+  }
+  .solitaire-moves {
+    font-size: 10px;
+    margin-left: auto;
+  }
+  .solitaire-board {
+    --card-height: clamp(54px, 16vw, 88px);
+    --card-stack-step: 21px;
+    --card-hidden-step: 12px;
+    padding: 17px 8px;
+  }
+  .solitaire-top-row,
+  .solitaire-columns {
+    gap: 6px;
+  }
+  .solitaire-top-row {
+    margin-bottom: 25px;
+  }
+  .playing-card,
+  .card-slot {
+    border-radius: 3px;
+  }
+  .card-corner {
+    top: 3px;
+    left: 3px;
+    font-size: 11px;
+    gap: 0;
+  }
+  .card-corner strong {
+    font-size: 13px;
+  }
+  .card-corner-bottom {
+    left: auto;
+    top: auto;
+    right: 3px;
+    bottom: 3px;
+  }
+  .card-center {
+    font-size: 21px;
+  }
+  .card-back {
+    border-width: 2px;
+  }
+  .card-back-emblem {
+    font-size: 19px;
+  }
+  .pile-label {
+    font-size: 8px;
+  }
+  .card-slot {
+    font-size: 27px;
+  }
+  .recycle-stock {
+    font-size: 32px;
+  }
+  .solitaire-message {
+    gap: 8px;
+    padding: 10px;
+    font-size: 10px;
+  }
+  .solitaire-message > span {
+    font-size: 9px;
+  }
+}
