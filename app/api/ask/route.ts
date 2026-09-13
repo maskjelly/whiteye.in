@@ -26,9 +26,24 @@ export async function POST(req: NextRequest) {
   }
 
   let question = ""
+  let history: { role: string; content: string }[] = []
   try {
     const body = await req.json()
     question = String(body?.question ?? "").trim()
+    if (Array.isArray(body?.history)) {
+      history = body.history
+        .filter(
+          (m: unknown): m is { role: string; content: string } =>
+            !!m &&
+            typeof m === "object" &&
+            typeof (m as { content?: unknown }).content === "string"
+        )
+        .slice(-8)
+        .map((m: { role: string; content: string }) => ({
+          role: m.role === "assistant" ? "assistant" : "user",
+          content: m.content.slice(0, 4000),
+        }))
+    }
   } catch {
     return Response.json({ error: "Invalid request." }, { status: 400 })
   }
@@ -40,28 +55,32 @@ export async function POST(req: NextRequest) {
   }
 
   const controller = new AbortController()
-  const timer = setTimeout(() => controller.abort(), 55_000)
+  setTimeout(() => controller.abort(), 58_000)
   try {
-    const res = await fetch(HARNESS_URL, {
+    const upstream = await fetch(HARNESS_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ question }),
+      body: JSON.stringify({ question, history, stream: true }),
       signal: controller.signal,
     })
-    const data = await res.json()
-    if (!res.ok) {
+    if (!upstream.ok || !upstream.body) {
+      const data = await upstream.json().catch(() => null)
       return Response.json(
         { error: data?.error ?? "The answer service is unavailable." },
         { status: 502 }
       )
     }
-    return Response.json(data)
+    return new Response(upstream.body, {
+      headers: {
+        "Content-Type": "text/event-stream",
+        "Cache-Control": "no-cache, no-transform",
+        "X-Accel-Buffering": "no",
+      },
+    })
   } catch {
     return Response.json(
       { error: "The answer took too long. Try again." },
       { status: 504 }
     )
-  } finally {
-    clearTimeout(timer)
   }
 }
