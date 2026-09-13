@@ -326,6 +326,19 @@ export function XpDesktop({
             </div>
             <span>GitHub</span>
           </a>
+          <a
+            className="desktop-shortcut"
+            href="/crawler-guide/"
+            target="_blank"
+            rel="noreferrer"
+            title="Open the Rust web-crawling study kit"
+          >
+            <div className="shortcut-icon">
+              <XpIcon name="documents" size={44} />
+              <span className="shortcut-arrow">↗</span>
+            </div>
+            <span>Crawler Kit</span>
+          </a>
         </nav>
         <div className="desktop-signature">
           <span>aaryan’s computer</span>
