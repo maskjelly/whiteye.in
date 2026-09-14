@@ -1,10 +1,26 @@
 import Link from "next/link"
+import type { Metadata } from "next"
 import { ArrowUpRight } from "lucide-react"
 import { posts } from "@/lib/posts"
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "writing",
   description: "Notes on infrastructure, security, and machines.",
+  alternates: { canonical: "/blog" },
+  openGraph: {
+    title: "writing",
+    description: "Notes on infrastructure, security, and machines.",
+    url: "https://whiteye.in/blog",
+    siteName: "aaryan",
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    title: "writing",
+    description: "Notes on infrastructure, security, and machines.",
+    card: "summary_large_image",
+    creator: "@aaryantwt",
+  },
 }
 
 export default function BlogIndex() {
@@ -19,7 +35,10 @@ export default function BlogIndex() {
           infrastructure, security, and the occasional rabbit hole.
         </p>
         <p className="page-meta animate-fade-in-up">
-          {posts.length} posts · updated sep 14, 2026
+          {posts.length} posts ·{" "}
+          <Link href="/feed.xml" className="text-accent hover:underline">
+            rss
+          </Link>
         </p>
       </header>
 
@@ -32,9 +51,7 @@ export default function BlogIndex() {
           >
             <div className="flex items-baseline justify-between gap-4">
               <div className="min-w-0">
-                <h2 className="entry-title">
-                  {post.title}
-                </h2>
+                <h2 className="entry-title">{post.title}</h2>
                 <p className="entry-description">{post.description}</p>
                 <p className="entry-meta mt-2">
                   {post.date} · {post.readingTime}

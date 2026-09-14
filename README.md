@@ -17,7 +17,7 @@ bun run dev
 
 Open http://localhost:3000. The desktop lives in `components/xp-desktop.tsx`, its content in `components/xp-apps.tsx`, and its styles in `app/xp.css`. Games use `components/xp-games.tsx`, `lib/xp-games.ts`, and `app/games.css`.
 
-Work history and projects are maintained in `lib/work-items.ts` and `lib/project-items.ts`. Essays live in `content/posts`; the now page is `app/(xp)/now/page.tsx`.
+Work history and projects are maintained in `lib/work-items.ts` and `lib/project-items.ts`. Essays live in `content/posts` and ship in two reading experiences: the plain reader-facing blog at `/blog` (`app/(site)/blog`) and the desktop-window version at `/xp/blog` (`app/(xp)/xp/blog`). Both render the same components from `lib/post-components.ts`; `/blog` is canonical in page metadata, the sitemap, and the RSS feed. The now page is `app/(xp)/now/page.tsx`.
 
 ## Live service analytics
 

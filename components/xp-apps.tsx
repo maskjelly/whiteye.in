@@ -234,7 +234,7 @@ export function WritingApp({ posts }: { posts: PostMeta[] }) {
           <Link
             className="file-row writing-file"
             key={post.slug}
-            href={`/blog/${post.slug}`}
+            href={`/xp/blog/${post.slug}`}
           >
             <XpIcon name="notepad" size={28} />
             <div>
@@ -248,9 +248,14 @@ export function WritingApp({ posts }: { posts: PostMeta[] }) {
           </Link>
         ))}
       </div>
-      <Link href="/blog" className="xp-text-link">
-        Open the writing archive →
-      </Link>
+      <div className="xp-text-links">
+        <Link href="/xp/blog" className="xp-text-link">
+          Open the writing archive →
+        </Link>
+        <Link href="/blog" className="xp-text-link">
+          Read in the web reader →
+        </Link>
+      </div>
     </div>
   )
 }
@@ -411,7 +416,7 @@ export function SearchApp({
     ...posts.map((post) => ({
       title: post.title,
       description: post.description,
-      href: `/blog/${post.slug}`,
+      href: `/xp/blog/${post.slug}`,
       icon: "notepad",
       app: undefined as AppId | undefined,
     })),

@@ -884,6 +884,11 @@ button.file-row:hover {
   margin-top: 24px;
   text-decoration: underline;
 }
+.xp-text-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 20px;
+}
 .window-projects {
   top: 13%;
   left: max(138px, calc(50% - 395px));

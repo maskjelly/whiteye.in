@@ -21,7 +21,7 @@ export default async function Image({
       title: "Notes from the machine room.",
       subtitle: "infrastructure · security · rabbit holes",
       windowTitle: "My Writing — Aaryan’s computer",
-      path: "whiteye.in/blog",
+      path: "whiteye.in/xp/blog",
     })
   }
   const fullTitle = `${post.title} — Aaryan’s computer`
@@ -30,6 +30,6 @@ export default async function Image({
     subtitle: post.description,
     windowTitle:
       fullTitle.length > 48 ? "writing — Aaryan’s computer" : fullTitle,
-    path: `whiteye.in/blog/${post.slug}`,
+    path: `whiteye.in/xp/blog/${post.slug}`,
   })
 }

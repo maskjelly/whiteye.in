@@ -10,6 +10,6 @@ export default function OG() {
     title: "Notes from the machine room.",
     subtitle: `${posts.length} posts · infrastructure · security · rabbit holes`,
     windowTitle: "My Writing — Aaryan’s computer",
-    path: "whiteye.in/blog",
+    path: "whiteye.in/xp/blog",
   })
 }

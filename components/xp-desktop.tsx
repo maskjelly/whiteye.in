@@ -276,9 +276,9 @@ export function XpDesktop({
       ? "Now — Internet Explorer"
       : pathname === "/uses"
         ? "My Setup — Internet Explorer"
-        : pathname === "/blog"
+        : pathname === "/xp/blog"
           ? "Writing — Internet Explorer"
-          : `${posts.find((post) => pathname === `/blog/${post.slug}`)?.title ?? "Page not found"} — Internet Explorer`
+          : `${posts.find((post) => pathname === `/xp/blog/${post.slug}`)?.title ?? "Page not found"} — Internet Explorer`
 
   return (
     <main
@@ -948,7 +948,9 @@ function XpWindow({
               className="toolbar-back"
               onClick={() =>
                 browser
-                  ? router.push(pathname.startsWith("/blog/") ? "/blog" : "/")
+                  ? router.push(
+                      pathname.startsWith("/xp/blog/") ? "/xp/blog" : "/"
+                    )
                   : open("welcome")
               }
               title="Back to home"
