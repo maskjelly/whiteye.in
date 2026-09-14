@@ -17,7 +17,7 @@ bun run dev
 
 Open http://localhost:3000. The desktop lives in `components/xp-desktop.tsx`, its content in `components/xp-apps.tsx`, and its styles in `app/xp.css`. Games use `components/xp-games.tsx`, `lib/xp-games.ts`, and `app/games.css`.
 
-Work history and projects are maintained in `lib/work-items.ts` and `lib/project-items.ts`. Essays live in `content/posts`; the now page is `app/now/page.tsx`.
+Work history and projects are maintained in `lib/work-items.ts` and `lib/project-items.ts`. Essays live in `content/posts`; the now page is `app/now/page.tsx`. The telemetry page (`app/telemetry`) shows live RPS from the rushort demo server and shortens URLs via `app/api/shorten` (server-held key, per-IP rate limit) into `app/s/[code]` redirect links.
 
 ## Checks
 

@@ -126,6 +126,7 @@ export default function Telemetry() {
   const rps = last?.rps ?? 0
   const qps = last?.qps ?? 0
   const fails = last?.fails ?? 0
+  const peak = series.reduce((a, p) => Math.max(a, p.rps), 0)
   const storagePct = m ? Math.min(100, (m.urls / Math.max(1, m.capacity)) * 100) : 0
 
   async function shorten(e: React.FormEvent) {
@@ -161,11 +162,12 @@ export default function Telemetry() {
         every request the demo server handles, sampled once per second. box ceiling: 35k round-trip / 1.18M pipelined RPS.
       </p>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-3">
         {[
           ["requests/s", rate(rps), BLUE],
           ["redirects/s", rate(qps), GREEN],
           ["fails/s", rate(fails), fails > 0 ? RED : DIM],
+          ["session peak", rate(peak), AMBER],
           ["uptime", m ? fmtUptime(m.uptime_s) : "—", TXT],
         ].map(([label, value, color]) => (
           <div key={label as string} style={tile}>

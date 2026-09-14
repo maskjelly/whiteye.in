@@ -3,8 +3,6 @@ import "./globals.css"
 import "./xp.css"
 import "./games.css"
 import "./browser.css"
-import { XpDesktop } from "@/components/xp-desktop"
-import { posts } from "@/lib/posts"
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://whiteye.in"),
@@ -42,9 +40,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>
-        <XpDesktop posts={posts}>{children}</XpDesktop>
-      </body>
+      <body>{children}</body>
     </html>
   )
 }

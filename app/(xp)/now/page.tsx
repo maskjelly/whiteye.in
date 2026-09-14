@@ -12,7 +12,7 @@ export default function NowPage() {
         <p className="page-kicker animate-fade-in">now</p>
         <h1 className="page-title animate-fade-in">lately.</h1>
         <p className="page-meta animate-fade-in-up">
-          last updated sep 06, 2026
+          last updated sep 08, 2026
         </p>
       </header>
 
@@ -31,16 +31,6 @@ export default function NowPage() {
             <strong>Tokio</strong>
           </Link>{" "}
           and other Rust repositories.
-        </p>
-        <p>
-          Also building{" "}
-          <Link
-            href="https://lawjurius.com"
-            className="text-accent hover:underline"
-          >
-            <strong>jurius</strong>
-          </Link>{" "}
-          — litigation intelligence for lawyers.
         </p>
         <p>
           Reading <em>Designing Data-Intensive Applications</em>. Again.
