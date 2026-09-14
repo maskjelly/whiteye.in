@@ -1,6 +1,6 @@
 # whiteye.in
 
-Aaryan’s personal website as a Windows XP desktop. Built with Next.js, React, and TypeScript.
+Aaryan’s personal website: an interactive Windows XP desktop, engineering essays, and a live analytics dashboard for the rushort Rust URL shortener. Built with Next.js, React, and TypeScript.
 
 The homepage starts with a clear desktop. All shortcuts fit without scrolling: they wrap into columns on desktop and a compact grid on phones. Open folders and apps by clicking their icons; use Show desktop to return to the wallpaper.
 
@@ -17,7 +17,31 @@ bun run dev
 
 Open http://localhost:3000. The desktop lives in `components/xp-desktop.tsx`, its content in `components/xp-apps.tsx`, and its styles in `app/xp.css`. Games use `components/xp-games.tsx`, `lib/xp-games.ts`, and `app/games.css`.
 
-Work history and projects are maintained in `lib/work-items.ts` and `lib/project-items.ts`. Essays live in `content/posts`; the now page is `app/now/page.tsx`. The telemetry page (`app/telemetry`) shows live RPS from the rushort demo server and shortens URLs via `app/api/shorten` (server-held key, per-IP rate limit) into `app/s/[code]` redirect links.
+Work history and projects are maintained in `lib/work-items.ts` and `lib/project-items.ts`. Essays live in `content/posts`; the now page is `app/(xp)/now/page.tsx`.
+
+## Live service analytics
+
+[whiteye.in/telemetry](https://whiteye.in/telemetry) is a dedicated analytics workspace with:
+
+- Live request throughput, cumulative counters, non-error response percentage, and stored links.
+- Requests, redirects, and errors charts with 1-, 2-, and 5-minute windows, sample inspection, averages, and peaks.
+- Host memory, system load, CPU information, and service uptime.
+- Pause/resume, CSV export, and explicit loading/disconnection states.
+- A URL-shortening playground with server-held credentials and a 10-links/hour per-IP limit.
+
+Charts retain up to five minutes of samples in the current browser session; they are not persisted historical analytics. The demo backend runs continuous synthetic benchmark traffic, so these counters are not organic visitor counts. Non-error response percentage is derived from request and 4xx/5xx counters; it is not an uptime SLA.
+
+Implementation: `app/telemetry/page.tsx` and `app/telemetry/telemetry.css`. `app/api/shorten` creates links; `app/s/[code]` resolves redirects through the backend.
+
+Configuration:
+
+| Variable | Purpose |
+| --- | --- |
+| `NEXT_PUBLIC_RUSHORT_BASE` | Browser-accessible backend base for metrics and host data; requires CORS. |
+| `RUSHORT_BASE` | Server-side backend base for shortening and resolving links. |
+| `RUSHORT_API_KEY` | Server-only write credential; never use a `NEXT_PUBLIC_` prefix. |
+
+The default backend base is `https://45.196.196.251/rushort`. The playground returns an explicit unavailable response when its server-side key is missing.
 
 ## Checks
 
