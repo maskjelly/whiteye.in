@@ -2,10 +2,10 @@ import { Figure, Caption } from "@/components/figure"
 
 export const meta = {
   slug: "16m-rps-rust-url-shortener",
-  title: "16M RPS in Rust — an 800-line URL shortener with no framework",
+  title: "16M RPS in Rust — a 1,000-line URL shortener with no framework",
   date: "sep 14, 2026",
-  description: "100M redirects in 10 seconds on loopback. what the number means, and the four tricks that earned it.",
-  readingTime: "12 min",
+  description: "100M redirects in 10 seconds on loopback, plus what the same binary did on a 4-vCPU Linux VPS. what the numbers mean, and which optimizations didn't survive measurement.",
+  readingTime: "15 min",
 }
 
 function ThroughputBars() {
@@ -39,6 +39,38 @@ function ThroughputBars() {
   )
 }
 
+function VpsBars() {
+  const rows = [
+    { label: "pipeline depth 128", value: "951k RPS", w: 570 },
+    { label: "no pipelining", value: "32.8k RPS", w: 20 },
+  ]
+  return (
+    <svg viewBox="0 0 720 190" role="img" aria-label="four vCPU Linux VPS throughput, linear scale">
+      <text x={0} y={18} fill="#244b80" fontSize={12} fontFamily="var(--font-mono)" letterSpacing="0.04em">
+        fig. 2 — same binary on a 4-vCPU Linux VPS (linear scale, loopback)
+      </text>
+      <line x1={0} y1={26} x2={720} y2={26} stroke="#cfc5b2" strokeWidth={1} />
+      {rows.map((r, i) => {
+        const y = 56 + i * 52
+        return (
+          <g key={r.label} fontFamily="var(--font-mono)">
+            <text x={0} y={y + 15} fill="#514b40" fontSize={12}>
+              {r.label}
+            </text>
+            <rect x={160} y={y} width={r.w} height={24} rx={3} fill={i === 0 ? "#244b80" : "#cfc5b2"} opacity={i === 0 ? 0.85 : 1} />
+            <text x={170 + r.w} y={y + 17} fill={i === 0 ? "#244b80" : "#817867"} fontSize={12}>
+              {r.value}
+            </text>
+            <text x={160} y={y + 44} fill="#817867" fontSize={11}>
+              {i === 0 ? "median of 3 × 8s runs, p99 batch latency 48.2–48.6 ms" : "median of 3 × 8s runs, p99 1.5–3.1 ms"}
+            </text>
+          </g>
+        )
+      })}
+    </svg>
+  )
+}
+
 export default function Post() {
   return (
     <article className="prose-mono">
@@ -49,10 +81,14 @@ export default function Post() {
         (100,000,000 requests, zero drops, p99 17.6ms), peaks at 16.8M RPS
         under closed-loop saturation, serves 165k round-trip RPS without
         pipelining, and holds 1,158 RPS of durable mixed traffic with
-        SIGKILL-safe acknowledgments. This paper documents the design, the
-        measurement methodology, and the three benchmark defects found and
-        fixed along the way. All results are reproducible from the
-        open-source harness.
+        SIGKILL-safe acknowledgments. The same binary on a 4-vCPU Linux VPS
+        sustains 951k pipelined RPS and 32.8k round-trip RPS with a co-resident
+        pinned client; two follow-up micro-optimizations failed to beat
+        baseline and were not deployed. The service now also exposes lock-free
+        `/api/metrics` and `/api/host` counters that power a live telemetry
+        dashboard, and accepts authenticated durable writes. This paper
+        documents the design, the measurement methodology, the VPS follow-up,
+        and the benchmark defects found and fixed along the way.
       </p>
 
       <h2>1. introduction</h2>
@@ -69,12 +105,15 @@ export default function Post() {
         to long URLs with 302 redirects.
       </p>
       <p>
-        The contribution is twofold: (i) a production-configured
-        implementation in approximately 800 lines of Rust on the serving path
-        (<code>src/lib.rs</code>, <code>src/store.rs</code>,{" "}
-        <code>src/bin/shortener.rs</code>), and (ii) a fail-closed benchmark
+        The contribution is fourfold: (i) a production-configured
+        implementation in approximately 1,000 lines of Rust on the serving
+        path (<code>src/lib.rs</code>, <code>src/store.rs</code>,{" "}
+        <code>src/bin/shortener.rs</code>), (ii) a fail-closed benchmark
         harness that verifies every response and fails on any drop, error, or
-        mismatch. Reporting follows the three-number convention of{" "}
+        mismatch, (iii) a controlled Linux VPS replication with two advertised
+        optimizations rejected on evidence, and (iv) public telemetry
+        endpoints that expose live counters behind a dashboard. Reporting
+        follows the three-number convention of{" "}
         <a href="https://blog.railway.com/p/railway-cdn">Railway&apos;s CDN
         writeup</a>: a sustained title number, a daily-rate number, and an
         ideal-lab peak, each bound to its workload.
@@ -119,6 +158,9 @@ export default function Post() {
       </p>
       <pre>
         <code>{`pub fn resolve(&self, code: &str) -> Option<Arc<str>> {
+    if code.len() > 11 || (code.len() > 1 && code.starts_with('0')) {
+        return None;
+    }
     let id = usize::try_from(base62_decode(code)?).ok()?;
     self.shards[id & (self.shards.len() - 1)]
         .read()
@@ -133,28 +175,41 @@ export default function Post() {
         links and abuse controls are out of scope.
       </p>
       <p>
-        Admission is bounded at every layer: 1,024 connections, 32 concurrent
-        writes, 5-second header/body/socket deadlines, 8 KiB bodies, 16 KiB
-        header blocks, and a 1M-URL capacity. Writes beyond capacity or
-        admission return 503. Malformed framing — duplicate Content-Length,
-        Transfer-Encoding, conflicting expectations — is rejected (400/413/
-        417/431) rather than interpreted.
+        Admission is bounded at every layer and configurable per deploy:
+        1,024 connections, 32 concurrent writes, 5-second header/body/socket
+        deadlines, 8 KiB bodies, 16 KiB header blocks, and a 1M-URL capacity
+        (<code>--max-connections</code>, <code>--max-writes</code>,{" "}
+        <code>--timeout</code>, <code>--max-urls</code>). Writes beyond
+        capacity or admission return 503. Malformed framing — duplicate
+        Content-Length, Transfer-Encoding, conflicting expectations — is
+        rejected (400/413/417/431) rather than interpreted.
       </p>
 
       <h2>4. implementation</h2>
       <p>
-        The server (<code>src/lib.rs</code>, 546 lines) implements the
-        connection loop, the batch drain, and routing. The store (
-        <code>src/store.rs</code>, 130 lines) holds a 64-way sharded RAM cache
-        backed by a single SQLite writer; a lock file refuses a second owner
-        of the same database, and startup verifies contiguous IDs, URL
-        validity, and capacity before serving. The binary (
-        <code>src/bin/shortener.rs</code>, 128 lines) parses configuration,
-        enforces bearer-token authentication on writes for durable and
-        non-loopback operation, and drains connections for up to 10 seconds on
-        SIGINT/SIGTERM. A separate load generator (
+        The server (<code>src/lib.rs</code>, 720 lines) implements the
+        connection loop, the batch drain, routing, and a lock-free counter
+        block for telemetry. The store (<code>src/store.rs</code>, 130 lines)
+        holds a 64-way sharded RAM cache backed by a single SQLite writer; a
+        lock file refuses a second owner of the same database, and startup
+        verifies contiguous IDs, URL validity, and capacity before serving.
+        The binary (<code>src/bin/shortener.rs</code>, 128 lines) parses
+        configuration, enforces bearer-token authentication on writes for
+        durable and non-loopback operation, and drains connections for up to
+        10 seconds on SIGINT/SIGTERM. A separate load generator (
         <code>src/bin/loadgen.rs</code>) is bench-only and excluded from the
         serving line count.
+      </p>
+      <p>
+        Two public, CORS-open read endpoints now power a live dashboard at{" "}
+        <a href="https://whiteye.in/telemetry">whiteye.in/telemetry</a>:{" "}
+        <code>/api/metrics</code> returns atomic counters (uptime, requests,
+        redirects, writes, 4xx/5xx, URL count, capacity) and{" "}
+        <code>/api/host</code> returns CPU, memory, OS, and load-average facts.
+        Nothing in the counter block mutates shared state on the hot path, so
+        the serving path is unchanged by telemetry. The site&apos;s shortening
+        form posts to the same service and produces{" "}
+        <code>whiteye.in/s/…</code> links behind a path-prefix reverse proxy.
       </p>
 
       <h2>5. evaluation</h2>
@@ -171,9 +226,9 @@ export default function Post() {
         the run. Latency is full batch-completion time including scheduling
         delay; it is never divided by pipeline depth. A fixture suite verifies
         the harness fails closed on all-500 fixtures, wrong stored URLs, and
-        duplicate codes.
+        duplicate codes; blackbox tests additionally cover SIGKILL durability.
       </p>
-      <h3>5.2 results</h3>
+      <h3>5.2 results — M4 Pro loopback</h3>
       <p>
         Hardware: 14-core Apple Silicon, macOS, client and server co-resident
         over loopback. Release profile: <code>lto=thin</code>,{" "}
@@ -218,9 +273,54 @@ export default function Post() {
         </Caption>
       </Figure>
 
+      <h3>5.3 results — Linux VPS follow-up</h3>
+      <p>
+        To check whether the loopback results survive a different kernel, CPU,
+        and scheduler, the unchanged implementation was run on a four-vCPU KVM
+        host (Linux 5.4.0-208, Rust 1.98.1) with a separate ephemeral server on{" "}
+        <code>127.0.0.1:18080</code>, 10,000 seeded links, 32 connections,
+        three 8-second runs per variant, and the server pinned to CPUs 0–1
+        with the client pinned to 2–3. Baseline medians:{" "}
+        <strong>951,012 RPS at pipeline depth 128</strong> (p99 batch latency
+        48.2–48.6 ms) and <strong>32,835 RPS with no pipelining</strong> (p99
+        1.5–3.1 ms). An unpinned first pass recorded 1,034,168 RPS at depth
+        128. All controlled runs passed with zero drops, transport errors, or
+        redirect mismatches.
+      </p>
+      <p>
+        Two candidate optimizations were then measured against that baseline
+        and <em>rejected</em>. Batching shared atomic counter updates per
+        connection batch landed at 1,013,335 RPS unpinned (−2.0%). Cache-line
+        aligned shard locks plus borrowing redirect URLs while copying
+        responses measured +3.72% at pipeline 128 (986,427 vs 951,012) but
+        −1.11% at pipeline 1, within host noise on 8-second runs; the
+        production binary and configuration were restored unchanged. Two
+        regression tests from the exercise were kept. The lesson is the
+        obvious one: short loopback comparisons cannot establish small
+        wins, and the harness should be trusted only when it can fail.
+      </p>
+      <Figure>
+        <VpsBars />
+        <Caption>
+          fig. 2 — the same binary on four vCPUs: batching still dominates
+          (951k vs 32.8k RPS), but the pipelined ceiling is 20× lower than the
+          M4 Pro&apos;s. Loopback processing, not public HTTPS capacity.
+        </Caption>
+      </Figure>
+      <p>
+        The public redirect path was measured separately with curl (no
+        redirect following). Direct to the Rust listener: time to first byte
+        302.5 / 279.7 / 292.9 ms. Through the website wrapper (which performs
+        an upstream fetch before returning its own 302): 5,451 / 699 / 685 ms.
+        The wrapper — not the Rust service — is the bottleneck users actually
+        touch; caching immutable code-to-URL mappings or serving redirects
+        directly through the edge proxy is the next obvious move, ahead of any
+        further Rust micro-optimization.
+      </p>
+
       <h2>6. threats to validity</h2>
       <p>
-        Four limitations bound these claims. (1) All figures are loopback on
+        Five limitations bound these claims. (1) All figures are loopback on
         one machine with no NIC, no TLS, and a co-resident generator consuming
         4–6 cores; they do not predict networked or multi-tenant behavior.
         (2) The 10M and 16.8M figures require 128-deep HTTP pipelining, a
@@ -231,8 +331,12 @@ export default function Post() {
         absorbing. (4) The durable rate test covers 30 seconds at the 100M/day
         average rate; it is not a 24-hour soak, a power-loss test, or a
         replication evaluation — the system is single-writer by design.
+        (5) The VPS comparison runs at 8 seconds per sample with both sides
+        pinned on four shared vCPUs, so sub-5% differences are not resolvable.
         Extrapolating the 10-second burst to a daily volume (≈864B/day) would
         be arithmetic without evidentiary basis and is explicitly disclaimed.
+        The public dashboard also includes a continuous synthetic load
+        generator; its charts are not organic visitor traffic.
       </p>
       <p>
         Three defects in earlier benchmark revisions are disclosed for
@@ -243,13 +347,16 @@ export default function Post() {
 
       <h2>7. conclusion</h2>
       <p>
-        A framework-free Rust shortener of ~800 serving-path lines sustains
+        A framework-free Rust shortener of ~1,000 serving-path lines sustains
         10M pipelined redirect RPS for 10 seconds, peaks at 16.8M RPS,
         answers 165k honest round-trips per second, and holds the 100M/day
-        average rate durably with kill-safe acknowledgments. The dominant
-        optimization is request batching at the socket layer; the dominant
-        methodological requirement is a harness that fails itself. Source,
-        harness, and deployment notes are MIT-licensed at{" "}
+        average rate durably with kill-safe acknowledgments. On a 4-vCPU Linux
+        VPS the same binary holds 951k pipelined RPS and 32.8k round-trip RPS,
+        and two plausible micro-optimizations failed to beat baseline. The
+        dominant optimization is request batching at the socket layer; the
+        dominant methodological requirement is a harness that fails itself.
+        Source, harness, deployment notes, and live telemetry are MIT-licensed
+        at{" "}
         <a href="https://github.com/maskjelly/rushort">
           github.com/maskjelly/rushort
         </a>
@@ -263,6 +370,25 @@ export default function Post() {
             rushort source (MIT).{" "}
             <a href="https://github.com/maskjelly/rushort">
               github.com/maskjelly/rushort
+            </a>
+            .
+          </li>
+          <li>
+            Live telemetry dashboard.{" "}
+            <a href="https://whiteye.in/telemetry">
+              whiteye.in/telemetry
+            </a>
+            .
+          </li>
+          <li>
+            Rove VPS investigation: method, rejected experiments, raw
+            measurements.{" "}
+            <a href="https://github.com/maskjelly/rushort/blob/main/docs/performance-2026-09-14.md">
+              docs/performance-2026-09-14.md
+            </a>{" "}
+            and{" "}
+            <a href="https://github.com/maskjelly/rushort/blob/main/docs/benchmarks/rove-2026-09-14.json">
+              rove-2026-09-14.json
             </a>
             .
           </li>
