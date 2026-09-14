@@ -5,6 +5,8 @@ import { useCallback, useEffect, useRef, useState } from "react"
 
 const METRICS_URL = `${process.env.NEXT_PUBLIC_RUSHORT_BASE ?? "https://45.196.196.251/rushort"}/api/metrics`
 
+const EASE = "cubic-bezier(0.2, 0, 0, 1)"
+
 type Metrics = {
   uptime_s: number
   started_unix: number
@@ -142,7 +144,7 @@ export default function Telemetry() {
   const qps = last?.qps ?? 0
   const fails = last?.fails ?? 0
   const peak = series.reduce((a, p) => Math.max(a, p.rps), 0)
-  const storagePct = m ? Math.min(100, (m.urls / Math.max(1, m.capacity)) * 100) : 0
+  const storagePct = m ? Math.min(1, m.urls / Math.max(1, m.capacity)) : 0
 
   async function shorten(e: React.FormEvent) {
     e.preventDefault()
@@ -177,15 +179,31 @@ export default function Telemetry() {
     }
   }
 
-  const panel = { background: PANEL, border: `1px solid ${LINE}`, borderRadius: 12 }
+  const panel = { background: PANEL, border: `1px solid ${LINE}`, borderRadius: 14 }
   const label = { color: DIM, fontSize: 11, textTransform: "uppercase" as const, letterSpacing: "0.1em" }
+  const pressable = {
+    transitionProperty: "scale, opacity",
+    transitionDuration: "150ms",
+    transitionTimingFunction: EASE,
+  } as const
 
   return (
     <div className="min-h-screen font-mono" style={{ background: BG, color: TXT }}>
+      <style>{`
+        @keyframes tlm-rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+        .tlm-enter { animation: tlm-rise 320ms ${EASE} both; }
+        @keyframes tlm-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+        .tlm-pulse { animation: tlm-pulse 2.4s ease-in-out infinite; }
+        .tlm-press:active { scale: 0.96; }
+        .tlm-input { transition-property: border-color; transition-duration: 150ms; transition-timing-function: ${EASE}; }
+        .tlm-input:focus-visible { border-color: ${BLUE}; outline: none; }
+        @media (prefers-reduced-motion: reduce) { .tlm-enter, .tlm-pulse { animation: none; } }
+      `}</style>
       <div className="mx-auto max-w-5xl px-4 md:px-6 py-8 md:py-12">
-        <div className="flex items-center justify-between mb-8">
+        <div className="tlm-enter flex items-center justify-between mb-8">
           <div className="flex items-center gap-3">
             <span
+              className={live ? "tlm-pulse" : undefined}
               style={{
                 width: 10, height: 10, borderRadius: "50%",
                 background: live ? GREEN : RED,
@@ -199,17 +217,17 @@ export default function Telemetry() {
           </span>
         </div>
 
-        <div className="mb-2" style={{ color: DIM, fontSize: 12, letterSpacing: "0.1em" }}>REQUESTS / SECOND</div>
-        <div className="tabular-nums leading-none mb-1" style={{ fontSize: "clamp(64px, 12vw, 120px)", fontWeight: 800, letterSpacing: "-0.04em", color: live ? TXT : DIM }}>
+        <div className="tlm-enter mb-2" style={{ animationDelay: "60ms", color: DIM, fontSize: 12, letterSpacing: "0.1em" }}>REQUESTS / SECOND</div>
+        <div className="tlm-enter tabular-nums leading-none mb-1" style={{ animationDelay: "60ms", fontSize: "clamp(64px, 12vw, 120px)", fontWeight: 800, letterSpacing: "-0.04em", color: live ? TXT : DIM }}>
           {big(rps)}
         </div>
-        <div className="flex flex-wrap gap-x-6 gap-y-1 mb-8 tabular-nums" style={{ fontSize: 13, color: DIM }}>
+        <div className="tlm-enter flex flex-wrap gap-x-6 gap-y-1 mb-8 tabular-nums" style={{ animationDelay: "120ms", fontSize: 13, color: DIM }}>
           <span><span style={{ color: GREEN }}>{big(qps)}</span> redirects/s</span>
           <span><span style={{ color: fails > 0 ? RED : DIM }}>{rate(fails)}</span> fails/s</span>
           <span><span style={{ color: AMBER }}>{big(peak)}</span> session peak</span>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-3 mb-3">
+        <div className="tlm-enter grid md:grid-cols-2 gap-3 mb-3" style={{ animationDelay: "180ms" }}>
           <div className="p-4" style={panel}>
             <Chart data={series.map((p) => p.rps)} stroke={BLUE} fill={BLUE} label="throughput · trailing 60s" unit="/s" />
           </div>
@@ -218,7 +236,7 @@ export default function Telemetry() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-3">
+        <div className="tlm-enter grid grid-cols-2 md:grid-cols-5 gap-3 mb-3" style={{ animationDelay: "240ms" }}>
           {[
             ["requests", m ? fmt(m.requests) : "—"],
             ["redirects", m ? fmt(m.redirects) : "—"],
@@ -233,17 +251,21 @@ export default function Telemetry() {
           ))}
         </div>
 
-        <div className="p-4 mb-3" style={panel}>
+        <div className="tlm-enter p-4 mb-3" style={{ animationDelay: "300ms", ...panel }}>
           <div className="flex justify-between mb-2" style={{ fontSize: 12 }}>
             <span style={{ color: DIM, textTransform: "uppercase", letterSpacing: "0.1em" }}>storage</span>
             <span className="tabular-nums">{m ? `${fmt(m.urls)} / ${fmt(m.capacity)}` : "—"}</span>
           </div>
           <div style={{ background: LINE, borderRadius: 999, height: 6 }}>
-            <div style={{ width: `${Math.max(storagePct, m && m.urls > 0 ? 0.5 : 0)}%`, background: AMBER, borderRadius: 999, height: 6, transition: "width 1s" }} />
+            <div style={{
+              transform: `scaleX(${storagePct})`, transformOrigin: "left",
+              transitionProperty: "transform", transitionDuration: "200ms", transitionTimingFunction: EASE,
+              background: AMBER, borderRadius: 999, height: 6,
+            }} />
           </div>
         </div>
 
-        <div className="p-5" style={{ ...panel, borderColor: "#23405e" }}>
+        <div className="tlm-enter p-5" style={{ animationDelay: "360ms", ...panel, borderColor: "#23405e" }}>
           <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 2 }}>shorten a url</div>
           <div className="mb-4" style={{ color: DIM, fontSize: 12 }}>public demo · 10 links/hour per IP · links look like whiteye.in/s/abc</div>
           <form onSubmit={shorten} className="flex flex-col sm:flex-row gap-2">
@@ -253,22 +275,26 @@ export default function Telemetry() {
               placeholder="https://example.com/long-thing"
               inputMode="url"
               spellCheck={false}
-              className="flex-1 px-4 py-2.5"
-              style={{ background: BG, border: `1px solid ${LINE}`, borderRadius: 8, color: TXT, fontSize: 14, outline: "none" }}
+              className="tlm-input flex-1 px-3 py-2"
+              style={{ background: BG, border: `1px solid ${LINE}`, borderRadius: 8, color: TXT, fontSize: 14 }}
             />
             <button
               type="submit"
               disabled={shortBusy || !url.trim()}
-              className="px-5 py-2.5"
-              style={{ background: GREEN, color: "#04120a", borderRadius: 8, fontWeight: 800, fontSize: 14, opacity: shortBusy || !url.trim() ? 0.45 : 1, cursor: shortBusy || !url.trim() ? "default" : "pointer" }}
+              className="tlm-press px-4 py-2"
+              style={{ ...pressable, background: GREEN, color: "#04120a", borderRadius: 8, fontWeight: 800, fontSize: 14, opacity: shortBusy || !url.trim() ? 0.45 : 1, cursor: shortBusy || !url.trim() ? "default" : "pointer" }}
             >
               {shortBusy ? "…" : "shorten →"}
             </button>
           </form>
           {short && (
-            <div className="mt-4 flex items-center gap-3 flex-wrap px-3 py-2.5" style={{ background: BG, border: `1px solid ${LINE}`, borderRadius: 8 }}>
+            <div className="mt-3 flex items-center gap-2 flex-wrap px-3 py-2" style={{ background: BG, border: `1px solid ${LINE}`, borderRadius: 8 }}>
               <Link href={`/s/${short.code}`} style={{ color: BLUE, fontSize: 14 }} className="break-all">{short.short_url}</Link>
-              <button onClick={copy} style={{ color: DIM, fontSize: 12, border: `1px solid ${LINE}`, borderRadius: 6, padding: "2px 10px" }}>
+              <button
+                onClick={copy}
+                className="tlm-press"
+                style={{ ...pressable, color: DIM, fontSize: 12, border: `1px solid ${LINE}`, borderRadius: 6, padding: "3px 10px 1px" }}
+              >
                 {copied ? "copied ✓" : "copy"}
               </button>
             </div>
