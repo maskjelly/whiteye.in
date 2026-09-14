@@ -19,7 +19,7 @@ export default function BlogIndex() {
           infrastructure, security, and the occasional rabbit hole.
         </p>
         <p className="page-meta animate-fade-in-up">
-          {posts.length} posts · updated jun 21, 2026
+          {posts.length} posts · updated sep 14, 2026
         </p>
       </header>
 

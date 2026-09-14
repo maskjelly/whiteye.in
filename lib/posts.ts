@@ -5,6 +5,7 @@ import { meta as memoryMeta } from "@/content/posts/memory-ordering-is-not-what-
 import { meta as bftMeta } from "@/content/posts/byzantine-fault-tolerance-when-nodes-lie"
 import { meta as logMeta } from "@/content/posts/the-log-is-the-database"
 import { meta as networkMeta } from "@/content/posts/the-network-is-not-a-wire"
+import { meta as rushortMeta } from "@/content/posts/16m-rps-rust-url-shortener"
 
 export type PostMeta = {
   slug: string
@@ -15,6 +16,7 @@ export type PostMeta = {
 }
 
 export const posts: PostMeta[] = [
+  rushortMeta,
   polynomialsMeta,
   storageMeta,
   bftMeta,

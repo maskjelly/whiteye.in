@@ -10,6 +10,7 @@ import MemoryPost from "@/content/posts/memory-ordering-is-not-what-you-think"
 import BftPost from "@/content/posts/byzantine-fault-tolerance-when-nodes-lie"
 import LogPost from "@/content/posts/the-log-is-the-database"
 import NetworkPost from "@/content/posts/the-network-is-not-a-wire"
+import RushortPost from "@/content/posts/16m-rps-rust-url-shortener"
 
 const components: Record<string, React.ComponentType> = {
   "polynomials-at-the-speed-of-silicon": PolynomialsPost,
@@ -19,6 +20,7 @@ const components: Record<string, React.ComponentType> = {
   "byzantine-fault-tolerance-when-nodes-lie": BftPost,
   "the-log-is-the-database": LogPost,
   "the-network-is-not-a-wire": NetworkPost,
+  "16m-rps-rust-url-shortener": RushortPost,
 }
 
 export const dynamicParams = false
