@@ -101,7 +101,7 @@ function Chart({ data, stroke, unit }: { data: number[]; stroke: string; unit: s
     <svg viewBox={`0 0 ${W} ${H}`} style={{ width: "100%", height: "auto", display: "block" }} role="img" aria-label="rate chart">
       <defs>
         <linearGradient id={gid} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor={stroke} stopOpacity="0.22" />
+          <stop offset="0%" stopColor={stroke} stopOpacity="0.25" />
           <stop offset="100%" stopColor={stroke} stopOpacity="0" />
         </linearGradient>
       </defs>
@@ -121,9 +121,9 @@ function Chart({ data, stroke, unit }: { data: number[]; stroke: string; unit: s
 }
 
 const TABS: { value: MetricKey; label: string; color: string }[] = [
-  { value: "rps", label: "Throughput", color: "#2563eb" },
-  { value: "qps", label: "Redirects", color: "#16a34a" },
-  { value: "fails", label: "Failures", color: "#dc2626" },
+  { value: "rps", label: "Throughput", color: "#58a6ff" },
+  { value: "qps", label: "Redirects", color: "#3fb950" },
+  { value: "fails", label: "Failures", color: "#f85149" },
 ]
 
 export default function Telemetry() {
@@ -227,6 +227,12 @@ export default function Telemetry() {
     }
   }
 
+  const kpis: [string, string, "neutral" | "positive" | "critical"][] = [
+    ["Requests/s", big(rps), "neutral"],
+    ["Redirects/s", big(qps), "positive"],
+    ["Fails/s", rate(fails), fails > 0 ? "critical" : "neutral"],
+    ["Session peak", big(peak), "neutral"],
+  ]
   const counters: [string, number | null][] = [
     ["Requests", m?.requests ?? null],
     ["Redirects", m?.redirects ?? null],
@@ -236,29 +242,46 @@ export default function Telemetry() {
   ]
 
   return (
-    <Reshaped theme="slate" defaultColorMode="light" scoped>
-      <Container width="1024px">
-        <View gap={8} paddingBlock={12}>
-          <View direction="row" align="center" justify="space-between" gap={4}>
-            <Text variant="title-3" weight="bold">rushort · live</Text>
-            <View direction="row" align="center" gap={2}>
+    <Reshaped theme="slate" defaultColorMode="dark" scoped>
+      <style>{`
+        html, body { height: auto; min-height: 100%; overflow: auto; }
+        body { background: var(--rs-color-background-page); }
+      `}</style>
+      <Container width="1080px">
+        <View gap={6} paddingBlock={10}>
+          <View direction="row" align="center" justify="space-between" gap={4} wrap>
+            <View direction="row" align="center" gap={3}>
               <Badge color={live ? "positive" : "critical"}>{live ? "live" : "reconnecting"}</Badge>
-              <Text variant="caption-1" color="neutral-faded">up {m ? fmtUptime(m.uptime_s) : "—"}</Text>
+              <Text variant="title-3" weight="bold">rushort telemetry</Text>
             </View>
+            <Text variant="caption-1" color="neutral-faded">
+              {host ? `${host.hostname} · ` : ""}up {m ? fmtUptime(m.uptime_s) : "—"}
+            </Text>
           </View>
 
-          <View gap={1}>
-            <Text variant="caption-1" color="neutral-faded">REQUESTS / SECOND</Text>
-            {m ? (
-              <Text variant="featured-1" weight="bold">{big(rps)}</Text>
-            ) : (
-              <Skeleton width="280px" height="76px" borderRadius="medium" />
-            )}
-            <View direction="row" gap={6}>
-              <Text variant="body-2" color="neutral-faded">{big(qps)} redirects/s</Text>
-              <Text variant="body-2" color="neutral-faded">{rate(fails)} fails/s</Text>
-              <Text variant="body-2" color="neutral-faded">{big(peak)} session peak</Text>
+          <Card padding={6}>
+            <View gap={2}>
+              <Text variant="caption-1" color="neutral-faded">REQUESTS / SECOND · LIVE</Text>
+              {m ? (
+                <Text variant="featured-1" weight="bold">{big(rps)}</Text>
+              ) : (
+                <Skeleton width="280px" height="76px" borderRadius="medium" />
+              )}
+              <View direction="row" gap={6} wrap>
+                <Text variant="body-2" color="neutral-faded">{big(qps)} redirects/s</Text>
+                <Text variant="body-2" color="neutral-faded">{rate(fails)} fails/s</Text>
+                <Text variant="body-2" color="neutral-faded">{big(peak)} session peak</Text>
+              </View>
             </View>
+          </Card>
+
+          <View gap={0} width="100%">
+            {kpis.map(([k, v]) => (
+              <View key={k} direction="row" align="center" justify="space-between" paddingBlock={3}>
+                <Text variant="body-2" color="neutral-faded">{k}</Text>
+                <Text variant="title-2" weight="bold">{v}</Text>
+              </View>
+            ))}
           </View>
 
           <Card padding={6}>
@@ -367,7 +390,8 @@ export default function Telemetry() {
             </View>
           </Card>
 
-          <View direction="row" justify="space-between" gap={2}>
+          <Divider />
+          <View direction="row" justify="space-between" gap={2} wrap>
             <Text variant="caption-1" color="neutral-faded">Box ceiling: 35k round-trip · 1.18M pipelined RPS</Text>
             <RLink href="/blog/16m-rps-rust-url-shortener">
               <Text variant="caption-1">How the numbers were earned →</Text>

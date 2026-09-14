@@ -39,7 +39,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" data-rs-theme="slate" data-rs-color-mode="light">
+    <html lang="en" data-rs-theme="slate" data-rs-color-mode="dark">
       <body>{children}</body>
     </html>
   )
