@@ -19,6 +19,16 @@ type Metrics = {
 
 type Point = { t: number; rps: number; qps: number; fails: number }
 
+const BG = "#0a0e13"
+const PANEL = "#10161d"
+const LINE = "#1e2833"
+const TXT = "#e6edf3"
+const DIM = "#8b98a5"
+const GREEN = "#3fb950"
+const BLUE = "#58a6ff"
+const RED = "#f85149"
+const AMBER = "#d29922"
+
 function fmt(n: number) {
   return n.toLocaleString("en-US")
 }
@@ -32,15 +42,42 @@ function fmtUptime(s: number) {
   return `${m}m ${Math.floor(s % 60)}s`
 }
 
-function Spark({ data, stroke }: { data: number[]; stroke: string }) {
+function rate(v: number) {
+  return v >= 100 ? v.toFixed(0) : v.toFixed(1)
+}
+
+function Chart({ data, stroke, fill, label }: { data: number[]; stroke: string; fill: string; label: string }) {
+  const W = 600
+  const H = 140
   const max = Math.max(1, ...data)
-  const pts = data
-    .map((v, i) => `${(i / Math.max(1, data.length - 1)) * 300},${44 - (v / max) * 40}`)
-    .join(" ")
+  const pts = data.map((v, i) => [(i / Math.max(1, data.length - 1)) * W, H - 8 - (v / max) * (H - 24)] as const)
+  const line = pts.map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`).join(" ")
+  const area = `0,${H} ${line} ${W},${H}`
+  const gid = `g-${label.replace(/\W/g, "")}`
   return (
-    <svg viewBox="0 0 300 48" className="w-full h-12" role="img" aria-label="rate history">
-      <polyline points={pts} fill="none" stroke={stroke} strokeWidth="2" />
-    </svg>
+    <div>
+      <div className="flex items-baseline justify-between mb-1">
+        <span style={{ color: DIM, fontSize: 12 }}>{label}</span>
+        <span className="tabular-nums" style={{ color: TXT, fontSize: 12 }}>max {rate(max)}/s</span>
+      </div>
+      <svg viewBox={`0 0 ${W} ${H}`} className="w-full" style={{ height: 140 }} role="img" aria-label={label}>
+        <defs>
+          <linearGradient id={gid} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={fill} stopOpacity="0.35" />
+            <stop offset="100%" stopColor={fill} stopOpacity="0" />
+          </linearGradient>
+        </defs>
+        {[0.25, 0.5, 0.75].map((f) => (
+          <line key={f} x1="0" y1={H * f} x2={W} y2={H * f} stroke={LINE} strokeWidth="1" />
+        ))}
+        <polygon points={area} fill={`url(#${gid})`} />
+        <polyline points={line} fill="none" stroke={stroke} strokeWidth="2" />
+      </svg>
+      <div className="flex justify-between" style={{ color: DIM, fontSize: 11 }}>
+        <span>-60s</span>
+        <span>now</span>
+      </div>
+    </div>
   )
 }
 
@@ -89,7 +126,7 @@ export default function Telemetry() {
   const rps = last?.rps ?? 0
   const qps = last?.qps ?? 0
   const fails = last?.fails ?? 0
-  const rate = (v: number) => (v >= 100 ? v.toFixed(0) : v.toFixed(1))
+  const storagePct = m ? Math.min(100, (m.urls / Math.max(1, m.capacity)) * 100) : 0
 
   async function shorten(e: React.FormEvent) {
     e.preventDefault()
@@ -112,83 +149,98 @@ export default function Telemetry() {
     }
   }
 
-  return (
-    <>
-      <header className="page-header">
-        <p className="page-kicker animate-fade-in">telemetry</p>
-        <h1 className="page-title animate-fade-in">rushort, live.</h1>
-        <p className="page-intro animate-fade-in-up">
-          every redirect the demo server handles, as it happens.{" "}
-          <span className={live ? "text-green-600" : "text-red-600"}>
-            {live ? "● live" : "● reconnecting"}
-          </span>
-        </p>
-      </header>
+  const tile = { background: PANEL, border: `1px solid ${LINE}`, borderRadius: 10, padding: "14px 16px" }
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+  return (
+    <div className="rounded-xl p-4 md:p-6 font-mono" style={{ background: BG, color: TXT }}>
+      <div className="flex items-center justify-between mb-1">
+        <h1 style={{ fontSize: 22, fontWeight: 700 }}>rushort · live</h1>
+        <span style={{ fontSize: 12, color: live ? GREEN : RED }}>● {live ? "live" : "reconnecting"}</span>
+      </div>
+      <p className="mb-5" style={{ color: DIM, fontSize: 13 }}>
+        every request the demo server handles, sampled once per second. box ceiling: 35k round-trip / 1.18M pipelined RPS.
+      </p>
+
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
         {[
-          ["RPS", rate(rps)],
-          ["redirects/s", rate(qps)],
-          ["fails/s", rate(fails)],
-          ["uptime", m ? fmtUptime(m.uptime_s) : "—"],
-        ].map(([label, value]) => (
-          <div key={label} className="entry-card">
-            <p className="entry-meta">{label}</p>
-            <p className="entry-title tabular-nums">{value}</p>
+          ["requests/s", rate(rps), BLUE],
+          ["redirects/s", rate(qps), GREEN],
+          ["fails/s", rate(fails), fails > 0 ? RED : DIM],
+          ["uptime", m ? fmtUptime(m.uptime_s) : "—", TXT],
+        ].map(([label, value, color]) => (
+          <div key={label as string} style={tile}>
+            <div style={{ color: DIM, fontSize: 11, textTransform: "uppercase", letterSpacing: "0.08em" }}>{label}</div>
+            <div className="tabular-nums" style={{ color: color as string, fontSize: 28, fontWeight: 700 }}>{value}</div>
           </div>
         ))}
       </div>
 
-      <div className="grid md:grid-cols-2 gap-4 mb-6">
-        <div className="entry-card">
-          <p className="entry-meta mb-2">requests/s · last 60s</p>
-          <Spark data={series.map((p) => p.rps)} stroke="#244b80" />
+      <div className="grid md:grid-cols-2 gap-3 mb-3">
+        <div style={tile}>
+          <Chart data={series.map((p) => p.rps)} stroke={BLUE} fill={BLUE} label="requests/s · last 60s" />
         </div>
-        <div className="entry-card">
-          <p className="entry-meta mb-2">fails/s · last 60s</p>
-          <Spark data={series.map((p) => p.fails)} stroke="#b3402e" />
+        <div style={tile}>
+          <Chart data={series.map((p) => p.fails)} stroke={RED} fill={RED} label="fails/s · last 60s" />
         </div>
       </div>
 
-      <div className="entry-card mb-6">
-        <div className="flex flex-wrap gap-x-8 gap-y-2">
-          <p className="entry-meta">total requests <span className="entry-name tabular-nums">{m ? fmt(m.requests) : "—"}</span></p>
-          <p className="entry-meta">redirects <span className="entry-name tabular-nums">{m ? fmt(m.redirects) : "—"}</span></p>
-          <p className="entry-meta">writes <span className="entry-name tabular-nums">{m ? fmt(m.writes) : "—"}</span></p>
-          <p className="entry-meta">4xx <span className="entry-name tabular-nums">{m ? fmt(m.errors_4xx) : "—"}</span></p>
-          <p className="entry-meta">5xx <span className="entry-name tabular-nums">{m ? fmt(m.errors_5xx) : "—"}</span></p>
-          <p className="entry-meta">stored <span className="entry-name tabular-nums">{m ? `${fmt(m.urls)} / ${fmt(m.capacity)}` : "—"}</span></p>
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-3">
+        {[
+          ["total requests", m ? fmt(m.requests) : "—"],
+          ["redirects", m ? fmt(m.redirects) : "—"],
+          ["writes", m ? fmt(m.writes) : "—"],
+          ["4xx", m ? fmt(m.errors_4xx) : "—"],
+          ["5xx", m ? fmt(m.errors_5xx) : "—"],
+        ].map(([label, value]) => (
+          <div key={label as string} style={tile}>
+            <div style={{ color: DIM, fontSize: 11 }}>{label}</div>
+            <div className="tabular-nums" style={{ fontSize: 18 }}>{value}</div>
+          </div>
+        ))}
+      </div>
+
+      <div className="mb-3" style={tile}>
+        <div className="flex justify-between mb-2" style={{ fontSize: 12 }}>
+          <span style={{ color: DIM }}>storage</span>
+          <span className="tabular-nums">{m ? `${fmt(m.urls)} / ${fmt(m.capacity)} (${storagePct.toFixed(storagePct < 0.01 && (m.urls > 0) ? 3 : 1)}%)` : "—"}</span>
+        </div>
+        <div style={{ background: LINE, borderRadius: 4, height: 8 }}>
+          <div style={{ width: `${Math.max(storagePct, m && m.urls > 0 ? 1 : 0)}%`, background: AMBER, borderRadius: 4, height: 8 }} />
         </div>
       </div>
 
-      <div className="entry-card">
-        <h2 className="entry-title mb-2">shorten a url</h2>
-        <p className="entry-description mb-4">
-          public demo, 10 links/hour per IP. links look like whiteye.in/s/abc.
-        </p>
+      <div style={tile}>
+        <div style={{ fontWeight: 700, marginBottom: 4 }}>shorten a url</div>
+        <div className="mb-3" style={{ color: DIM, fontSize: 12 }}>public demo · 10 links/hour per IP · links look like whiteye.in/s/abc</div>
         <form onSubmit={shorten} className="flex flex-col sm:flex-row gap-2">
           <input
             value={url}
             onChange={(e) => setUrl(e.target.value)}
             placeholder="https://example.com/long-thing"
-            className="flex-1 border rounded px-3 py-2 bg-white text-black"
             inputMode="url"
+            className="flex-1 px-3 py-2"
+            style={{ background: BG, border: `1px solid ${LINE}`, borderRadius: 6, color: TXT }}
           />
-          <button type="submit" disabled={shortBusy || !url.trim()} className="border rounded px-4 py-2">
-            {shortBusy ? "shortening…" : "shorten"}
+          <button
+            type="submit"
+            disabled={shortBusy || !url.trim()}
+            className="px-4 py-2"
+            style={{ background: GREEN, color: "#04120a", borderRadius: 6, fontWeight: 700, opacity: shortBusy || !url.trim() ? 0.5 : 1 }}
+          >
+            {shortBusy ? "…" : "shorten"}
           </button>
         </form>
         {short && (
-          <p className="mt-3">
-            <a href={short.short_url} className="underline break-all">{short.short_url}</a>
+          <p className="mt-3" style={{ fontSize: 14 }}>
+            <Link href={`/s/${short.code}`} style={{ color: BLUE }} className="break-all">{short.short_url}</Link>
           </p>
         )}
-        {shortErr && <p className="mt-3 text-red-600">{shortErr}</p>}
+        {shortErr && <p className="mt-3" style={{ color: RED, fontSize: 14 }}>{shortErr}</p>}
       </div>
 
-      <div className="back-row">
-        <Link href="/blog/16m-rps-rust-url-shortener" className="back-link">← how the numbers were earned</Link>
+      <div className="mt-4" style={{ fontSize: 12 }}>
+        <Link href="/blog/16m-rps-rust-url-shortener" style={{ color: DIM }}>← how the numbers were earned</Link>
       </div>
-    </>
+    </div>
   )
 }
