@@ -49,6 +49,14 @@ function fmt(n: number) {
   return n.toLocaleString("en-US")
 }
 
+function compact(n: number) {
+  if (n >= 1e12) return `${(n / 1e12).toFixed(2)}T`
+  if (n >= 1e9) return `${(n / 1e9).toFixed(2)}B`
+  if (n >= 1e6) return `${(n / 1e6).toFixed(2)}M`
+  if (n >= 1e3) return `${(n / 1e3).toFixed(1)}k`
+  return `${n}`
+}
+
 function fmtUptime(s: number) {
   const d = Math.floor(s / 86400)
   const h = Math.floor((s % 86400) / 3600)
@@ -87,7 +95,7 @@ function Chart({ data, stroke, fill, label, unit }: { data: number[]; stroke: st
     <div>
       <div className="flex items-baseline justify-between mb-2">
         <span style={{ color: DIM, fontSize: 11, textTransform: "uppercase", letterSpacing: "0.1em" }}>{label}</span>
-        <span className="tabular-nums" style={{ color: DIM, fontSize: 11 }}>peak {rate(max)}{unit}</span>
+        <span className="tabular-nums" style={{ color: DIM, fontSize: 11 }}>peak {big(max)}{unit}</span>
       </div>
       <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-auto" style={{ aspectRatio: `${W} / ${H}` }} role="img" aria-label={label}>
         <defs>
@@ -100,7 +108,7 @@ function Chart({ data, stroke, fill, label, unit }: { data: number[]; stroke: st
           <g key={t}>
             <line x1="0" y1={Y(t)} x2={W} y2={Y(t)} stroke={LINE} strokeWidth="1" strokeDasharray="3 4" />
             <text x={W - 2} y={Y(t) - 4} fill={DIM} fontSize="10" textAnchor="end" fontFamily="monospace">
-              {rate(t)}{unit}
+              {big(t)}{unit}
             </text>
           </g>
         ))}
@@ -316,15 +324,15 @@ export default function Telemetry() {
 
         <div className="tlm-enter grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-3" style={{ animationDelay: "300ms" }}>
           {[
-            ["requests", m ? fmt(m.requests) : "—"],
-            ["redirects", m ? fmt(m.redirects) : "—"],
-            ["writes", m ? fmt(m.writes) : "—"],
-            ["4xx", m ? fmt(m.errors_4xx) : "—"],
-            ["5xx", m ? fmt(m.errors_5xx) : "—"],
+            ["requests", m?.requests],
+            ["redirects", m?.redirects],
+            ["writes", m?.writes],
+            ["4xx", m?.errors_4xx],
+            ["5xx", m?.errors_5xx],
           ].map(([k, v]) => (
-            <div key={k as string} className="p-3 sm:p-4 min-w-0" style={panel}>
+            <div key={k as string} className="p-3 sm:p-4 min-w-0 overflow-hidden" style={panel}>
               <div style={label}>{k}</div>
-              <div className="tabular-nums mt-1 truncate" style={{ fontSize: 20, fontWeight: 700 }}>{v}</div>
+              <div className="tabular-nums mt-1 truncate" title={typeof v === "number" ? fmt(v) : "—"} style={{ fontSize: 20, fontWeight: 700 }}>{typeof v === "number" ? compact(v) : "—"}</div>
             </div>
           ))}
         </div>
