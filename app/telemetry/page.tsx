@@ -3,7 +3,9 @@
 import Link from "next/link"
 import { useCallback, useEffect, useRef, useState } from "react"
 
-const METRICS_URL = `${process.env.NEXT_PUBLIC_RUSHORT_BASE ?? "https://45.196.196.251/rushort"}/api/metrics`
+const BASE = process.env.NEXT_PUBLIC_RUSHORT_BASE ?? "https://45.196.196.251/rushort"
+const METRICS_URL = `${BASE}/api/metrics`
+const HOST_URL = `${BASE}/api/host`
 
 const EASE = "cubic-bezier(0.2, 0, 0, 1)"
 
@@ -17,6 +19,18 @@ type Metrics = {
   errors_5xx: number
   urls: number
   capacity: number
+}
+
+type Host = {
+  hostname: string
+  os: string
+  cpu: string
+  cpus: number
+  mem_total_kb: number
+  mem_available_kb: number
+  load1: number
+  load5: number
+  load15: number
 }
 
 type Point = { t: number; rps: number; qps: number; fails: number }
@@ -54,6 +68,10 @@ function big(n: number) {
   return rate(n)
 }
 
+function fmtGB(kb: number) {
+  return `${(kb / 1024 / 1024).toFixed(1)}G`
+}
+
 function Chart({ data, stroke, fill, label, unit }: { data: number[]; stroke: string; fill: string; label: string; unit: string }) {
   const W = 640
   const H = 170
@@ -71,7 +89,7 @@ function Chart({ data, stroke, fill, label, unit }: { data: number[]; stroke: st
         <span style={{ color: DIM, fontSize: 11, textTransform: "uppercase", letterSpacing: "0.1em" }}>{label}</span>
         <span className="tabular-nums" style={{ color: DIM, fontSize: 11 }}>peak {rate(max)}{unit}</span>
       </div>
-      <svg viewBox={`0 0 ${W} ${H}`} className="w-full" style={{ height: 170 }} role="img" aria-label={label}>
+      <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-auto" style={{ aspectRatio: `${W} / ${H}` }} role="img" aria-label={label}>
         <defs>
           <linearGradient id={gid} x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor={fill} stopOpacity="0.32" />
@@ -99,6 +117,7 @@ function Chart({ data, stroke, fill, label, unit }: { data: number[]; stroke: st
 
 export default function Telemetry() {
   const [m, setM] = useState<Metrics | null>(null)
+  const [host, setHost] = useState<Host | null>(null)
   const [live, setLive] = useState(false)
   const [series, setSeries] = useState<Point[]>([])
   const [url, setUrl] = useState("")
@@ -133,11 +152,26 @@ export default function Telemetry() {
     }
   }, [])
 
+  const tickHost = useCallback(async () => {
+    try {
+      const res = await fetch(HOST_URL, { cache: "no-store" })
+      if (!res.ok) return
+      setHost(await res.json())
+    } catch {
+      /* keep last */
+    }
+  }, [])
+
   useEffect(() => {
     tick()
+    tickHost()
     const id = setInterval(tick, 1000)
-    return () => clearInterval(id)
-  }, [tick])
+    const id2 = setInterval(tickHost, 5000)
+    return () => {
+      clearInterval(id)
+      clearInterval(id2)
+    }
+  }, [tick, tickHost])
 
   const last = series[series.length - 1]
   const rps = last?.rps ?? 0
@@ -145,6 +179,10 @@ export default function Telemetry() {
   const fails = last?.fails ?? 0
   const peak = series.reduce((a, p) => Math.max(a, p.rps), 0)
   const storagePct = m ? Math.min(1, m.urls / Math.max(1, m.capacity)) : 0
+  const memUsedPct = host && host.mem_total_kb > 0
+    ? Math.min(1, 1 - host.mem_available_kb / host.mem_total_kb)
+    : 0
+  const cores = host?.cpus && host.cpus > 0 ? host.cpus : 4
 
   async function shorten(e: React.FormEvent) {
     e.preventDefault()
@@ -186,9 +224,15 @@ export default function Telemetry() {
     transitionDuration: "150ms",
     transitionTimingFunction: EASE,
   } as const
+  const bar = {
+    transformOrigin: "left",
+    transitionProperty: "transform",
+    transitionDuration: "200ms",
+    transitionTimingFunction: EASE,
+  } as const
 
   return (
-    <div className="min-h-screen font-mono" style={{ background: BG, color: TXT }}>
+    <div className="min-h-screen font-mono overflow-x-hidden" style={{ background: BG, color: TXT }}>
       <style>{`
         @keyframes tlm-rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
         .tlm-enter { animation: tlm-rise 320ms ${EASE} both; }
@@ -199,44 +243,78 @@ export default function Telemetry() {
         .tlm-input:focus-visible { border-color: ${BLUE}; outline: none; }
         @media (prefers-reduced-motion: reduce) { .tlm-enter, .tlm-pulse { animation: none; } }
       `}</style>
-      <div className="mx-auto max-w-5xl px-4 md:px-6 py-8 md:py-12">
-        <div className="tlm-enter flex items-center justify-between mb-8">
-          <div className="flex items-center gap-3">
+      <div className="mx-auto w-full max-w-5xl px-4 sm:px-6 py-6 sm:py-10 md:py-12">
+        <div className="tlm-enter flex flex-wrap items-center justify-between gap-2 mb-6 sm:mb-8">
+          <div className="flex items-center gap-3 min-w-0">
             <span
               className={live ? "tlm-pulse" : undefined}
               style={{
-                width: 10, height: 10, borderRadius: "50%",
+                width: 10, height: 10, borderRadius: "50%", flexShrink: 0,
                 background: live ? GREEN : RED,
                 boxShadow: live ? `0 0 12px ${GREEN}` : `0 0 12px ${RED}`,
               }}
             />
-            <span style={{ fontSize: 12, letterSpacing: "0.18em", color: DIM }}>RUSHORT · LIVE TELEMETRY</span>
+            <span className="truncate" style={{ fontSize: 12, letterSpacing: "0.18em", color: DIM }}>RUSHORT · LIVE TELEMETRY</span>
           </div>
-          <span className="tabular-nums" style={{ fontSize: 12, color: DIM }}>
+          <span className="tabular-nums whitespace-nowrap" style={{ fontSize: 12, color: DIM }}>
             {live ? "● streaming" : "● reconnecting"} · up {m ? fmtUptime(m.uptime_s) : "—"}
           </span>
         </div>
 
         <div className="tlm-enter mb-2" style={{ animationDelay: "60ms", color: DIM, fontSize: 12, letterSpacing: "0.1em" }}>REQUESTS / SECOND</div>
-        <div className="tlm-enter tabular-nums leading-none mb-1" style={{ animationDelay: "60ms", fontSize: "clamp(64px, 12vw, 120px)", fontWeight: 800, letterSpacing: "-0.04em", color: live ? TXT : DIM }}>
+        <div className="tlm-enter tabular-nums leading-none mb-1 break-words" style={{ animationDelay: "60ms", fontSize: "clamp(56px, 15vw, 120px)", fontWeight: 800, letterSpacing: "-0.04em", color: live ? TXT : DIM }}>
           {big(rps)}
         </div>
-        <div className="tlm-enter flex flex-wrap gap-x-6 gap-y-1 mb-8 tabular-nums" style={{ animationDelay: "120ms", fontSize: 13, color: DIM }}>
+        <div className="tlm-enter flex flex-wrap gap-x-6 gap-y-1 mb-6 sm:mb-8 tabular-nums" style={{ animationDelay: "120ms", fontSize: 13, color: DIM }}>
           <span><span style={{ color: GREEN }}>{big(qps)}</span> redirects/s</span>
           <span><span style={{ color: fails > 0 ? RED : DIM }}>{rate(fails)}</span> fails/s</span>
           <span><span style={{ color: AMBER }}>{big(peak)}</span> session peak</span>
         </div>
 
-        <div className="tlm-enter grid md:grid-cols-2 gap-3 mb-3" style={{ animationDelay: "180ms" }}>
-          <div className="p-4" style={panel}>
+        <div className="tlm-enter grid grid-cols-1 md:grid-cols-2 gap-3 mb-3" style={{ animationDelay: "180ms" }}>
+          <div className="p-3 sm:p-4 min-w-0" style={panel}>
             <Chart data={series.map((p) => p.rps)} stroke={BLUE} fill={BLUE} label="throughput · trailing 60s" unit="/s" />
           </div>
-          <div className="p-4" style={panel}>
+          <div className="p-3 sm:p-4 min-w-0" style={panel}>
             <Chart data={series.map((p) => p.fails)} stroke={RED} fill={RED} label="failures · trailing 60s" unit="/s" />
           </div>
         </div>
 
-        <div className="tlm-enter grid grid-cols-2 md:grid-cols-5 gap-3 mb-3" style={{ animationDelay: "240ms" }}>
+        <div className="tlm-enter" style={{ animationDelay: "240ms", color: DIM, fontSize: 11, letterSpacing: "0.1em", margin: "20px 0 8px" }}>
+          DEVICE · {host ? host.hostname : "rove"}
+        </div>
+        <div className="tlm-enter grid grid-cols-2 lg:grid-cols-4 gap-3 mb-3" style={{ animationDelay: "240ms" }}>
+          <div className="p-3 sm:p-4 min-w-0" style={panel}>
+            <div style={label}>host</div>
+            <div className="mt-1 truncate" style={{ fontSize: 16, fontWeight: 700 }}>{host?.hostname ?? "…"}</div>
+            <div className="truncate" style={{ color: DIM, fontSize: 12 }}>{host?.os ?? "…"}</div>
+          </div>
+          <div className="p-3 sm:p-4 min-w-0" style={panel}>
+            <div style={label}>cpu</div>
+            <div className="mt-1 truncate" style={{ fontSize: 16, fontWeight: 700 }}>{host ? `${host.cpus} cores` : "…"}</div>
+            <div className="truncate" style={{ color: DIM, fontSize: 12 }}>{host?.cpu ?? "…"}</div>
+          </div>
+          <div className="p-3 sm:p-4 min-w-0" style={panel}>
+            <div style={label}>memory</div>
+            <div className="mt-1 tabular-nums" style={{ fontSize: 16, fontWeight: 700 }}>
+              {host ? `${fmtGB(host.mem_total_kb - host.mem_available_kb)} / ${fmtGB(host.mem_total_kb)}` : "…"}
+            </div>
+            <div className="mt-2" style={{ background: LINE, borderRadius: 999, height: 6 }}>
+              <div style={{ ...bar, transform: `scaleX(${memUsedPct})`, background: BLUE, borderRadius: 999, height: 6 }} />
+            </div>
+          </div>
+          <div className="p-3 sm:p-4 min-w-0" style={panel}>
+            <div style={label}>load 1 / 5 / 15m</div>
+            <div className="mt-1 tabular-nums" style={{ fontSize: 16, fontWeight: 700 }}>
+              {host ? `${host.load1.toFixed(2)} · ${host.load5.toFixed(2)} · ${host.load15.toFixed(2)}` : "…"}
+            </div>
+            <div className="mt-2" style={{ background: LINE, borderRadius: 999, height: 6 }}>
+              <div style={{ ...bar, transform: `scaleX(${host ? Math.min(1, host.load1 / cores) : 0})`, background: host && host.load1 > cores ? RED : GREEN, borderRadius: 999, height: 6 }} />
+            </div>
+          </div>
+        </div>
+
+        <div className="tlm-enter grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-3" style={{ animationDelay: "300ms" }}>
           {[
             ["requests", m ? fmt(m.requests) : "—"],
             ["redirects", m ? fmt(m.redirects) : "—"],
@@ -244,28 +322,24 @@ export default function Telemetry() {
             ["4xx", m ? fmt(m.errors_4xx) : "—"],
             ["5xx", m ? fmt(m.errors_5xx) : "—"],
           ].map(([k, v]) => (
-            <div key={k as string} className="p-4" style={panel}>
+            <div key={k as string} className="p-3 sm:p-4 min-w-0" style={panel}>
               <div style={label}>{k}</div>
-              <div className="tabular-nums mt-1" style={{ fontSize: 22, fontWeight: 700 }}>{v}</div>
+              <div className="tabular-nums mt-1 truncate" style={{ fontSize: 20, fontWeight: 700 }}>{v}</div>
             </div>
           ))}
         </div>
 
-        <div className="tlm-enter p-4 mb-3" style={{ animationDelay: "300ms", ...panel }}>
-          <div className="flex justify-between mb-2" style={{ fontSize: 12 }}>
-            <span style={{ color: DIM, textTransform: "uppercase", letterSpacing: "0.1em" }}>storage</span>
-            <span className="tabular-nums">{m ? `${fmt(m.urls)} / ${fmt(m.capacity)}` : "—"}</span>
+        <div className="tlm-enter p-3 sm:p-4 mb-3" style={{ animationDelay: "340ms", ...panel }}>
+          <div className="flex justify-between gap-2 mb-2" style={{ fontSize: 12 }}>
+            <span style={{ color: DIM, textTransform: "uppercase", letterSpacing: "0.1em" }}>link storage</span>
+            <span className="tabular-nums whitespace-nowrap">{m ? `${fmt(m.urls)} / ${fmt(m.capacity)}` : "—"}</span>
           </div>
           <div style={{ background: LINE, borderRadius: 999, height: 6 }}>
-            <div style={{
-              transform: `scaleX(${storagePct})`, transformOrigin: "left",
-              transitionProperty: "transform", transitionDuration: "200ms", transitionTimingFunction: EASE,
-              background: AMBER, borderRadius: 999, height: 6,
-            }} />
+            <div style={{ ...bar, transform: `scaleX(${storagePct})`, background: AMBER, borderRadius: 999, height: 6 }} />
           </div>
         </div>
 
-        <div className="tlm-enter p-5" style={{ animationDelay: "360ms", ...panel, borderColor: "#23405e" }}>
+        <div className="tlm-enter p-4 sm:p-5" style={{ animationDelay: "400ms", ...panel, borderColor: "#23405e" }}>
           <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 2 }}>shorten a url</div>
           <div className="mb-4" style={{ color: DIM, fontSize: 12 }}>public demo · 10 links/hour per IP · links look like whiteye.in/s/abc</div>
           <form onSubmit={shorten} className="flex flex-col sm:flex-row gap-2">
@@ -275,25 +349,25 @@ export default function Telemetry() {
               placeholder="https://example.com/long-thing"
               inputMode="url"
               spellCheck={false}
-              className="tlm-input flex-1 px-3 py-2"
-              style={{ background: BG, border: `1px solid ${LINE}`, borderRadius: 8, color: TXT, fontSize: 14 }}
+              className="tlm-input flex-1 min-w-0 px-3 py-3 sm:py-2"
+              style={{ background: BG, border: `1px solid ${LINE}`, borderRadius: 8, color: TXT, fontSize: 16 }}
             />
             <button
               type="submit"
               disabled={shortBusy || !url.trim()}
-              className="tlm-press px-4 py-2"
-              style={{ ...pressable, background: GREEN, color: "#04120a", borderRadius: 8, fontWeight: 800, fontSize: 14, opacity: shortBusy || !url.trim() ? 0.45 : 1, cursor: shortBusy || !url.trim() ? "default" : "pointer" }}
+              className="tlm-press px-4 py-3 sm:py-2"
+              style={{ ...pressable, background: GREEN, color: "#04120a", borderRadius: 8, fontWeight: 800, fontSize: 14, opacity: shortBusy || !url.trim() ? 0.45 : 1, cursor: shortBusy || !url.trim() ? "default" : "pointer", minHeight: 44 }}
             >
               {shortBusy ? "…" : "shorten →"}
             </button>
           </form>
           {short && (
             <div className="mt-3 flex items-center gap-2 flex-wrap px-3 py-2" style={{ background: BG, border: `1px solid ${LINE}`, borderRadius: 8 }}>
-              <Link href={`/s/${short.code}`} style={{ color: BLUE, fontSize: 14 }} className="break-all">{short.short_url}</Link>
+              <Link href={`/s/${short.code}`} style={{ color: BLUE, fontSize: 14 }} className="break-all min-w-0 flex-1">{short.short_url}</Link>
               <button
                 onClick={copy}
                 className="tlm-press"
-                style={{ ...pressable, color: DIM, fontSize: 12, border: `1px solid ${LINE}`, borderRadius: 6, padding: "3px 10px 1px" }}
+                style={{ ...pressable, color: DIM, fontSize: 12, border: `1px solid ${LINE}`, borderRadius: 6, padding: "8px 14px" }}
               >
                 {copied ? "copied ✓" : "copy"}
               </button>
