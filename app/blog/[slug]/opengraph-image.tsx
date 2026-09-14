@@ -1,8 +1,13 @@
 import { xpSocialImage } from "@/components/xp-social-image"
-import { getPostMeta } from "@/lib/posts"
+import { getPostMeta, posts } from "@/lib/posts"
 
 export const size = { width: 1200, height: 630 }
 export const contentType = "image/png"
+export const alt = "An essay from Aaryan’s Windows XP desktop"
+
+export function generateStaticParams() {
+  return posts.map((post) => ({ slug: post.slug }))
+}
 
 export default async function Image({
   params,
