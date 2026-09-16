@@ -1,8 +1,5 @@
 import type { Metadata } from "next"
 import "./globals.css"
-import "./xp.css"
-import "./games.css"
-import "./browser.css"
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://whiteye.in"),
