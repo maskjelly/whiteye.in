@@ -339,6 +339,19 @@ export function XpDesktop({
             </div>
             <span>Crawler Kit</span>
           </a>
+          <a
+            className="desktop-shortcut"
+            href="/plain-corners"
+            target="_blank"
+            rel="noreferrer"
+            title="Plain Corners — a Mac utility for subtler window corners"
+          >
+            <div className="shortcut-icon">
+              <XpIcon name="settings" size={44} />
+              <span className="shortcut-arrow">↗</span>
+            </div>
+            <span>Plain Corners</span>
+          </a>
         </nav>
         <div className="desktop-signature">
           <span>aaryan’s computer</span>

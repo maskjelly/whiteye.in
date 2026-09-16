@@ -66,6 +66,12 @@ export function Navbar() {
         >
           now
         </Link>
+        <Link
+          href="/plain-corners"
+          className="site-nav-link"
+        >
+          corners
+        </Link>
       </div>
     </nav>
   )

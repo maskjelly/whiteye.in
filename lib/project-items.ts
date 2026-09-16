@@ -2,6 +2,12 @@ import type { Item } from "@/components/section-list"
 
 export const projectItems: Item[] = [
   {
+    title: "plain corners",
+    role: "creator",
+    description: "a tiny mac app that fixes apple's over-rounded window corners.",
+    href: "/plain-corners",
+  },
+  {
     title: "jurius",
     role: "creator",
     description: "litigation intelligence built on precedent graphs.",
