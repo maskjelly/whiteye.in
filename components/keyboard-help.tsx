@@ -6,6 +6,7 @@ const shortcuts = [
   { key: "h", label: "home" },
   { key: "b", label: "writing" },
   { key: "n", label: "now" },
+  { key: "c", label: "corners" },
   { key: "w", label: "work" },
   { key: "p", label: "projects" },
   { key: "?", label: "this help" },

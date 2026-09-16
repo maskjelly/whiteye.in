@@ -189,7 +189,11 @@ export function CollectionApp({ kind }: { kind: "projects" | "work" }) {
             <div>
               <h2>
                 {item.href ? (
-                  <a href={item.href} target="_blank" rel="noreferrer">
+                  <a
+                    href={item.href}
+                    target={item.href.startsWith("http") ? "_blank" : undefined}
+                    rel={item.href.startsWith("http") ? "noreferrer" : undefined}
+                  >
                     {item.title} <span className="external-arrow">↗</span>
                   </a>
                 ) : (

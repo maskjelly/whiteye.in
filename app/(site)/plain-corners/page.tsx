@@ -200,8 +200,9 @@ export default function PlainCornersPage() {
           <p>
             the 0.1.0 release is a working preview — ad-hoc signed rather than
             notarized, so macOS will ask you to vouch for it once (privacy
-            &amp; security → open anyway). it is honest about being a small
-            tool that does one thing.
+            &amp; security → open anyway). the build is universal, but only
+            apple silicon has been exercised so far. it is honest about being a
+            small tool that does one thing.
           </p>
         </div>
       </section>

@@ -33,6 +33,9 @@ export function Navbar() {
         case "n":
           router.push("/now")
           break
+        case "c":
+          router.push("/plain-corners")
+          break
         case "p":
           document.getElementById("projects")?.scrollIntoView({ behavior: "smooth" })
           break
