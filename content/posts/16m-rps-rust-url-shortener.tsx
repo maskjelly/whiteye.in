@@ -2,9 +2,9 @@ import { Figure, Caption } from "@/components/figure"
 
 export const meta = {
   slug: "16m-rps-rust-url-shortener",
-  title: "16M RPS in Rust — a 1,000-line URL shortener with no framework",
+  title: "16.8M RPS on M4 Pro; 1.42M on a $4 VPS — a Rust URL shortener",
   date: "sep 14, 2026",
-  description: "100M redirects in 10 seconds on loopback, plus what the same binary did on a 4-vCPU Linux VPS. what the numbers mean, and which optimizations didn't survive measurement.",
+  description: "A historical 16.8M RPS loopback peak on M4 Pro, plus a verified 1.42M RPS median on a $4, four-vCPU Linux VPS. Workloads, limitations, and raw results.",
   readingTime: "15 min",
 }
 
@@ -47,7 +47,7 @@ function VpsBars() {
   return (
     <svg viewBox="0 0 720 190" role="img" aria-label="four vCPU Linux VPS throughput, linear scale">
       <text x={0} y={18} fill="#244b80" fontSize={12} fontFamily="var(--font-mono)" letterSpacing="0.04em">
-        fig. 2 — same binary on a 4-vCPU Linux VPS (linear scale, loopback)
+        fig. 2 — September 14 VPS baseline (linear scale, loopback)
       </text>
       <line x1={0} y1={26} x2={720} y2={26} stroke="#cfc5b2" strokeWidth={1} />
       {rows.map((r, i) => {
@@ -81,10 +81,12 @@ export default function Post() {
         (100,000,000 requests, zero drops, p99 17.6ms), peaks at 16.8M RPS
         under closed-loop saturation, serves 165k round-trip RPS without
         pipelining, and holds 1,158 RPS of durable mixed traffic with
-        SIGKILL-safe acknowledgments. The same binary on a 4-vCPU Linux VPS
-        sustains 951k pipelined RPS and 32.8k round-trip RPS with a co-resident
-        pinned client; two follow-up micro-optimizations failed to beat
-        baseline and were not deployed. The service now also exposes lock-free
+        SIGKILL-safe acknowledgments. On a $4 Linux VPS with four vCPUs, a
+        September 26 rerun measured 1.42M median pipelined RPS across three
+        eight-second saturation runs and completed 13M verified redirects in
+        each of three ten-second fixed-rate runs. An earlier pinned VPS test
+        measured 951k pipelined RPS and 32.8k round-trip RPS. The service now
+        also exposes lock-free
         `/api/metrics` and `/api/host` counters that power a live telemetry
         dashboard, and accepts authenticated durable writes. This paper
         documents the design, the measurement methodology, the VPS follow-up,
@@ -276,8 +278,8 @@ export default function Post() {
       <h3>5.3 results — Linux VPS follow-up</h3>
       <p>
         To check whether the loopback results survive a different kernel, CPU,
-        and scheduler, the unchanged implementation was run on a four-vCPU KVM
-        host (Linux 5.4.0-208, Rust 1.98.1) with a separate ephemeral server on{" "}
+        and scheduler, the unchanged implementation was run on a $4 KVM VPS with four vCPUs
+        host (then Linux 5.4.0-208, Rust 1.98.1) with a separate ephemeral server on{" "}
         <code>127.0.0.1:18080</code>, 10,000 seeded links, 32 connections,
         three 8-second runs per variant, and the server pinned to CPUs 0–1
         with the client pinned to 2–3. Baseline medians:{" "}
@@ -302,7 +304,7 @@ export default function Post() {
       <Figure>
         <VpsBars />
         <Caption>
-          fig. 2 — the same binary on four vCPUs: batching still dominates
+          fig. 2 — the September 14 test on a $4 VPS with four vCPUs: batching still dominates
           (951k vs 32.8k RPS), but the pipelined ceiling is 20× lower than the
           M4 Pro&apos;s. Loopback processing, not public HTTPS capacity.
         </Caption>
@@ -318,6 +320,35 @@ export default function Post() {
         further Rust micro-optimization.
       </p>
 
+      <h3>5.4 September 26 VPS rerun</h3>
+      <p>
+        A later run on the same four-vCPU KVM VPS, now on Linux 5.15, used an
+        isolated RAM-only server, 1,000 preloaded URLs, and a client on the
+        same host. The continuous synthetic traffic generator was paused for
+        each suite and restored afterward; the production shortener stayed
+        running. With 32 connections and pipeline depth 512, three eight-second
+        saturation runs passed at 1,383,376–1,428,007 RPS: <strong>1,418,510
+        median RPS</strong>, zero drops, errors, or redirect mismatches, and
+        58.1–59.4 ms p99 batch latency. The best single five-second run in the
+        configuration sweep was 1,465,138 RPS at 16 connections and pipeline
+        depth 256.
+      </p>
+      <p>
+        At a fixed 1.3M RPS target, three ten-second runs each verified all
+        13,000,000 redirects, finishing in 10.03–10.07 seconds with 1.291–1.296M
+        achieved RPS. The p99 batch latency rose to 116–264 ms near saturation.
+        A 1.4M RPS target failed its throughput requirement: all 14M responses
+        were correct, but they took 10.62 seconds. The earlier 951k result used
+        pinned CPU pairs, 10,000 seeds, pipeline depth 128, and a different
+        kernel. The improvement in the headline number reflects different
+        benchmark conditions; it does not establish a code speedup or 16M RPS
+        on this VPS. Full method and{" "}
+        <a href="https://github.com/maskjelly/rushort/blob/main/docs/performance-2026-09-26.md">
+          raw-result links
+        </a>{" "}
+        are in the rushort repository.
+      </p>
+
       <h2>6. threats to validity</h2>
       <p>
         Five limitations bound these claims. (1) All figures are loopback on
@@ -331,8 +362,10 @@ export default function Post() {
         absorbing. (4) The durable rate test covers 30 seconds at the 100M/day
         average rate; it is not a 24-hour soak, a power-loss test, or a
         replication evaluation — the system is single-writer by design.
-        (5) The VPS comparison runs at 8 seconds per sample with both sides
-        pinned on four shared vCPUs, so sub-5% differences are not resolvable.
+        (5) The initial VPS comparison ran 8 seconds per sample with both sides
+        pinned on four shared vCPUs, so sub-5% differences are not resolvable;
+        the September 26 rerun changed seed size and pipelining and is not a
+        direct before/after comparison.
         Extrapolating the 10-second burst to a daily volume (≈864B/day) would
         be arithmetic without evidentiary basis and is explicitly disclaimed.
         The public dashboard also includes a continuous synthetic load
@@ -350,9 +383,11 @@ export default function Post() {
         A framework-free Rust shortener of ~1,000 serving-path lines sustains
         10M pipelined redirect RPS for 10 seconds, peaks at 16.8M RPS,
         answers 165k honest round-trips per second, and holds the 100M/day
-        average rate durably with kill-safe acknowledgments. On a 4-vCPU Linux
-        VPS the same binary holds 951k pipelined RPS and 32.8k round-trip RPS,
-        and two plausible micro-optimizations failed to beat baseline. The
+        average rate durably with kill-safe acknowledgments on the M4 Pro. On
+        a $4 Linux VPS with four vCPUs, the September 26 rerun measured 1.42M
+        median pipelined RPS and verified 13M redirects per ten-second
+        fixed-rate run. Two plausible micro-optimizations in the earlier VPS
+        comparison failed to beat baseline. The
         dominant optimization is request batching at the socket layer; the
         dominant methodological requirement is a harness that fails itself.
         Source, harness, deployment notes, and live telemetry are MIT-licensed
@@ -389,6 +424,17 @@ export default function Post() {
             and{" "}
             <a href="https://github.com/maskjelly/rushort/blob/main/docs/benchmarks/rove-2026-09-14.json">
               rove-2026-09-14.json
+            </a>
+            .
+          </li>
+          <li>
+            September 26 VPS rerun: method, configuration sweep, and raw JSON.{" "}
+            <a href="https://github.com/maskjelly/rushort/blob/main/docs/performance-2026-09-26.md">
+              performance-2026-09-26.md
+            </a>{" "}
+            and{" "}
+            <a href="https://github.com/maskjelly/rushort/blob/main/docs/benchmarks/rove-2026-09-26.json">
+              rove-2026-09-26.json
             </a>
             .
           </li>
