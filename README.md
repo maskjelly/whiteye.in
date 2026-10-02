@@ -8,6 +8,12 @@ The desktop includes movable and resizable windows, a Start menu, taskbar, searc
 
 Internet Explorer opens real websites in a sandboxed iframe, with an address bar, bookmarks, refresh, and back/forward for addresses opened from its controls. Links within external pages keep their own browser history; cross-origin rules prevent reading their current address. Sites that forbid embedding can be opened using the external-tab link. HTTP pages require opening separately when the portfolio is served over HTTPS. No proxy is used to bypass site restrictions.
 
+## Résumé
+
+`/resume` is a static HTML profile with work history, public project links, scoped benchmarks and linked merged contributions. It has canonical metadata, Person/ProfilePage structured data, a dedicated social image, print styles and a downloadable one-page PDF. `/resume.txt` serves plain text without JavaScript; `/llms.txt` links the public sources. Robots allows crawling and the sitemap includes `/resume`.
+
+The profile and text route share `lib/resume-data.json`. Update the PDF in `public/Aaryan-Singh-Resume.pdf` whenever the profile changes; figures were checked on October 2, 2026. The interactive homepage, work folder and now page link to the profile.
+
 ## Development
 
 ```sh

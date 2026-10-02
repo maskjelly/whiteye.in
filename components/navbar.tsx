@@ -57,6 +57,7 @@ export function Navbar() {
         aaryan.
       </Link>
       <div className="site-nav-links">
+        <a href="/resume" className="site-nav-link">résumé</a>
         <Link
           href="/blog"
           className="site-nav-link"

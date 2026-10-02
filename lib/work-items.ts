@@ -2,30 +2,36 @@ import type { Item } from "@/components/section-list"
 
 export const workItems: Item[] = [
   {
-    title: "Rust open source",
+    title: "Open source",
     role: "contributor",
     period: "now",
-    description: "Learning Rust. Opening PRs in Tokio and other Rust repos.",
-    href: "https://github.com/tokio-rs/tokio",
+    description: "47 merged PRs across 13 external repositories, including Podman Desktop, Atuin, IBM Granite CLI and termlens.",
+    href: "/resume#open-source",
   },
   {
-    title: "referrush",
+    title: "ReferRush",
     role: "founding engineer",
     period: "feb 2025 — sep 2026",
-    description: "Built the product from the first commit.",
+    description: "Built from the first commit: Shopify installs, WhatsApp referrals, UPI payouts and production recovery.",
     href: "https://referrush.com",
-  },
-  {
-    title: "AI email client",
-    role: "software engineer",
-    period: "YC W23",
-    description: "Engineered email indexing, search, and automation at scale.",
   },
   {
     title: "O1Visa",
     role: "backend engineer",
-    period: "2024 — 2025",
-    description: "Built the backend powering onboarding and integrations.",
+    period: "jan 2024 — jan 2025",
+    description: "Built indexes, search and the customer directory powering onboarding.",
+  },
+  {
+    title: "FnBC.ltd",
+    role: "founder & software engineer",
+    period: "oct 2022 — nov 2024",
+    description: "Ran a software agency, building AI agents and full-stack products for clients.",
+  },
+  {
+    title: "MailTime Email Client",
+    role: "software engineer",
+    period: "oct 2022 — sep 2024",
+    description: "Engineered email indexing, search and automation.",
   },
   {
     title: "Rice University",

@@ -71,7 +71,7 @@ export function WelcomeApp({ open }: { open: OpenApp }) {
             Hi, I’m Aaryan<span>.</span>
           </h1>
           <p className="welcome-location">
-            Software engineer · Bangalore, India
+            Software engineer · Assam, India
           </p>
         </div>
         <div className="profile-picture">
@@ -83,21 +83,12 @@ export function WelcomeApp({ open }: { open: OpenApp }) {
         <br className="desktop-break" /> the parts that break.
       </p>
       <p className="welcome-detail">
-        Learning Rust and opening PRs in{" "}
-        <a
-          href="https://github.com/tokio-rs/tokio"
-          target="_blank"
-          rel="noreferrer"
-        >
-          Tokio
-        </a>{" "}
-        and other Rust repos.
+        Built <a href="https://instantkv.com" target="_blank" rel="noreferrer">instantKV</a>{" "}
+        for agent memory and <a href="https://github.com/maskjelly/morse" target="_blank" rel="noreferrer">Morse</a>{" "}
+        for remote agent work. 47 merged PRs across 13 external repositories.
         <br />
-        Previously at{" "}
-        <a href="https://referrush.com" target="_blank" rel="noreferrer">
-          referrush
-        </a>
-        . Two-time YC alum.
+        Previously founding engineer at{" "}
+        <a href="https://referrush.com" target="_blank" rel="noreferrer">ReferRush</a>.
       </p>
       <div className="xp-section-heading">
         <h2>Make yourself at home</h2>
@@ -119,16 +110,16 @@ export function WelcomeApp({ open }: { open: OpenApp }) {
         <AppShortcut
           icon="documents"
           title="My Work"
-          description="Founding engineer · YC ×2"
+          description="Products, systems and open source"
           onClick={() => open("work")}
         />
-        <Link href="/now" className="app-shortcut">
-          <XpIcon name="ie" size={38} />
+        <a href="/resume" className="app-shortcut">
+          <XpIcon name="documents" size={38} />
           <span>
-            <strong>What I’m up to</strong>
-            <small>The now page</small>
+            <strong>Résumé</strong>
+            <small>Work, projects and measured results</small>
           </span>
-        </Link>
+        </a>
       </div>
       <div className="welcome-bottom">
         <span>

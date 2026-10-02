@@ -1,0 +1,63 @@
+.resume-page { min-height: 100vh; background: #fff; color: #202020; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 16px; line-height: 1.65; }
+.resume-shell { max-width: 840px; padding: 0 30px; margin: 0 auto; }
+.resume-page a { color: inherit; text-decoration: underline; text-decoration-color: #b9b9b9; text-underline-offset: 4px; }
+.resume-page a:hover { text-decoration-color: currentColor; }
+.resume-page a:focus-visible, .resume-table-wrap:focus-visible { outline: 2px solid #2459a6; outline-offset: 5px; border-radius: 1px; }
+.resume-nav { display: flex; justify-content: space-between; align-items: center; gap: 24px; padding: 28px 0; border-bottom: 1px solid #e6e6e6; font-size: 14px; }
+.resume-nav > div { display: flex; gap: 24px; }
+.resume-header { padding: 64px 0 42px; }
+.resume-header h1 { font-family: Georgia, "Times New Roman", serif; font-size: clamp(42px, 7vw, 64px); line-height: 1.08; letter-spacing: -2px; font-weight: 400; margin: 0 0 14px; }
+.resume-title { color: #565656; margin: 0 0 28px; }
+.resume-intro { font-family: Georgia, "Times New Roman", serif; font-size: clamp(24px, 4vw, 30px); line-height: 1.35; max-width: 30ch; margin: 0 0 18px; }
+.resume-summary { max-width: 66ch; margin: 0 0 24px; }
+.resume-contact { display: flex; flex-wrap: wrap; gap: 6px 20px; font-size: 14px; color: #565656; }
+.resume-section { border-top: 1px solid #e6e6e6; padding: 30px 0 36px; }
+.resume-section h2 { font-size: 20px; font-weight: 600; letter-spacing: -0.3px; line-height: 1.35; margin: 0 0 20px; }
+.resume-section h3 { font-size: 17px; font-weight: 600; margin: 0; line-height: 1.5; }
+.resume-section p { margin: 10px 0 0; max-width: 72ch; }
+.resume-entry + .resume-entry { margin-top: 28px; }
+.resume-entry-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.resume-entry-heading > p { margin: 0; font-size: 13px; color: #656565; white-space: nowrap; }
+.resume-section .resume-role { font-size: 14px; color: #656565; margin: 3px 0 10px; }
+.resume-section ul { list-style: disc; padding-left: 19px; margin: 12px 0 0; }
+.resume-section li + li { margin-top: 8px; }
+.resume-proof strong { font-weight: 600; }
+.resume-section .resume-note { font-size: 14px; line-height: 1.65; color: #656565; }
+.resume-source-links { display: flex; flex-wrap: wrap; gap: 8px 20px; margin-top: 10px; font-size: 14px; }
+.resume-table-wrap { margin-top: 18px; overflow-x: auto; }
+.resume-page table { border-collapse: collapse; width: 100%; font-size: 14px; text-align: left; }
+.resume-page caption { text-align: left; font-size: 13px; color: #656565; margin-bottom: 10px; }
+.resume-page th, .resume-page td { border-bottom: 1px solid #e6e6e6; padding: 10px 12px 10px 0; vertical-align: top; }
+.resume-page th { font-weight: 600; }
+.resume-page td:nth-child(2) { white-space: nowrap; font-variant-numeric: tabular-nums; }
+.resume-section .resume-contributions { list-style: none; padding: 0; margin-top: 20px; }
+.resume-contributions li { display: grid; grid-template-columns: 160px 1fr; gap: 16px; font-size: 14px; }
+.resume-contributions span { color: #656565; }
+.resume-skills > div { display: grid; grid-template-columns: 170px 1fr; gap: 18px; margin-top: 12px; }
+.resume-skills dt { font-size: 14px; font-weight: 600; }
+.resume-skills dd { margin: 0; font-size: 14px; }
+.resume-footer { display: flex; justify-content: space-between; align-items: center; gap: 20px; padding: 24px 0 40px; border-top: 1px solid #e6e6e6; font-size: 13px; color: #656565; }
+.resume-skip { position: absolute; left: 20px; top: 12px; transform: translateY(-200%); background: #fff; padding: 8px 12px; z-index: 10; }
+.resume-skip:focus { transform: none; }
+@media (max-width: 560px) {
+  .resume-shell { padding: 0 22px; }
+  .resume-nav { gap: 16px; padding: 22px 0; font-size: 13px; }
+  .resume-nav > div { gap: 16px; }
+  .resume-header { padding: 44px 0 32px; }
+  .resume-entry-heading { display: block; }
+  .resume-entry-heading > p { margin-top: 2px; }
+  .resume-contributions li, .resume-skills > div { grid-template-columns: 1fr; gap: 2px; }
+  .resume-page table { font-size: 13px; }
+  .resume-page th, .resume-page td { padding-right: 8px; }
+}
+@media print {
+  .resume-page { font-size: 10pt; color: #000; }
+  .resume-shell { max-width: none; padding: 0; }
+  .resume-nav, .resume-skip { display: none; }
+  .resume-header { padding: 0 0 16px; }
+  .resume-header h1 { font-size: 28pt; }
+  .resume-intro { font-size: 16pt; }
+  .resume-section { padding: 15px 0; }
+  .resume-entry { break-inside: avoid; }
+  .resume-page a { text-decoration: none; }
+}

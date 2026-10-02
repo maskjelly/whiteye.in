@@ -1,0 +1,18 @@
+# Aaryan Singh — whiteye.in
+
+Software engineer working across products, AI agents and systems. Public work history, projects and measured results are available without an account.
+
+## Profile
+- [Résumé](https://whiteye.in/resume): Work history, selected projects, open-source contributions and benchmark conditions.
+- [Plain-text résumé](https://whiteye.in/resume.txt): Text version with project and evidence URLs.
+- [PDF résumé](https://whiteye.in/Aaryan-Singh-Resume.pdf): One-page résumé.
+- [GitHub](https://github.com/maskjelly): Public repositories and contributions.
+
+## Writing and software
+- [Engineering essays](https://whiteye.in/blog)
+- [Current work](https://whiteye.in/now)
+- [instantKV](https://instantkv.com): Self-hosted agent memory in Rust.
+- [Service telemetry](https://whiteye.in/telemetry): rushort metrics; includes synthetic traffic.
+- [Plain Corners](https://whiteye.in/plain-corners): Native macOS utility.
+
+Benchmark numbers describe specific hardware, workloads and transports. ReferRush figures describe the platform. The résumé page links the measurement reports and marks planned functionality.

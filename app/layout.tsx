@@ -7,10 +7,10 @@ export const metadata: Metadata = {
     default: "aaryan",
     template: "%s | aaryan",
   },
-  description: "Aaryan's personal site. Software, systems, and notes.",
+  description: "Aaryan Singh. Founding engineer, AI agents, Rust systems and open-source software. Projects, work history and engineering notes.",
   openGraph: {
     title: "aaryan",
-    description: "Aaryan's personal site. Software, systems, and notes.",
+    description: "Aaryan Singh. Founding engineer, AI agents, Rust systems and open-source software. Projects, work history and engineering notes.",
     url: "https://whiteye.in",
     siteName: "aaryan",
     locale: "en_US",

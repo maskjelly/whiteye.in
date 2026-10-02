@@ -352,6 +352,13 @@ export function XpDesktop({
             </div>
             <span>Plain Corners</span>
           </a>
+          <a className="desktop-shortcut" href="/resume" title="Résumé — work, projects and measured results">
+            <div className="shortcut-icon">
+              <XpIcon name="documents" size={44} />
+              <span className="shortcut-arrow">↗</span>
+            </div>
+            <span>Résumé</span>
+          </a>
         </nav>
         <div className="desktop-signature">
           <span>aaryan’s computer</span>
@@ -479,6 +486,10 @@ export function XpDesktop({
                   <XpIcon name="settings" size={24} />
                   My Setup
                 </Link>
+                <a href="/resume" onClick={() => setStartOpen(false)}>
+                  <XpIcon name="documents" size={24} />
+                  Résumé
+                </a>
                 <hr />
                 <a
                   href="https://github.com/maskjelly"

@@ -1,0 +1,111 @@
+{
+  "name": "Aaryan Singh",
+  "headline": "Software Engineer | Product, AI Agents & Systems",
+  "location": "Assam, India",
+  "email": "aaryan@whiteye.in",
+  "updated": "2026-10-02",
+  "summary": "Built ReferRush from its first commit, engineered email search and automation, and ship Rust agent infrastructure. I work across the interface, backend, production debugging and customer conversations.",
+  "experience": [
+    {
+      "company": "ReferRush",
+      "role": "Founding Engineer",
+      "period": "Feb 2025 - Sep 2026",
+      "location": "Bengaluru",
+      "url": "https://referrush.com",
+      "bullets": [
+        "Built Shopify installation, WhatsApp referrals and UPI payouts from the first commit, including PAN and TDS handling. The platform reached 2,300 merchants, 30M+ customers and $1M+ processed.",
+        "Diagnosed a bank-reversal loop through payment-ID logs. Added a two-minute watchdog, EC2 worker recovery, alerts and payment isolation so other payouts could continue.",
+        "Worked directly with customers and closed brands through sales."
+      ]
+    },
+    {
+      "company": "O1Visa",
+      "role": "Backend Engineer",
+      "period": "Jan 2024 - Jan 2025",
+      "bullets": [
+        "Built indexes, search and the customer directory powering onboarding for an O-1 visa platform."
+      ]
+    },
+    {
+      "company": "FnBC.ltd",
+      "role": "Founder & Software Engineer",
+      "period": "Oct 2022 - Nov 2024",
+      "location": "Remote (Dubai)",
+      "bullets": [
+        "Ran a freelance software agency alongside employment, building AI agents and full-stack products for clients."
+      ]
+    },
+    {
+      "company": "MailTime Email Client",
+      "role": "Software Engineer",
+      "period": "Oct 2022 - Sep 2024",
+      "bullets": [
+        "Engineered email indexing, search and automation."
+      ]
+    }
+  ],
+  "oss": "47 merged pull requests across 13 external public repositories, including 27 in termlens. Contributions include Podman Desktop UI, Atuin hook handling, IBM Granite CLI setup, dial9 telemetry and removing JSON key clones in spate.",
+  "projects": [
+    {
+      "name": "instantKV",
+      "stack": "Rust, Tokio, Axum, redb, MCP",
+      "url": "https://github.com/maskjelly/instantKV",
+      "description": "Built self-hosted agent memory with shared/private namespaces, atomic checkpoints and seven MCP tools. Verified agent isolation, kill/restart recovery and backup restore. Published 157,500 successful HTTP requests with zero errors across five workloads on a shared four-vCPU VPS.",
+      "extra": "Exact-key and prefix retrieval. Versioned memory branching, distributed sync, semantic search and automatic extraction remain roadmap work.",
+      "demo": "https://instantkv.com",
+      "evidence": "https://github.com/maskjelly/instantKV/blob/main/docs/benchmarks.md"
+    },
+    {
+      "name": "Morse",
+      "stack": "Rust agent runtime",
+      "url": "https://github.com/maskjelly/morse",
+      "description": "Built remote execution that continues after client disconnects, streamed tool output, persisted sessions, event replay and crash recovery. A separate side agent reports progress without interrupting active work.",
+      "extra": "Verified session recovery after a container restart on a VPS."
+    },
+    {
+      "name": "FireScope",
+      "stack": "TypeScript Firebase SDK & CLI",
+      "url": "https://github.com/maskjelly/firescope",
+      "description": "Built typed Functions/Firestore helpers, generated configuration and staged rebuilds. Verified HTTP, Hosting, callable functions and Firestore triggers in real emulators; added Node.js 22/24 CI.",
+      "demo": "https://maskjelly.github.io/firescope/"
+    },
+    {
+      "name": "TiVM",
+      "stack": "Python computer-use testing",
+      "url": "https://github.com/maskjelly/TiVM",
+      "description": "Built Linux desktop testing through accessibility, screenshots, video and reports. Added authenticated APIs, commit-pinned jobs, atomic queue claims, webhook deduplication and restart recovery.",
+      "extra": "Fixed host seccomp incompatibility blocking desktop startup."
+    },
+    {
+      "name": "rushort",
+      "stack": "Rust HTTP/1.1, Tokio, SQLite WAL",
+      "url": "https://github.com/maskjelly/rushort",
+      "description": "Built a raw HTTP service with commit-before-ack writes, live backups and rollback. Measured 1.34M redirects/s on a four-vCPU VPS: loopback, pipeline depth 512, median of three eight-second runs, zero errors.",
+      "extra": "The same comparison measured 34,423 redirects/s without pipelining. These are controlled local measurements, not public HTTPS capacity.",
+      "demo": "https://whiteye.in/telemetry",
+      "evidence": "https://github.com/maskjelly/rushort/blob/main/docs/performance-2026-09-30.md"
+    },
+    {
+      "name": "Rove",
+      "stack": "Rust terminal AI assistant",
+      "url": "https://github.com/maskjelly/rove",
+      "description": "Built streamed model/tool output, a live observer feed, bearer authentication and process-group timeouts; deployed verified commits through CI with rollback."
+    }
+  ],
+  "skills": [
+    {
+      "label": "Languages",
+      "value": "TypeScript, JavaScript, Rust, Python, Go, Swift, Shell"
+    },
+    {
+      "label": "Product & AI",
+      "value": "React, Next.js, Firebase, AI agents, MCP, computer-use testing"
+    },
+    {
+      "label": "Systems & infrastructure",
+      "value": "Tokio, Axum, redb, HTTP, WebSocket, SSE, SQLite, PostgreSQL, AWS EC2, Docker, Linux, GitHub Actions, Cloudflare Workers, R2, Queues"
+    }
+  ],
+  "education": "University of Waterloo | Computer Engineering studies | Left to build full time",
+  "honors": "Responsibly disclosed SQL injection on rice.edu at age 17. National Math Olympiad silver (grade 9); IITM NexHack 2nd place (2023); IPSC Web Dev 4th in India."
+}

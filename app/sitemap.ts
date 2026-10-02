@@ -6,6 +6,7 @@ export const dynamic = "force-static"
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = "https://whiteye.in"
   const staticRoutes = [
+    { url: `${base}/resume`, lastModified: new Date("2026-10-02"), changeFrequency: "monthly" as const, priority: 0.9 },
     { url: base, lastModified: new Date(), changeFrequency: "monthly" as const, priority: 1 },
     { url: `${base}/blog`, lastModified: new Date(), changeFrequency: "weekly" as const, priority: 0.9 },
     { url: `${base}/plain-corners`, lastModified: new Date(), changeFrequency: "monthly" as const, priority: 0.7 },
