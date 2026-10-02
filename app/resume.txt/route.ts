@@ -22,7 +22,7 @@ export function GET() {
     lines.push("")
   }
   lines.push("OPEN SOURCE — CONTRIBUTOR", "", profile.oss,
-    ...contributions.repositories.flatMap(c => [`${c.displayName} | ${c.repository} | ${c.stars.toLocaleString("en-US")} repository stars`, `Contributor | ${c.merged} merged PR${c.merged === 1 ? "" : "s"}`, c.detail, c.mergedUrl, ""]),
+    ...contributions.repositories.flatMap((c, index) => [`${c.displayName} | ${c.repository}${index < 6 ? ` | ${c.stars.toLocaleString("en-US")} repository stars` : ""}`, `Contributor | ${c.merged} merged PR${c.merged === 1 ? "" : "s"}`, c.detail, c.mergedUrl, ""]),
     `Repository stars and merged counts checked: ${contributions.checked}`,
     "https://github.com/search?q=author%3Amaskjelly+is%3Apr+is%3Amerged+-user%3Amaskjelly&type=pullrequests", "",
     "TECHNICAL SKILLS", "", ...profile.skills.map(s => `${s.label}: ${s.value}`), "",

@@ -84,12 +84,16 @@ export default function ResumePage() {
           <section className="resume-section" aria-labelledby="open-source">
             <h2 id="open-source">Contributor. 47 merged PRs. 13 repositories.</h2>
             <p>My changes are merged in Atuin, Podman Desktop and 11 other public repositories. Each credit links to the accepted work.</p>
-            <ul className="resume-contributions">{contributions.repositories.map(c => <li key={c.repository}>
+            <ul className="resume-contributions">{contributions.repositories.map((c, index) => <li key={c.repository}>
               <div className="resume-contribution-heading">
                 <h3><a href={c.url}>{c.displayName} ↗</a></h3>
-                <span className="resume-repo-stars" aria-label={`${c.stars.toLocaleString("en-US")} repository stars`}><span aria-hidden="true">★</span> {c.stars.toLocaleString("en-US")}</span>
+                {index < 6 ? (
+                  <span className="resume-contribution-stat resume-repo-stars" aria-label={`${c.stars.toLocaleString("en-US")} repository stars`}><span aria-hidden="true">★</span> {c.stars.toLocaleString("en-US")}</span>
+                ) : (
+                  <span className="resume-contribution-stat resume-merge-stats">{c.merged} merged {c.merged === 1 ? "PR" : "PRs"}</span>
+                )}
               </div>
-              <p className="resume-contribution-credit"><a href={c.mergedUrl}>Contributor · {c.merged} merged {c.merged === 1 ? "PR" : "PRs"}</a></p>
+              <p className="resume-contribution-credit"><a href={c.mergedUrl}>Contributor{index < 6 && <> · {c.merged} merged {c.merged === 1 ? "PR" : "PRs"}</>}</a></p>
               <p className="resume-contribution-detail">{c.detail}</p>
             </li>)}</ul>
             <p className="resume-note"><a href="https://github.com/search?q=author%3Amaskjelly+is%3Apr+is%3Amerged+-user%3Amaskjelly&type=pullrequests">All merged external PRs ↗</a> · Repository stars and merged counts checked October 2, 2026.</p>

@@ -39,7 +39,7 @@
 .resume-contributions li + li { margin-top: 0; }
 .resume-contribution-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
 .resume-contribution-heading h3 { font-size: 16px; min-width: 0; }
-.resume-repo-stars { font-size: 13px; font-variant-numeric: tabular-nums; white-space: nowrap; color: #565656; }
+.resume-contribution-stat { font-size: 13px; font-variant-numeric: tabular-nums; white-space: nowrap; color: #565656; }
 .resume-section .resume-contribution-credit { margin-top: 5px; font-size: 13px; }
 .resume-section .resume-contribution-detail { margin-top: 5px; font-size: 13px; color: #656565; }
 .resume-skills > div { display: grid; grid-template-columns: 170px 1fr; gap: 18px; margin-top: 12px; }
