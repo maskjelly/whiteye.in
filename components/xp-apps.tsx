@@ -79,16 +79,16 @@ export function WelcomeApp({ open }: { open: OpenApp }) {
         </div>
       </div>
       <p className="welcome-intro">
-        I make software and write about
-        <br className="desktop-break" /> the parts that break.
+        Hacked Rice at 17. Dropped out of Waterloo.
+        <br className="desktop-break" /> Built a 1.34M req/s Rust service.
       </p>
       <p className="welcome-detail">
-        Built <a href="https://instantkv.com" target="_blank" rel="noreferrer">instantKV</a>{" "}
-        for agent memory and <a href="https://github.com/maskjelly/morse" target="_blank" rel="noreferrer">Morse</a>{" "}
-        for remote agent work. 47 merged PRs across 13 external repositories.
+        Hacked into Waterloo’s GPU cluster. Early engineer at <a href="https://extraordinary.com" target="_blank" rel="noreferrer">extraordinary.com</a>.{" "}
+        Founding engineer at <a href="https://referrush.com" target="_blank" rel="noreferrer">ReferRush</a>.
         <br />
-        Previously founding engineer at{" "}
-        <a href="https://referrush.com" target="_blank" rel="noreferrer">ReferRush</a>.
+        Contributor to Atuin and Podman Desktop; 47 merged PRs across 13 repos.
+        <br />
+        <a href="/resume">Projects, contribution credits and benchmark conditions ↗</a>
       </p>
       <div className="xp-section-heading">
         <h2>Make yourself at home</h2>

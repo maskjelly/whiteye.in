@@ -1,11 +1,12 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 import profile from "@/lib/resume-data.json"
+import contributions from "@/lib/contributions.json"
 import "./resume.css"
 
 export const dynamic = "force-static"
 
-const description = "Aaryan Singh: founding engineer, email product experience, Rust agent infrastructure and 47 merged open-source contributions. Projects, benchmarks and work history."
+const description = "Aaryan Singh: Waterloo dropout, founding engineer, early engineer at Extraordinary, Rice security disclosure at 17, a 1.34M req/s Rust benchmark and 47 merged PRs."
 
 export const metadata: Metadata = {
   title: { absolute: "Aaryan Singh | Software Engineer" },
@@ -19,15 +20,6 @@ export const metadata: Metadata = {
   },
   twitter: { title: "Aaryan Singh | Software Engineer", description, card: "summary_large_image" },
 }
-
-const contributions = [
-  { name: "Podman Desktop", detail: "UI error handling and disabled file inputs", url: "https://github.com/podman-desktop/podman-desktop/pull/19300" },
-  { name: "Atuin", detail: "Hook response compatibility", url: "https://github.com/atuinsh/atuin/pull/4171" },
-  { name: "IBM Granite CLI", detail: "MCP setup and configuration failures", url: "https://github.com/ibm-granite-community/granite-cli/pull/146" },
-  { name: "spate", detail: "Removed JSON key clones", url: "https://github.com/spate-etl/spate/pull/542" },
-  { name: "dial9", detail: "Worker IDs in task-spawn telemetry", url: "https://github.com/dial9-rs/dial9/pull/931" },
-  { name: "termlens", detail: "27 merged fixes and improvements", url: "https://github.com/vyncint/termlens/pulls?q=is%3Apr+is%3Amerged+author%3Amaskjelly" },
-]
 
 export default function ResumePage() {
   const structured = {
@@ -69,7 +61,7 @@ export default function ResumePage() {
           <header className="resume-header">
             <h1>{profile.name}</h1>
             <p className="resume-title">Software engineer · Product, AI agents &amp; systems</p>
-            <p className="resume-intro">I build products people use and the systems they depend on.</p>
+            <p className="resume-intro">{profile.intro}</p>
             <p className="resume-summary">{profile.summary}</p>
             <div className="resume-contact">
               <span>{profile.location}</span>
@@ -80,12 +72,27 @@ export default function ResumePage() {
           </header>
 
           <section className="resume-section" aria-labelledby="at-a-glance">
-            <h2 id="at-a-glance">A few things I’ve done</h2>
+            <h2 id="at-a-glance">The short version</h2>
             <ul className="resume-proof">
-              <li><strong>Built ReferRush from the first commit.</strong> Shopify installs, WhatsApp referrals, UPI payouts, production recovery and customer conversations.</li>
-              <li><strong>47 merged PRs across 13 external repositories.</strong> UI, runtime behavior, telemetry, performance and developer tooling.</li>
-              <li><strong>Shipped agent runtimes and memory infrastructure in Rust.</strong> Persistent sessions, isolated memory, restart recovery and published measurements.</li>
+              {profile.highlights.map(h => <li key={h.title}>
+                <strong>{"url" in h ? <a href={h.url}>{h.title}</a> : h.title}</strong>
+                <span>{h.detail}</span>
+              </li>)}
             </ul>
+          </section>
+
+          <section className="resume-section" aria-labelledby="open-source">
+            <h2 id="open-source">Contributor. 47 merged PRs. 13 repositories.</h2>
+            <p>My changes are merged in Atuin, Podman Desktop and 11 other public repositories. Each credit links to the accepted work.</p>
+            <ul className="resume-contributions">{contributions.repositories.map(c => <li key={c.repository}>
+              <div className="resume-contribution-heading">
+                <h3><a href={c.url}>{c.displayName} ↗</a></h3>
+                <span className="resume-repo-stars" aria-label={`${c.stars.toLocaleString("en-US")} repository stars`}><span aria-hidden="true">★</span> {c.stars.toLocaleString("en-US")}</span>
+              </div>
+              <p className="resume-contribution-credit"><a href={c.mergedUrl}>Contributor · {c.merged} merged {c.merged === 1 ? "PR" : "PRs"}</a></p>
+              <p className="resume-contribution-detail">{c.detail}</p>
+            </li>)}</ul>
+            <p className="resume-note"><a href="https://github.com/search?q=author%3Amaskjelly+is%3Apr+is%3Amerged+-user%3Amaskjelly&type=pullrequests">All merged external PRs ↗</a> · Repository stars and merged counts checked October 2, 2026.</p>
           </section>
 
           <section className="resume-section" aria-labelledby="experience">
@@ -133,13 +140,6 @@ export default function ResumePage() {
             </div>
             <p className="resume-note">Median of three runs per workload, zero errors. instantKV completed 157,500 measured requests across five profiles. These runs measure specific workloads, not public HTTPS capacity.</p>
             <p className="resume-note">The newer <a href="https://github.com/maskjelly/instantKV/blob/main/docs/demo-results/2026-10-02-mac/README.md">M4 Pro demo workload</a> acknowledged 330,000 writes with zero errors: 42,517 RAM writes/s and 225 immediate durable writes/s. Separate unique-record workload; throughput excludes setup and pauses between batches.</p>
-          </section>
-
-          <section className="resume-section" aria-labelledby="open-source">
-            <h2 id="open-source">Open source</h2>
-            <p>{profile.oss}</p>
-            <ul className="resume-contributions">{contributions.map(c => <li key={c.name}><a href={c.url}>{c.name} ↗</a><span>{c.detail}</span></li>)}</ul>
-            <p className="resume-note"><a href="https://github.com/search?q=author%3Amaskjelly+is%3Apr+is%3Amerged+-user%3Amaskjelly&type=pullrequests">All merged external PRs ↗</a> · Count checked October 2, 2026.</p>
           </section>
 
           <section className="resume-section" aria-labelledby="skills">

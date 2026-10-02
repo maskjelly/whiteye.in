@@ -1,4 +1,5 @@
 import profile from "@/lib/resume-data.json"
+import contributions from "@/lib/contributions.json"
 
 export const dynamic = "force-static"
 
@@ -6,7 +7,8 @@ export function GET() {
   const lines = [
     profile.name, profile.headline, `${profile.location} | ${profile.email}`,
     "https://whiteye.in/resume", "https://github.com/maskjelly", "https://x.com/aaryantwt",
-    `Updated: ${profile.updated}`, "", profile.summary, "", "EXPERIENCE", "",
+    `Updated: ${profile.updated}`, "", profile.intro, profile.summary, "", "THE SHORT VERSION", "",
+    ...profile.highlights.flatMap(h => [h.title, h.detail, ...("url" in h ? [h.url] : []), ""]), "EXPERIENCE", "",
   ]
   for (const e of profile.experience) {
     lines.push(`${e.role} | ${e.company} | ${e.period}`, ...e.bullets.map(b => `- ${b}`), "")
@@ -19,7 +21,9 @@ export function GET() {
     if (p.evidence) lines.push(`Evidence: ${p.evidence}`)
     lines.push("")
   }
-  lines.push("OPEN SOURCE", "", profile.oss,
+  lines.push("OPEN SOURCE — CONTRIBUTOR", "", profile.oss,
+    ...contributions.repositories.flatMap(c => [`${c.displayName} | ${c.repository} | ${c.stars.toLocaleString("en-US")} repository stars`, `Contributor | ${c.merged} merged PR${c.merged === 1 ? "" : "s"}`, c.detail, c.mergedUrl, ""]),
+    `Repository stars and merged counts checked: ${contributions.checked}`,
     "https://github.com/search?q=author%3Amaskjelly+is%3Apr+is%3Amerged+-user%3Amaskjelly&type=pullrequests", "",
     "TECHNICAL SKILLS", "", ...profile.skills.map(s => `${s.label}: ${s.value}`), "",
     "EDUCATION & RECOGNITION", "", profile.education, profile.honors, "",

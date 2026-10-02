@@ -4,7 +4,7 @@
   "location": "Assam, India",
   "email": "aaryan@whiteye.in",
   "updated": "2026-10-02",
-  "summary": "Built ReferRush from its first commit, engineered email search and automation, and ship Rust agent infrastructure. I work across the interface, backend, production debugging and customer conversations.",
+  "summary": "Built ReferRush from its first commit. Early engineer at extraordinary.com. Now building Rust agent infrastructure, with merged contributions to Atuin, Podman Desktop and 11 other repositories.",
   "experience": [
     {
       "company": "ReferRush",
@@ -44,7 +44,7 @@
       ]
     }
   ],
-  "oss": "47 merged pull requests across 13 external public repositories, including 27 in termlens. Contributions include Podman Desktop UI, Atuin hook handling, IBM Granite CLI setup, dial9 telemetry and removing JSON key clones in spate.",
+  "oss": "Contributor to Atuin, Podman Desktop, WebTUI, Nimbus, iamb and eight other public repositories. 47 merged PRs, including 27 in termlens. Contributions span UI, runtime behavior, telemetry, performance and developer tooling.",
   "projects": [
     {
       "name": "instantKV",
@@ -106,6 +106,32 @@
       "value": "Tokio, Axum, redb, HTTP, WebSocket, SSE, SQLite, PostgreSQL, AWS EC2, Docker, Linux, GitHub Actions, Cloudflare Workers, R2, Queues"
     }
   ],
-  "education": "University of Waterloo | Computer Engineering studies | Left to build full time",
-  "honors": "Responsibly disclosed SQL injection on rice.edu at age 17. National Math Olympiad silver (grade 9); IITM NexHack 2nd place (2023); IPSC Web Dev 4th in India."
+  "education": "University of Waterloo dropout | Computer Engineering studies | Left to build full time",
+  "honors": "Hacked rice.edu at 17 and responsibly disclosed SQL injection. Hacked into Waterloo’s GPU cluster. National Math Olympiad silver (grade 9); IITM NexHack 2nd (2023); IPSC Web Dev 4th in India.",
+  "intro": "Waterloo dropout. Founding engineer. Open-source contributor.",
+  "highlights": [
+    {
+      "title": "Hacked rice.edu at 17.",
+      "detail": "Found SQL injection on Rice University’s website and responsibly disclosed it."
+    },
+    {
+      "title": "Hacked into Waterloo’s GPU cluster.",
+      "detail": "Studied Computer Engineering at the University of Waterloo, then dropped out to build full time."
+    },
+    {
+      "title": "Built a 1.34M requests/sec Rust service.",
+      "detail": "rushort, on four shared VPS CPUs. Loopback HTTP, 32 connections, pipeline depth 512; median of three runs, zero errors.",
+      "url": "https://github.com/maskjelly/rushort/blob/main/docs/performance-2026-09-30.md"
+    },
+    {
+      "title": "Built ReferRush from the first commit.",
+      "detail": "Founding engineer on a platform that reached 2,300 merchants, 30M+ customers and $1M+ processed. Owned product, payouts, production debugging and customer conversations.",
+      "url": "https://referrush.com"
+    },
+    {
+      "title": "Early engineer at extraordinary.com.",
+      "detail": "Built the directory and console connecting applicants, lawyers and advisors through the USCIS application process.",
+      "url": "https://extraordinary.com"
+    }
+  ]
 }
