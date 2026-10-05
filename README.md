@@ -12,7 +12,9 @@ Internet Explorer opens real websites in a sandboxed iframe, with an address bar
 
 `/resume` is a static HTML profile with work history, public project links, scoped benchmarks and linked merged contributions. It has canonical metadata, Person/ProfilePage structured data, a dedicated social image, print styles and a downloadable one-page PDF. `/resume.txt` serves plain text without JavaScript; `/llms.txt` links the public sources. Robots allows crawling and the sitemap includes `/resume`.
 
-The profile and text route share `lib/resume-data.json`. Update the PDF in `public/Aaryan-Singh-Resume.pdf` whenever the profile changes; figures were checked on October 2, 2026. The interactive homepage, work folder and now page link to the profile.
+The profile and text route share `lib/resume-data.json`. Product and retrieval evidence was checked on October 5, 2026. Contribution counts are unchanged; the star snapshot remains dated October 2. The instantKV entry covers the source MVP, BM25 search, native OpenCode MCP, five full retrieval datasets and a separate GPT-6 Luna QA evaluation. The interactive homepage, work folder and now page link to the profile.
+
+Regenerate the one-page PDF after profile changes with `python3 scripts/build-resume.py` (requires `reportlab` and `pypdf`). It reads the same profile, embeds fonts, and checks page count, key text and project links. Render the result and inspect it before publishing.
 
 ## Development
 

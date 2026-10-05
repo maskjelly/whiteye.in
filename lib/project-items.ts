@@ -4,7 +4,7 @@ export const projectItems: Item[] = [
   {
     title: "instantKV",
     role: "creator",
-    description: "Self-hosted agent memory: shared facts, private namespaces and durable checkpoints.",
+    description: "Local-first Rust memory with BM25 search, topic/time filters, durable checkpoints and native OpenCode MCP.",
     href: "https://instantkv.com",
   },
   {

@@ -129,7 +129,23 @@ export default function ResumePage() {
 
           <section className="resume-section" aria-labelledby="measurements">
             <h2 id="measurements">Measured, with the conditions attached</h2>
-            <p>Published runs on a shared four-vCPU VPS. Client and server used loopback HTTP.</p>
+            <p>Current instantKV retrieval runs: Apple M4 Pro, 24 GiB RAM, macOS 27. Server RAM is sampled Rust process RSS; query time excludes model inference.</p>
+            <div className="resume-table-wrap" role="region" aria-label="Local memory measurements" tabIndex={0}>
+              <table>
+                <caption>Full source-evidence retrieval tests. Recall@10 is separate from answer accuracy.</caption>
+                <thead><tr><th scope="col">Benchmark</th><th scope="col">Recall@10</th><th scope="col">Server RAM / query p95</th></tr></thead>
+                <tbody>
+                  <tr><th scope="row">LongMemEval-S · 500 questions</th><td>95.13%</td><td>14.34 MiB / 5.65 ms</td></tr>
+                  <tr><th scope="row">LoCoMo · 1,533 scored questions</th><td>57.66%</td><td>11.25 MiB / 0.79 ms</td></tr>
+                  <tr><th scope="row">BEIR SciFact · 300 questions</th><td>81.43%</td><td>23.14 MiB / 1.55 ms</td></tr>
+                  <tr><th scope="row">BEIR ArguAna · 1,406 questions</th><td>76.96%</td><td>24.78 MiB / 46.83 ms</td></tr>
+                  <tr><th scope="row">BEIR NFCorpus · 323 questions</th><td>15.31%</td><td>22.92 MiB / 0.93 ms</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p className="resume-note">LongMemEval-S answer accuracy: 85.20% (426/500), 95% confidence interval 82.0–88.2%. GPT-6 Luna was reader and judge; this is a model variant, not official leaderboard parity. ArguAna had 688 truncated and 1,149 reduced queries. Timings include shared host load. <a href="https://instantkv.com/benchmarks/">All run conditions, limits, comparisons and raw results ↗</a></p>
+            <p className="resume-note">Separate structured-memory test: three fresh 10,000-record databases, 512-byte content plus metadata. Recorded binary: 8.31 MiB. All 30,000 memories recovered after process restarts; device power loss was not tested. <a href="https://github.com/maskjelly/instantKV/blob/main/docs/performance.md">Performance report ↗</a></p>
+            <p>Earlier HTTP throughput runs: shared four-vCPU VPS, client and server on loopback.</p>
             <div className="resume-table-wrap" role="region" aria-label="Benchmark results" tabIndex={0}>
               <table>
                 <caption>Successful throughput; source reports include workload, latency and error counts.</caption>
@@ -143,7 +159,6 @@ export default function ResumePage() {
               </table>
             </div>
             <p className="resume-note">Median of three runs per workload, zero errors. instantKV completed 157,500 measured requests across five profiles. These runs measure specific workloads, not public HTTPS capacity.</p>
-            <p className="resume-note">The newer <a href="https://github.com/maskjelly/instantKV/blob/main/docs/demo-results/2026-10-02-mac/README.md">M4 Pro demo workload</a> acknowledged 330,000 writes with zero errors: 42,517 RAM writes/s and 225 immediate durable writes/s. Separate unique-record workload; throughput excludes setup and pauses between batches.</p>
           </section>
 
           <section className="resume-section" aria-labelledby="skills">
@@ -157,7 +172,7 @@ export default function ResumePage() {
             <p>{profile.honors}</p>
           </section>
         </main>
-        <footer className="resume-footer"><p>Updated <time dateTime={profile.updated}>October 2, 2026</time></p><a href={`mailto:${profile.email}`}>Let’s talk ↗</a></footer>
+        <footer className="resume-footer"><p>Updated <time dateTime={profile.updated}>October 5, 2026</time></p><a href={`mailto:${profile.email}`}>Let’s talk ↗</a></footer>
       </div>
     </div>
   )

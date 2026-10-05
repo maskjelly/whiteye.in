@@ -93,6 +93,19 @@ export default function Post() {
         and the benchmark defects found and fixed along the way.
       </p>
 
+      <p>
+        <strong>Update: October 5, 2026.</strong> The latest September 30
+        comparison measured 1,341,131 redirects/s with pipeline depth 512
+        and 34,423/s without pipelining. These are medians of three
+        eight-second loopback runs on four shared VPS CPUs, with zero errors.
+        A borrowed-lookup change did not improve performance consistently,
+        so I removed it. I kept the host-metrics cache and uptime counter.
+        The earlier measurements below remain dated results.{" "}
+        <a href="https://github.com/maskjelly/rushort/blob/main/docs/performance-2026-09-30.md">
+          Latest method and raw results
+        </a>.
+      </p>
+
       <h2>1. introduction</h2>
       <p>
         The motivating observation, stated in{" "}

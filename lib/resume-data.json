@@ -3,7 +3,7 @@
   "headline": "Software Engineer | Product, AI Agents & Systems",
   "location": "Assam, India",
   "email": "aaryan@whiteye.in",
-  "updated": "2026-10-02",
+  "updated": "2026-10-05",
   "summary": "Built ReferRush from its first commit. Early engineer at extraordinary.com. Now building Rust agent infrastructure, with merged contributions to Atuin, Podman Desktop and 11 other repositories.",
   "experience": [
     {
@@ -50,10 +50,11 @@
       "name": "instantKV",
       "stack": "Rust, Tokio, Axum, redb, MCP",
       "url": "https://github.com/maskjelly/instantKV",
-      "description": "Built self-hosted agent memory with shared/private namespaces, atomic checkpoints and seven MCP tools. Verified agent isolation, kill/restart recovery and backup restore. Published 157,500 successful HTTP requests with zero errors across five workloads on a shared four-vCPU VPS.",
-      "extra": "Exact-key and prefix retrieval. Versioned memory branching, distributed sync, semantic search and automatic extraction remain roadmap work.",
+      "description": "Built local-first agent memory in Rust: atomic topic/tag/time indexes, bounded BM25 search, revisioned writes and native OpenCode MCP. Measured 95.13% Recall@10 across all 500 LongMemEval-S questions with 14.34 MiB sampled server RAM on an M4 Pro.",
+      "extra": "Full LongMemEval-S answer accuracy: 85.20% with GPT-6 Luna as reader and judge, a model variant rather than official leaderboard parity. The memory engine needs no model or cloud calls. Source MVP; phone bindings and semantic search remain planned.",
       "demo": "https://instantkv.com",
-      "evidence": "https://github.com/maskjelly/instantKV/blob/main/docs/benchmarks.md"
+      "evidence": "https://instantkv.com/benchmarks/",
+      "pdfExtra": "QA: 85.20% with GPT-6 Luna reader/judge (model variant). Source MVP; phone integration is planned."
     },
     {
       "name": "Morse",

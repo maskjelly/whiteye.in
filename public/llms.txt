@@ -11,7 +11,8 @@ Software engineer working across products, AI agents and systems. Public work hi
 ## Writing and software
 - [Engineering essays](https://whiteye.in/blog)
 - [Current work](https://whiteye.in/now)
-- [instantKV](https://instantkv.com): Self-hosted agent memory in Rust.
+- [instantKV](https://instantkv.com): Local-first agent memory in Rust; bounded BM25 search, topic/tag/time filters and native OpenCode MCP.
+- [instantKV benchmarks](https://instantkv.com/benchmarks/): Full retrieval datasets, answer accuracy, sampled RAM, latency, limits and raw reports.
 - [Service telemetry](https://whiteye.in/telemetry): rushort metrics; includes synthetic traffic.
 - [Plain Corners](https://whiteye.in/plain-corners): Native macOS utility.
 
