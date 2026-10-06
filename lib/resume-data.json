@@ -108,30 +108,30 @@
     }
   ],
   "education": "University of Waterloo dropout | Computer Engineering studies | Left to build full time",
-  "honors": "Hacked rice.edu at 17 and responsibly disclosed SQL injection. Hacked into Waterloo’s GPU cluster. National Math Olympiad silver (grade 9); IITM NexHack 2nd (2023); IPSC Web Dev 4th in India.",
+  "honors": "Hacked rice.edu at 17 and responsibly disclosed SQL injection. Hacked into Waterloo’s GPU cluster. 3x National Math Olympiad silver (ages 15–17); IITM NexHack 2nd (2023); IPSC Web Dev 4th in India.",
   "intro": "Waterloo dropout. Founding engineer. Open-source contributor.",
   "highlights": [
     {
       "title": "Hacked rice.edu at 17.",
-      "detail": "Found SQL injection on Rice University’s website and responsibly disclosed it."
+      "detail": "Found SQL injection on Rice University’s website and pwnd them , later responsibly disclosing it."
     },
     {
       "title": "Hacked into Waterloo’s GPU cluster.",
       "detail": "Studied Computer Engineering at the University of Waterloo, then dropped out to build full time."
     },
     {
-      "title": "Built a 1.34M requests/sec Rust service.",
+      "title": "Built 3 Trillion request per month (1M RPS) query and URL transactor ",
       "detail": "rushort, on four shared VPS CPUs. Loopback HTTP, 32 connections, pipeline depth 512; median of three runs, zero errors.",
       "url": "https://github.com/maskjelly/rushort/blob/main/docs/performance-2026-09-30.md"
     },
     {
-      "title": "Built ReferRush from the first commit.",
+      "title": "Founding Engineer @ ReferRush.",
       "detail": "Founding engineer on a platform that reached 2,300 merchants, 30M+ customers and $1M+ processed. Owned product, payouts, production debugging and customer conversations.",
       "url": "https://referrush.com"
     },
     {
       "title": "Early engineer at extraordinary.com.",
-      "detail": "Built the directory and console connecting applicants, lawyers and advisors through the USCIS application process.",
+      "detail": "Built early stage directory and brand console connecting applicants to , lawyers and advisors through the USCIS application process.",
       "url": "https://extraordinary.com"
     }
   ]

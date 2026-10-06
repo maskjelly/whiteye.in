@@ -50,14 +50,14 @@ story.append(p('<b>Contributor: 47 merged PRs across 13 repositories.</b> ' + cr
 heading('Technical skills')
 for skill in d['skills']: story.append(p(f'<b>{escape(skill["label"])}:</b> {escape(skill["value"])}'))
 heading('Education & recognition')
-story += [p(escape(d['education'])), p(escape(d['honors'][d['honors'].index('National Math'):]))]
+story += [p(escape(d['education'])), p(escape(d['honors'][d['honors'].index('3x National Math'):]))]
 pdf = OUT / 'Aaryan-Singh-Resume.pdf'
 SimpleDocTemplate(str(pdf), pagesize=(612, 792), leftMargin=35, rightMargin=35, topMargin=29, bottomMargin=29,
                   title='Aaryan Singh | Software Engineer', author=d['name']).build(story)
 reader = PdfReader(pdf)
 assert len(reader.pages) == 1, f'Expected one page, got {len(reader.pages)}'
 text = ' '.join(reader.pages[0].extract_text().split())
-for term in ['instantKV', '95.13%', '14.34 MiB', '85.20%', 'OpenCode', '47 merged', 'MailTime', 'ReferRush', '1.34M', 'EDUCATION', 'GPU cluster', '31,876', 'Extraordinary', 'Waterloo dropout']:
+for term in ['instantKV', '95.13%', '14.34 MiB', '85.20%', 'OpenCode', '47 merged', 'MailTime', 'ReferRush', '1.34M', 'EDUCATION', 'GPU cluster', '31,876', 'Extraordinary', 'Waterloo dropout', '3x National Math Olympiad silver (ages 15–17)']:
     assert term in text, term
 links = [a.get_object().get('/A', {}).get('/URI') for a in reader.pages[0].get('/Annots', [])]
 assert all(project['url'] in links for project in d['projects'])
