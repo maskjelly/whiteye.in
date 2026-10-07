@@ -3,7 +3,7 @@
   "headline": "Software Engineer | Product, AI Agents & Systems",
   "location": "Assam, India",
   "email": "aaryan@whiteye.in",
-  "updated": "2026-10-05",
+  "updated": "2026-10-08",
   "summary": "Built ReferRush from its first commit. Early engineer at extraordinary.com. Now building Rust agent infrastructure, with merged contributions to Atuin, Podman Desktop and 11 other repositories.",
   "experience": [
     {
@@ -19,7 +19,7 @@
       ]
     },
     {
-      "company": "O1Visa",
+      "company": "Extraordinary.club",
       "role": "Backend Engineer",
       "period": "Jan 2024 - Jan 2025",
       "bullets": [

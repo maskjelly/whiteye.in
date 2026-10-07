@@ -16,7 +16,7 @@ export const workItems: Item[] = [
     href: "https://referrush.com",
   },
   {
-    title: "O1Visa",
+    title: "Extraordinary.club",
     role: "backend engineer",
     period: "jan 2024 — jan 2025",
     description: "Built indexes, search and the customer directory powering onboarding.",

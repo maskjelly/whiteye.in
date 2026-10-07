@@ -57,7 +57,7 @@ SimpleDocTemplate(str(pdf), pagesize=(612, 792), leftMargin=35, rightMargin=35, 
 reader = PdfReader(pdf)
 assert len(reader.pages) == 1, f'Expected one page, got {len(reader.pages)}'
 text = ' '.join(reader.pages[0].extract_text().split())
-for term in ['instantKV', '95.13%', '14.34 MiB', '85.20%', 'OpenCode', '47 merged', 'MailTime', 'ReferRush', '1.34M', 'EDUCATION', 'GPU cluster', '31,876', 'Extraordinary', 'Waterloo dropout', '3x National Math Olympiad silver (ages 15–17)']:
+for term in ['instantKV', '95.13%', '14.34 MiB', '85.20%', 'OpenCode', '47 merged', 'MailTime', 'ReferRush', '1.34M', 'EDUCATION', 'GPU cluster', '31,876', 'Extraordinary.club', 'Waterloo dropout', '3x National Math Olympiad silver (ages 15–17)']:
     assert term in text, term
 links = [a.get_object().get('/A', {}).get('/URI') for a in reader.pages[0].get('/Annots', [])]
 assert all(project['url'] in links for project in d['projects'])
