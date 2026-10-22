@@ -3,7 +3,7 @@ import { posts } from "@/lib/posts"
 export const dynamic = "force-static"
 
 function toRFC822(dateStr: string): string {
-  const d = new Date(dateStr)
+  const d = new Date(`${dateStr} UTC`)
   if (isNaN(d.getTime())) return new Date().toUTCString()
   return d.toUTCString()
 }
