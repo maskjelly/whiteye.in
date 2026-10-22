@@ -4,268 +4,282 @@ export const meta = {
   slug: "the-log-is-the-database",
   title: "the log is the database",
   date: "may 03, 2026",
-  description: "one abstraction behind storage and streaming.",
-  readingTime: "11 min",
+  updated: "oct 23, 2026",
+  description: "What a log lets you rebuild, what must survive beside it, and how recovery changes between Postgres, an LSM tree, and Kafka.",
+  readingTime: "12 min",
 }
 
 export default function Post() {
   return (
     <article className="prose-mono">
       <p className="lead">
-        Every database you have ever used is, at its core, a log. The tables
-        you query are a convenience, a materialized view of that log, kept up
-        to date so you do not have to replay history on every read. The
-        write-ahead log, the Raft log, the Kafka topic, the event-sourcing
-        journal: all the same shape, serving the same purpose, at different
-        scales.
+        A transaction can commit while its changed table pages are still in RAM. The
+        database first makes their recovery records durable in a write-ahead log.
+        After a crash, it can redo the changes, but how much state can that retained
+        log recover?
       </p>
 
       <p>
-        I did not write this post to make a grand point. I wrote it because I
-        kept noticing the same data structure showing up in every system I
-        read about, and writing it down helped me understand why.
+        I kept running into logs while reading about storage and distributed systems.
+        Kreps&apos;s <a
+        href="https://www.linkedin.com/blog/engineering/distributed-systems/log-what-every-software-engineer-should-know-about-real-time-datas-unifying">essay
+        on the log</a> gave me a way to connect them: save ordered records, then build
+        the state you need from those records. Recovery puts limits on that idea:
+        Postgres still needs its data files, and a Kafka consumer needs enough retained
+        input. A log cannot replay records that have been discarded.
       </p>
 
-      <h2>the claim</h2>
+      <h2>a log and the state it protects</h2>
       <p>
-        A database is two things: an append-only log that records every state
-        change, and a set of indexes that materialize the current state for
-        fast reads. The log is the truth. The indexes are a cache. On every
-        write, you append to the log and update the indexes. On every crash,
-        you replay the log to reconstruct the indexes. On every replication,
-        you ship the log to a follower.
+        A WAL-based engine serves reads from table and index files. Recovery starts at
+        a known point and replays the required WAL tail over those files. Earlier work
+        is already in the checkpointed state; replay need not start at the database&apos;s
+        first transaction. Today&apos;s WAL files alone cannot restore a lost database.
+        The state they build on must survive too.
       </p>
       <p>
-        This is not a metaphor. It is the literal architecture of Postgres
-        (WAL + heap), MySQL (redo log + binlog + buffer pool), SQLite (WAL +
-        b-tree), RocksDB (WAL + LSM), and every other durable storage engine
-        you can name. The differences are in the shape of the index and the
-        strategy for keeping it consistent with the log.
+        Postgres pairs a WAL with heap and index pages. InnoDB has a redo log, alongside
+        MySQL&apos;s separate binary log for replication. SQLite offers WAL mode or a
+        rollback journal, and RocksDB combines a WAL with sorted files. The record
+        formats and recovery requirements differ. Copy-on-write engines use another
+        commit protocol to preserve durable state.
       </p>
 
       <Figure>
-        <Diagram viewBox="0 0 720 320" title="a database is a log plus indexes" logPlusIndex />
+        <Diagram viewBox="0 0 720 320" title="WAL-based recovery: data files and a log tail" logPlusIndex />
         <Caption>
-          A write lands in the log first (durable, append-only, fast). The
-          index updates from the log. On crash, the index is rebuilt by
-          replaying the log tail. On replication, the follower consumes the
-          same log. The log is the source of truth. Everything else is
-          derivable.
+          Log records reach durable storage before the data pages they protect.
+          Recovery needs those data files and the required log tail. Replication can
+          reuse the records if the follower has a suitable starting copy.
         </Caption>
       </Figure>
 
-      <h2>why the log comes first</h2>
+      <h2>why write the log first</h2>
       <p>
-        The log solves two problems at once that are hard to solve any other
-        way. The first is durability. Appending to a log is a single
-        sequential write, which is the cheapest durable operation on any
-        medium. Updating a b-tree in place is many random writes and a lot of
-        bookkeeping. Doing it durably on every transaction would be slow. So
-        you write the log first (one fsync), tell the client &quot;committed,&quot;
-        and update the b-tree lazily in memory. If you crash before the b-tree
-        is flushed, you replay the log and rebuild.
+        A transaction changes a row and an index entry on another page. Waiting for both
+        pages to reach disk before commit puts both writes on the client&apos;s
+        critical path. The WAL collects recovery records into a sequential stream.
+        Once those and the commit record are durable, the database can acknowledge the
+        transaction and write the dirty pages later.
       </p>
       <p>
-        The second is order. A log is a total order on events. In a
-        single-node database that total order is trivial, it is the append
-        order. In a distributed system, the total order is the whole point. It
-        is what makes a group of machines agree on a single history. This is
-        why Raft&apos;s log and Postgres&apos;s WAL are the same data structure
-        wearing different hats. Raft uses the log to make multiple machines
-        agree. Postgres uses it to make one machine survive a crash. The
-        mechanism, an append-only, totally ordered sequence of records, is
-        identical.
+        <a
+        href="https://www.postgresql.org/docs/17/wal-intro.html">PostgreSQL&apos;s WAL
+        documentation</a> requires recovery records to be flushed before the data pages
+        they protect. Pages can already be changed in RAM; &quot;write ahead&quot;
+        refers to persistence. Raft also uses an ordered log, but a leader&apos;s local
+        append is insufficient to establish cluster agreement on committed commands.
       </p>
 
-      <h2>the WAL</h2>
+      <h2>what the WAL saves you from</h2>
       <p>
-        Postgres calls it the WAL. MySQL calls it the redo log (and
-        separately, the binlog for replication). SQLite calls it the WAL too.
-        The pattern is universal:
+        With Postgres configured for durable commits:
       </p>
       <ol>
         <li>
-          A transaction modifies pages in an in-memory buffer pool. The pages
-          are dirty but not yet written to disk.
+          The transaction changes pages in the buffer pool and generates WAL. Those
+          pages are now dirty.
         </li>
         <li>
-          Before the transaction commits, its changes are appended to the log
-          and the log is flushed. This is the fsync from the storage post.
-          This is where that contract matters.
+          Before a dirty page can be written to disk, its WAL records must be durable.
+          Before acknowledging a synchronous commit, the database also flushes the
+          transaction&apos;s commit record.
         </li>
         <li>
-          The commit returns. The dirty pages may not be on disk yet. They
-          will be written later by a background process (the checkpointer).
+          The client receives the acknowledgment; background writers and checkpoints
+          can finish writing the data pages afterwards.
         </li>
         <li>
-          On crash recovery, the database reads the log, redoes any
-          transactions whose changes did not make it to the data files, and
-          undoes any that were not committed. The index is consistent with the
-          log again.
+          After a crash, recovery redoes records from the required recovery point.
+          Postgres handles uncommitted work through transaction visibility rules rather
+          than a general WAL undo pass.
         </li>
       </ol>
       <p>
-        The optimization this enables, group commit, is the reason databases
-        can be both durable and fast. Many transactions append their records
-        to the log in a batch, and a single fsync commits all of them. The
-        cost of the honest flush is amortized across the group. Same principle
-        as journaling in filesystems: batch the slow, honest operation so you
-        can afford to do it honestly.
+        Suppose the changed heap page survives a crash but the index page still has its
+        old contents. Recovery can redo the missing index change because its records
+        were durable before either page was written. Allowing pages to reach disk first
+        would leave a window for a change to survive while its recovery record vanished
+        with RAM.
+      </p>
+      <p>
+        Group commit can make several transactions&apos; queued commit records durable
+        with one flush. It reduces the cost per transaction, provided storage honors the
+        flush; the data pages can still be written later.
+      </p>
+      <p>
+        A checkpoint establishes how far the data files have caught up and records where
+        replay must begin. Postgres can recycle older WAL once recovery and consumers
+        such as replication or archiving no longer need it. Its <a
+        href="https://www.postgresql.org/docs/17/wal-configuration.html">checkpoint
+        documentation</a> describes the tradeoff: more frequent checkpoints mean less
+        replay work and more page writes. They also increase WAL traffic when full-page
+        writes are enabled: the first page change after a checkpoint logs a full-page
+        image to protect against partial page writes.
       </p>
 
       <h2>the LSM tree</h2>
       <p>
-        A b-tree database has a log (the WAL) and an index (the b-tree). The
-        LSM tree asks a different question: what if the index is a log? What
-        if we never update in place at all, and instead make the whole storage
-        engine append-only?
+        A log-structured merge tree batches writes in memory, then flushes sorted,
+        immutable SSTables. The WAL protects writes until they reach those files. An
+        SSTable&apos;s key order supports lookups; the WAL records changes in
+        chronological order.
       </p>
       <p>
-        An LSM (Log-Structured Merge) tree writes everything into an in-memory
-        memtable (a sorted structure). When the memtable fills, it is flushed
-        to disk as an immutable SSTable (Sorted String Table) at level 0. As
-        SSTables accumulate, a background compaction process merges them into
-        larger, sorted files at deeper levels, discarding overwritten and
-        deleted keys. Reads check the memtable, then the SSTables from
-        shallowest to deepest, using bloom filters to skip files that
-        definitely do not contain the key.
+        By default, a <a
+        href="https://github.com/facebook/rocksdb/wiki/RocksDB-Overview">RocksDB</a>{" "}
+        write enters the WAL and a sorted memtable; durability depends on the WAL sync
+        settings. A full memtable flushes to an SSTable, usually at level 0. Reads may
+        search both memory and several files, with Bloom filters ruling out files that
+        cannot contain the key.
+      </p>
+      <p>
+        Updates leave multiple versions of a key until <a
+        href="https://github.com/facebook/rocksdb/wiki/Compaction">compaction</a> can
+        remove the old ones. Deletion writes a tombstone because an older file may
+        still contain the value. Drop the tombstone too soon and that value can reappear
+        on a lookup. Compaction merges sorted files and removes obsolete records only
+        when snapshots and the remaining files no longer need them.
       </p>
 
       <Figure>
         <Diagram viewBox="0 0 720 360" title="LSM tree — append, flush, compact" lsmTree />
         <Caption>
-          Writes are always sequential appends. Never a random in-place
-          update. The cost moves from the write path to the read path (you may
-          check several files) and to the background compaction (which
-          rewrites files as they merge). This is the write-optimized extreme.
-          A b-tree is the read-optimized extreme.
+          Each write avoids an in-place disk update, but compaction later reads and
+          rewrites the records, sometimes repeatedly. Sequential writes improve
+          throughput while leaving background I/O to pay for.
         </Caption>
       </Figure>
 
       <p>
-        The tradeoff has three names:
+        The postponed work shows up in three kinds of amplification:
       </p>
       <ul>
         <li>
-          <strong>Write amplification:</strong> how many bytes get written to
-          disk per byte of logical write. LSM is low (one append). A b-tree is
-          high (page reads, page writes, split propagation).
+          <strong>Write amplification.</strong> One logical write can enter the WAL, an
+          SSTable flush, and several compaction rewrites. B-trees also write whole pages
+          for smaller changes. The workload and configuration decide which engine
+          writes fewer bytes.
         </li>
         <li>
-          <strong>Read amplification:</strong> how many I/Os per read. A
-          b-tree is low (a root-to-leaf traversal). LSM is higher (memtable +
-          several SSTables, mitigated by bloom filters).
+          <strong>Read amplification.</strong> A B-tree follows a path to a leaf. An LSM
+          lookup may search several sorted runs. Caches and Bloom filters can avoid much
+          of that I/O, especially for keys that are absent.
         </li>
         <li>
-          <strong>Space amplification:</strong> how much extra space is used.
-          LSM has stale copies of overwritten keys until compaction. A b-tree
-          is compact (in-place updates). Compaction is the tax you pay for the
-          cheap writes.
+          <strong>Space amplification.</strong> LSMs retain old values and tombstones
+          until compaction can remove them. B-trees lose space to fragmentation and
+          partially filled pages. Both store more than the live payload.
         </li>
       </ul>
       <p>
-        Pick your engine by your workload. Write-heavy, append-mostly, or
-        time-series: LSM (RocksDB, Cassandra, InfluxDB). Read-heavy,
-        point-lookup-heavy, with a working set that fits in RAM: B-tree
-        (Postgres, MySQL/InnoDB). Most OLTP workloads are the second, which is
-        why Postgres is the default and RocksDB is the specialization.
+        RocksDB and Cassandra are useful LSM implementations to study alongside
+        page-based designs such as Postgres and InnoDB. A fair comparison has to measure
+        foreground latency and the background I/O needed to sustain it. A short ingestion
+        test can finish with a backlog of compaction still growing.
       </p>
 
       <h2>Kafka</h2>
       <p>
-        If the log is the source of truth and the tables are materialized
-        views, there is no reason the log has to live inside the database. You
-        can externalize it. A dedicated log system that other systems
-        subscribe to. That is Kafka.
+        Kafka exposes the retained stream as a service. A search index and an analytics
+        pipeline can read the same records, keep their own state, and advance at
+        different rates. Kreps describes this as a log and its materialized views:
+        records can outlive a particular representation.
       </p>
       <p>
-        Kafka is a log, partitioned for scale, replicated for durability, with
-        a consumer protocol for reading it back in order. Producers append.
-        Consumers read at their own pace. The log retains history for as long
-        as you configure. Once you have it, the architecture shifts:
+        Producers append to partitions; consumers track offsets. Records are ordered
+        within a partition. Separate partitions provide no global sequence, and
+        retention limits how far back replay can go. If the stream is an
+        application&apos;s authoritative input, its views depend on what remains:
       </p>
       <ul>
         <li>
-          Your database becomes a materialized view of a Kafka topic, not the
-          other way around.
+          A database can hold a queryable projection of a topic and rebuild it from
+          retained events, provided they contain everything the projection needs.
         </li>
         <li>
-          Multiple downstream systems (search index, cache, analytics
-          warehouse, ML feature store) can all consume the same log and build
-          their own projections, all consistent because they share the source.
+          Other consumers can build a cache or analytics view from the same input.
+          Offsets show each consumer&apos;s progress. Search may reflect an event that
+          analytics has not consumed yet; sharing a topic does not make their updates
+          atomic.
         </li>
         <li>
-          You can replay history: spin up a new consumer at offset zero and
-          rebuild a view from scratch. The log is the backup. The views are
-          disposable.
+          A new consumer can replay from the earliest retained offset. Rebuilding from
+          the beginning needs enough history or a starting snapshot. If earlier records
+          have expired, the topic alone is an incomplete backup.
         </li>
       </ul>
 
       <Figure>
         <Diagram viewBox="0 0 720 320" title="the log as spine — one history, many views" logSpine />
         <Caption>
-          The log is the committed history. Every downstream system is a
-          projection. A Postgres table, a Raft log, and a Kafka topic are all
-          logs at different scopes: one machine&apos;s durability, a
-          cluster&apos;s agreement, and an organization&apos;s event backbone.
+          Each view advances through the same retained stream independently. Its
+          recoverability depends on the scope of ordering and how much history remains.
         </Caption>
       </Figure>
 
-      <h2>CDC</h2>
+      <h2>getting database changes into the stream</h2>
       <p>
-        Change Data Capture is the technique that connects the in-database
-        log to the external log. Instead of application code writing to both
-        Postgres and Kafka (the &quot;dual write&quot; bug factory, you will
-        eventually write to one and not the other and silently diverge), CDC
-        reads the database&apos;s own WAL and publishes every committed change
-        to Kafka. The database is the source of truth. Kafka is the fan-out.
+        An application commits an order cancellation in Postgres, then publishes it to
+        Kafka. A crash between the two leaves a cancelled order and no event for other
+        services. Reverse the order and consumers may act on a transaction that never
+        commits. Change data capture (CDC) follows committed database changes to avoid
+        this application-level dual write.
       </p>
       <p>
-        Postgres has logical replication (decoding the WAL into a row-level
-        change stream). Debezium is the standard connector that turns that
-        stream into Kafka events. The guarantee you get is meaningful: every
-        change that committed in the database arrives in Kafka, in commit
-        order, exactly once. No dual writes, no divergence, no &quot;the
-        cache is stale and I do not know why.&quot;
+        Postgres logical decoding exposes row-level changes from the WAL; Debezium can
+        publish them to Kafka. Its <a
+        href="https://debezium.io/documentation/reference/stable/connectors/postgresql.html">Postgres
+        connector documentation</a> describes the retry window: events may be emitted
+        before the connector saves its source offset. After a crash, it can emit those
+        events again when it resumes from the saved offset. CDC alone does not guarantee
+        exactly-once delivery, and partitioning still decides which events stay ordered.
       </p>
       <p>
-        This is also the honest way to do event sourcing if you must. The
-        event log is the truth. The read models are projections. The database
-        is an event log that happens to also serve as a queryable store. The
-        architecture is the same. The framing is different.
+        Setting the order&apos;s state to <code>cancelled</code> again can be harmless.
+        Incrementing a cancellation counter again counts a second effect. The consumer
+        needs an idempotent update, or it must record each applied event atomically with
+        its effect. An end-to-end exactly-once claim has to cover that write as well as
+        the connector&apos;s delivery settings.
+      </p>
+      <p>
+        CDC history also differs from event sourcing. A row update records a storage
+        change; a domain event records an action, such as an order cancellation, and the
+        context consumers need. Write that event into an outbox table in the same
+        transaction as the order update, then let CDC publish it. Debezium&apos;s <a
+        href="https://debezium.io/documentation/reference/stable/transformations/outbox-event-router.html">outbox
+        event router</a> supports this pattern. The transaction ties state to event;
+        consumers still need retry handling. Watching arbitrary row changes cannot
+        recover business intent the application never recorded.
       </p>
 
       <p>
-        I keep coming back to the log because it is the one data structure
-        that shows up unchanged across every layer of the stack. The storage
-        post&apos;s durability is implemented by a WAL. The consensus
-        post&apos;s agreement is implemented by a replicated log. The
-        memory-ordering post&apos;s publish pattern is, at the hardware level,
-        a log of coherence events. The BFT post&apos;s PBFT is a log agreed on
-        by nodes that do not trust each other.
+        The failure model sets the promise. A WAL protects changes a local crash might
+        lose. Raft helps replicas agree on commands; PBFT must also tolerate replicas
+        sending conflicting messages. CPU memory ordering is concerned with order too,
+        but coherence leaves no durable history after power loss.
       </p>
       <p>
-        A log is an append-only, totally ordered sequence of records. That is
-        the whole definition. Everything else (durability, replication,
-        consensus, streaming, event sourcing) is what you build on top of it.
-        The reason it keeps appearing is that a log is the simplest structure
-        that gives you both an order and a history. Order lets multiple things
-        agree. History lets you recover and replay.
-      </p>
-      <p>
-        When I look at a new system now, the first question I ask is: where is
-        the log? If the answer is &quot;there isn&apos;t one,&quot; I ask how
-        it survives a crash. If the answer involves anything other than
-        replaying a committed history, I get nervous. I am not sure this
-        heuristic has ever been wrong.
+        I still look for the log early when reading a design. Then I follow what happens
+        when old records are deleted. Postgres needs a suitable base copy and the
+        required WAL. A Kafka projection needs enough retained events, or a compatible
+        snapshot and the events after it. Identify the checkpoint, snapshot, or retained
+        starting state before removing history, then test recovery using only that state
+        and the records the system promises to keep.
       </p>
 
       <section className="references">
         <h2>references</h2>
         <ol>
           <li>
-            Ousterhout (2015). &quot;A Technical Overview of RocksDB.&quot;{" "}
-            <a href="https://github.com/facebook/rocksdb/wiki/RocksDB-Talks">
+            PostgreSQL documentation. <a href="https://www.postgresql.org/docs/17/wal-intro.html">Write-Ahead
+            Logging</a> and <a href="https://www.postgresql.org/docs/17/wal-configuration.html">WAL
+            Configuration</a>. The page-write rule, group commit, and checkpoints.
+          </li>
+          <li>
+            RocksDB project. Overview and technical presentations.{" "}
+            <a href="https://github.com/facebook/rocksdb/wiki/RocksDB-Overview">Overview</a>{" "}
+            and <a href="https://github.com/facebook/rocksdb/wiki/RocksDB-Talks">
               GitHub wiki
             </a>
             . The LSM tradeoffs (write/read/space amplification) are
@@ -277,31 +291,33 @@ export default function Post() {
             <a href="http://notes.stephenholiday.com/Kafka.pdf">
               PDF
             </a>
-            . The original Kafka paper. Short. The log-as-backbone idea is
-            explicit.
+            . Partitioned logs and independent consumers in the original Kafka design.
           </li>
           <li>
-            Kreps (2014). &quot;The Log: What every software engineer should
+            Kreps (2013). &quot;The Log: What every software engineer should
             know about real-time data&apos;s unifying abstraction.&quot;{" "}
-            <a href="https://engineering.linkedin.com/distributed-systems/log-what-every-software-engineer-should-know-about-real-time-datas-unifying">
+            <a href="https://www.linkedin.com/blog/engineering/distributed-systems/log-what-every-software-engineer-should-know-about-real-time-datas-unifying">
               LinkedIn Engineering Blog
             </a>
             . The post that made me start thinking this way.
           </li>
           <li>
             Debezium documentation.{" "}
-            <a href="https://debezium.io/documentation/">
-              debezium.io
-            </a>
-            . The standard CDC connector for Postgres/MySQL/etc.
+            <a href="https://debezium.io/documentation/reference/stable/connectors/postgresql.html">
+              PostgreSQL connector
+            </a>{" "}
+            and <a href="https://debezium.io/documentation/reference/stable/transformations/outbox-event-router.html">Outbox
+            Event Router</a>. Saved offsets, duplicate events after a crash, and
+            publishing application events from an outbox table.
           </li>
           <li>
-            Ongaro. &quot;Consensus: Bridging Theory and Practice&quot; (Raft
-            thesis), Chapter 5 on log compaction.{" "}
+            Ongaro, Ousterhout (2014). &quot;In Search of an Understandable
+            Consensus Algorithm&quot; (extended version), Section 7 on log
+            compaction.{" "}
             <a href="https://raft.github.io/raft.pdf">
               raft.github.io
             </a>
-            . The log management chapter that most Raft papers skip.
+            . Snapshotting and bringing lagging followers up to date.
           </li>
         </ol>
       </section>

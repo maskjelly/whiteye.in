@@ -11,6 +11,7 @@ export type PostMeta = {
   slug: string
   title: string
   date: string
+  updated?: string
   description: string
   readingTime: string
 }

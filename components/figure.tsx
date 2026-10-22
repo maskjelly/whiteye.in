@@ -259,17 +259,17 @@ function HornerDatapath() {
         markerEnd="url(#arrow-accent)"
       />
       <text
-        x={startX + (w + gap) * 4 - gap + 36}
+        x={startX + (w + gap) * 4 - gap + 32}
         y={y + 5}
         fill={ACCENT}
-        fontSize={13}
+        fontSize={12}
       >
         p(x)
       </text>
 
       {/* legend note */}
       <text x={20} y={60} fill={DIM} fontSize={11}>
-        4 MAC stages · 1 cycle each · 4-cycle deterministic latency
+        4 conceptual MAC stages · register depth sets cycle latency
       </text>
 
       <defs>
@@ -301,7 +301,7 @@ function HornerDatapath() {
 function FiberVsMicrowave() {
   const start = 70
   const fiberEnd = 640
-  const microEnd = 450
+  const microEnd = start + (fiberEnd - start) * 3.7 / 5.5
   const fiberY = 110
   const microY = 160
   const h = 26
@@ -316,14 +316,14 @@ function FiberVsMicrowave() {
 
       {/* fiber bar */}
       <rect x={start} y={fiberY} width={fiberEnd - start} height={h} rx={3} fill="#cfc5b2" />
-      <text x={fiberEnd + 10} y={fiberY + 18} fill={TEXT} fontSize={13}>
+      <text x={fiberEnd - 10} y={fiberY + 18} fill={TEXT} fontSize={13} textAnchor="end">
         fiber · ~5.5 ms
       </text>
 
       {/* microwave bar */}
       <rect x={start} y={microY} width={microEnd - start} height={h} rx={3} fill={ACCENT} opacity={0.85} />
       <text x={microEnd + 10} y={microY + 18} fill={ACCENT} fontSize={13}>
-        microwave · ~3.8 ms
+        microwave · ~3.7 ms
       </text>
 
       {/* gap bracket */}
@@ -333,7 +333,7 @@ function FiberVsMicrowave() {
       <line x1={microEnd} y1={microY + h + 9} x2={microEnd} y2={microY + h + 19} stroke={ACCENT} strokeWidth={1} />
       <line x1={fiberEnd} y1={microY + h + 9} x2={fiberEnd} y2={microY + h + 19} stroke={ACCENT} strokeWidth={1} />
       <text x={(microEnd + fiberEnd) / 2} y={microY + h + 36} fill={ACCENT} fontSize={12} textAnchor="middle">
-        ≈ 1.7 ms
+        ≈ 1.8 ms
       </text>
 
       {/* route axis */}
@@ -938,40 +938,38 @@ function ByzCommander() {
 
 function ThreeFPlusOne() {
   const cols = [
-    { label: "N = 3f", x: 80, valid: false },
-    { label: "N = 3f + 1", x: 420, valid: true },
+    { label: "N = 3f · quorum 2f", x: 70, valid: false },
+    { label: "N = 3f + 1 · quorum 2f+1", x: 410, valid: true },
   ]
-  const y = 100
-  const cellW = 60
-  const cellH = 40
   return (
     <g fontFamily="var(--font-mono)">
-      {cols.map((c, ci) => (
-        <g key={ci}>
-          <text x={c.x + 120} y={y - 20} fill={c.valid ? ACCENT : DIM} fontSize={13} textAnchor="middle">
-            {c.label}{c.valid ? " ✓" : " ✗"}
+      {cols.map((c) => (
+        <g key={c.label}>
+          <text x={c.x + 110} y={80} fill={c.valid ? ACCENT : DIM} fontSize={12} textAnchor="middle">
+            {c.label}
           </text>
-          {/* rows: liars (f), crashed (f), honest (rest) */}
-          {[0, 1, 2].map((ri) => {
-            const ry = y + ri * (cellH + 4)
-            const kind = ri === 0 ? "liar" : ri === 1 ? "crashed" : "honest"
-            const fillC = kind === "liar" ? "rgba(36,75,128,0.25)" : kind === "crashed" ? "#d7cdbc" : "rgba(36,33,25,0.04)"
-            const strokeC = kind === "liar" ? ACCENT : kind === "crashed" ? DIM : LINE
-            const txtC = kind === "liar" ? ACCENT : kind === "crashed" ? DIM : WHITE
-            const count = c.valid ? (ri === 0 ? "f" : ri === 1 ? "f" : "f+1") : (ri === 0 ? "f" : ri === 1 ? "f" : "f")
+          <text x={c.x + 95} y={108} fill={DIM} fontSize={11} textAnchor="middle">A</text>
+          <text x={c.x + 165} y={108} fill={DIM} fontSize={11} textAnchor="middle">B</text>
+          {["A only", "shared", "B only"].map((label, row) => {
+            const y = 120 + row * 44
+            const count = row === 1 && c.valid ? "f+1" : "f"
             return (
-              <g key={ri}>
-                <rect x={c.x} y={ry} width={cellW} height={cellH} fill={fillC} stroke={strokeC} strokeWidth={1} />
-                <text x={c.x + cellW / 2} y={ry + cellH / 2 + 4} fill={txtC} fontSize={12} textAnchor="middle">{count}</text>
-                <text x={c.x - 8} y={ry + cellH / 2 + 4} fill={DIM} fontSize={10} textAnchor="end">{kind}</text>
-                {/* second cell to visualize overlap */}
-                <rect x={c.x + cellW + 8} y={ry} width={cellW} height={cellH} fill={fillC} stroke={strokeC} strokeWidth={1} />
-                <text x={c.x + cellW + 8 + cellW / 2} y={ry + cellH / 2 + 4} fill={txtC} fontSize={12} textAnchor="middle">{count}</text>
+              <g key={label}>
+                <text x={c.x + 56} y={y + 23} fill={DIM} fontSize={10} textAnchor="end">{label}</text>
+                {[0, 1].map((quorum) => {
+                  const included = row === 1 || row === quorum * 2
+                  return (
+                    <g key={quorum}>
+                      <rect x={c.x + 65 + quorum * 70} y={y} width={60} height={36} fill={included ? row === 1 ? "rgba(36,75,128,0.20)" : FILL : "none"} stroke={included ? row === 1 ? ACCENT : LINE : LINE} strokeDasharray={included ? undefined : "3 3"} />
+                      <text x={c.x + 95 + quorum * 70} y={y + 23} fill={row === 1 ? ACCENT : WHITE} fontSize={12} textAnchor="middle">{included ? count : "—"}</text>
+                    </g>
+                  )
+                })}
               </g>
             )
           })}
-          <text x={c.x + 120} y={y + 3 * (cellH + 4) + 20} fill={c.valid ? ACCENT : DIM} fontSize={11} textAnchor="middle">
-            {c.valid ? "honest f+1 > liars f among active 2f+1" : "honest f = liars f → tie, can't decide"}
+          <text x={c.x + 110} y={278} fill={c.valid ? ACCENT : DIM} fontSize={10} textAnchor="middle">
+            {c.valid ? "shared f+1: at least one honest" : "shared f: all could be faulty"}
           </text>
         </g>
       ))}
@@ -1057,23 +1055,23 @@ function LogPlusIndex() {
 
       {/* INDEX */}
       <rect x={430} y={60} width={160} height={60} rx={4} fill={FILL} stroke={LINE} strokeWidth={1} />
-      <text x={510} y={84} fill={WHITE} fontSize={13} textAnchor="middle">INDEX (b-tree)</text>
-      <text x={510} y={104} fill={DIM} fontSize={10} textAnchor="middle">materialized view</text>
+      <text x={510} y={84} fill={WHITE} fontSize={13} textAnchor="middle">DATA + INDEXES</text>
+      <text x={510} y={104} fill={DIM} fontSize={10} textAnchor="middle">persisted pages</text>
 
       {/* crash recovery row */}
       <text x={40} y={210} fill={WHITE} fontSize={12}>crash</text>
       <line x1={80} y1={205} x2={160} y2={205} stroke={DIM} strokeWidth={1} markerEnd="url(#arrow-dim)" />
       <rect x={170} y={180} width={160} height={50} rx={4} fill={FILL} stroke={LINE} strokeWidth={1} />
-      <text x={250} y={210} fill={WHITE} fontSize={11} textAnchor="middle">replay log tail</text>
+      <text x={250} y={210} fill={WHITE} fontSize={10} textAnchor="middle">data files + log tail</text>
       <line x1={330} y1={205} x2={420} y2={205} stroke={ACCENT} strokeWidth={1.2} markerEnd="url(#arrow-accent)" />
-      <text x={375} y={197} fill={ACCENT} fontSize={10} textAnchor="middle">rebuild</text>
+      <text x={375} y={197} fill={ACCENT} fontSize={10} textAnchor="middle">redo</text>
       <rect x={430} y={180} width={160} height={50} rx={4} fill={FILL} stroke={LINE} strokeWidth={1} strokeDasharray="4 3" />
-      <text x={510} y={210} fill={WHITE} fontSize={11} textAnchor="middle">INDEX restored</text>
+      <text x={510} y={210} fill={WHITE} fontSize={11} textAnchor="middle">pages recovered</text>
 
       {/* replication row */}
       <text x={40} y={290} fill={WHITE} fontSize={12}>replica</text>
       <line x1={90} y1={285} x2={170} y2={285} stroke={DIM} strokeWidth={1} markerEnd="url(#arrow-dim)" />
-      <text x={250} y={290} fill={DIM} fontSize={10} textAnchor="middle">ships log → follower rebuilds same index</text>
+      <text x={320} y={290} fill={DIM} fontSize={10} textAnchor="middle">starting copy + shipped log → follower replays changes</text>
     </g>
   )
 }
@@ -1224,15 +1222,15 @@ function AimdVsBbr() {
       <text x={x1} y={y0 + h + 18} fill={DIM} fontSize={10} textAnchor="end">time →</text>
 
       {/* AIMD sawtooth (top half) */}
-      <text x={x0 + 10} y={y0 - 8} fill={ACCENT} fontSize={11}>AIMD (Reno/CUBIC)</text>
+      <text x={x0 + 10} y={y0 - 8} fill={ACCENT} fontSize={11}>Reno-style window (schematic)</text>
       {[
         [60, 100, 220, 40],
         [220, 100, 360, 40],
         [360, 100, 480, 40],
       ].map(([x1s, y1s, x2s, y2s], i) => (
         <g key={i}>
-          <line x1={x0 + x1s} y1={y0 + y2s} x2={x0 + x2s} y2={y0 + y1s} stroke={ACCENT} strokeWidth={1.6} />
-          <line x1={x0 + x2s} y1={y0 + y1s} x2={x0 + x2s + 4} y2={y0 + y2s} stroke={ACCENT} strokeWidth={1.6} />
+          <line x1={x0 + x1s} y1={y0 + y1s} x2={x0 + x2s} y2={y0 + y2s} stroke={ACCENT} strokeWidth={1.6} />
+          <line x1={x0 + x2s} y1={y0 + y2s} x2={x0 + x2s + 4} y2={y0 + y1s} stroke={ACCENT} strokeWidth={1.6} />
         </g>
       ))}
       <text x={x0 + 250} y={y0 + 60} fill={DIM} fontSize={9}>loss → halve</text>
@@ -1240,7 +1238,7 @@ function AimdVsBbr() {
       {/* BBR steady (bottom strip) */}
       <text x={x0 + 10} y={y0 + h + 36} fill={ACCENT} fontSize={11}>BBR (model-based)</text>
       <line x1={x0 + 60} y1={y0 + h + 56} x2={x0 + 480} y2={y0 + h + 56} stroke={ACCENT} strokeWidth={1.6} />
-      <text x={x0 + 250} y={y0 + h + 50} fill={DIM} fontSize={9}>steady at BDP · no loss needed</text>
+      <text x={x0 + 250} y={y0 + h + 50} fill={DIM} fontSize={9}>BDP reference · actual BBR probes</text>
     </g>
   )
 }

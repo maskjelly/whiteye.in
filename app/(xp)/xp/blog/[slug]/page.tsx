@@ -31,7 +31,8 @@ export async function generateMetadata({
       siteName: "aaryan",
       locale: "en_US",
       type: "article",
-      publishedTime: post.date,
+      publishedTime: new Date(`${post.date} UTC`).toISOString(),
+      modifiedTime: post.updated ? new Date(`${post.updated} UTC`).toISOString() : undefined,
     },
     twitter: {
       title: post.title,
@@ -75,6 +76,7 @@ export default async function PostPage({
           </h1>
           <p className="page-meta animate-fade-in-up">
             {post.date} · {post.readingTime} read
+            {post.updated && <> · updated {post.updated}</>}
           </p>
         </header>
 

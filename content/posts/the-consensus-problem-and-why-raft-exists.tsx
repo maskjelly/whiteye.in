@@ -4,7 +4,8 @@ export const meta = {
   slug: "the-consensus-problem-and-why-raft-exists",
   title: "the consensus problem, and why raft exists",
   date: "may 28, 2026",
-  description: "how machines agree.",
+  updated: "oct 23, 2026",
+  description: "What a replacement leader must preserve: quorum rules, FLP's liveness limit, and a worked Raft recovery trace.",
   readingTime: "12 min",
 }
 
@@ -12,351 +13,345 @@ export default function Post() {
   return (
     <article className="prose-mono">
       <p className="lead">
-        Consensus is the problem that will not leave you alone. You solve it in
-        a database, in a lock service, in a blockchain, every time two
-        computers need to agree on one fact in the presence of failures. It
-        also has the strangest history in computer science: a proof that it is
-        impossible, an algorithm nobody could teach, and a rewrite that took
-        over the industry.
+        A database leader acknowledges a write, then disappears. Its replacement has to
+        preserve that write even if the acknowledgment was the last message the old
+        leader sent. How can it tell which history is safe to continue? That question is
+        where consensus became concrete for me: an election has to preserve earlier
+        decisions.
       </p>
 
       <p>
-        I tried to learn Paxos three times before it stuck. The third time was
-        Ongaro&apos;s Raft thesis, which made me realize I had been confused
-        not because the material was hard (it is, but not that hard) but
-        because the Paxos paper was written in a way that actively resisted
-        understanding. This post is the explanation I wish I had had the
-        first time.
+        I tried to learn Paxos three times. Reading Ongaro&apos;s Raft thesis finally
+        helped me connect the voting rules to the log a database needs. Quorum overlap,
+        timeouts, and Raft&apos;s election and commit rules each explain part of how a
+        replacement leader recovers that log.
       </p>
 
-      <h2>the problem</h2>
+      <h2>what the nodes need to agree on</h2>
       <p>
-        You have <code>N</code> nodes. They communicate by sending messages.
-        Any node can crash at any time. Messages can be delayed, dropped,
-        duplicated, and reordered. One process proposes a value. The group
-        must agree on a single value such that:
+        Take <code>N</code> nodes that communicate by messages. A node can crash; the
+        network can delay, lose, or reorder a message. In a single consensus instance,
+        processes propose values, and the decision must satisfy three requirements:
       </p>
       <ul>
         <li>
-          <strong>Agreement:</strong> no two correct nodes decide different
-          values. Ever. This is a safety property. It must hold in every
-          execution, including the ones that crash halfway through.
+          <strong>Agreement.</strong> Two correct nodes cannot decide different values.
+          This safety property must hold through failures and retries.
         </li>
         <li>
-          <strong>Validity:</strong> the decided value was actually proposed
-          by someone. The algorithm cannot just always decide{" "}
-          <code>null</code> and call it a day.
+          <strong>Validity.</strong> The decided value must be a proposed value. Always
+          returning <code>null</code> would avoid disagreement but would not solve the
+          problem.
         </li>
         <li>
-          <strong>Termination:</strong> eventually, every non-faulty node
-          decides. This is a liveness property. It has to happen eventually,
-          not necessarily by any particular deadline.
+          <strong>Termination.</strong> Every correct node eventually decides. This is a
+          liveness property; promising it requires assumptions about message delivery.
         </li>
       </ul>
       <p>
-        You cannot have all three at once. This is not a joke. It is a theorem.
+        With unbounded message delays and even one possible crash, a deterministic
+        algorithm cannot guarantee all three in every admissible execution. The <a
+        href="https://dl.acm.org/doi/10.1145/3149.214121">FLP result</a> makes that
+        limit precise: guaranteeing eventual progress requires stronger assumptions.
       </p>
 
-      <h2>why naive voting fails first</h2>
+      <h2>why counting votes is not enough</h2>
       <p>
-        The first thing everyone tries is majority vote. Propose a value,
-        count yes-votes, decide if &gt; <code>N/2</code>. This breaks in two
-        ways.
+        A majority sounds like a good start: accept a proposal once more than{" "}
+        <code>N/2</code> nodes vote for it. But the count needs rules. Which membership
+        defines N? Can a node vote again after a restart? What must a new leader learn
+        about earlier votes?
       </p>
       <p>
-        The first break is split brain. Suppose you have a leader. The network
-        partitions. Now two partitions each think the other side is dead, and
-        each elects its own leader. You now have two leaders accepting writes
-        to the same logical object. When the partition heals, you have two
-        histories and no honest way to merge them.
+        Split a five-node cluster into groups of three and two. If each side counts
+        only the nodes it can reach, both can elect a leader and accept writes. Each has
+        silently redefined the membership. By the time communication resumes and the
+        conflicting histories meet, the application may have acted on both sets of
+        acknowledgments.
       </p>
 
       <Figure>
         <Diagram viewBox="0 0 720 340" title="split brain — two quorums that do not overlap" splitbrain />
         <Caption>
-          A 5-node cluster partitions 3-2. Each side has a bare majority of
-          its own partition and elects a leader. Both leaders accept
-          conflicting writes. On heal, the system is inconsistent with no
-          deterministic resolution. Majority-of-the-whole is not
-          majority-of-a-partition.
+          The broken rule counts a majority of each reachable partition. A fixed
+          five-node membership requires three votes, so the two-node side cannot commit
+          a new write on its own. Failure detection must not redefine the voting
+          population.
         </Caption>
       </Figure>
 
       <p>
-        The fix to split brain is quorum intersection: require a majority of
-        the whole cluster, and force any two majorities to overlap in at least
-        one node. With 5 nodes, any two 3-node majorities share at least one
-        node. That shared node is the witness that prevents two conflicting
-        decisions. Everything else in consensus is variations on this one
-        counting argument.
+        Label the five nodes A through E. A write stored on A, B, and C has at least one
+        witness in any future three-node voting group; even C, D, and E must include C.
+        But C needs something useful to remember. If it loses its state on restart, or
+        the protocol lets it approve a conflicting history, the overlap hasn&apos;t
+        protected the write. C must persist its state and use it to refuse the
+        conflicting vote.
       </p>
       <p>
-        The second break is subtler, and it is the one that leads to the
-        impossibility result. In an asynchronous system there is no bound on
-        message delay. You cannot tell the difference between &quot;this node
-        crashed&quot; and &quot;this node is very slow.&quot; A node that
-        merely might have crashed can stall the algorithm forever, because you
-        keep waiting for it, and if you give up and decide without it, you
-        might violate agreement if it wakes up with a conflicting vote.
+        Even careful voting cannot tell a crashed node from a slow one in an
+        asynchronous network. A protocol may wait indefinitely for enough information
+        to decide while preserving agreement. A timeout lets it try another leader;
+        it proves nothing about whether the old leader is dead.
       </p>
 
-      <h2>FLP</h2>
+      <h2>what FLP rules out</h2>
       <p>
-        In 1985, Fischer, Lynch, and Paterson published a result that quietly
-        ended a decade of optimism. The FLP impossibility theorem says: in a
-        purely asynchronous system, no deterministic consensus algorithm can
-        simultaneously guarantee termination and tolerate even a single crash
-        failure.
+        Fischer, Lynch, and Paterson&apos;s 1985 result considers deterministic
+        consensus in a fully asynchronous system with a possible crash. It constructs an
+        admissible execution in which the protocol never decides. Agreement can hold
+        throughout. Termination is the guarantee that fails.
       </p>
       <p>
-        The proof is an adversarial argument. You have a system state that is
-        bivalent, meaning it could still go to either of two decision values.
-        The adversary shows it can always delay a message in just the right
-        way to keep the system bivalent indefinitely. As long as there is one
-        process whose messages you can delay, you can prevent any other
-        process from ruling out either outcome. The system never decides, and
-        termination fails.
+        The proof starts from a bivalent state, one from which either decision is still
+        possible. Delaying selected steps or messages keeps the system bivalent.
+        Non-faulty processes keep running and messages are eventually delivered, yet
+        the schedule prevents a decision forever.
       </p>
       <p>
-        Read it carefully. FLP does not say consensus is impossible. It says
-        deterministic consensus with guaranteed termination in a purely
-        asynchronous model is impossible. Every real system escapes FLP by
-        weakening one of those adjectives:
+        To prove progress, a protocol has to change the assumptions:
       </p>
       <ul>
         <li>
-          Add randomness (Ben-Or&apos;s algorithm). The adversary cannot keep
-          the system bivalent forever if a coin flip eventually breaks the
-          tie.
+          Use randomness. Ben-Or&apos;s randomized protocol changes FLP&apos;s
+          deterministic premise, making probabilistic progress claims under its fault
+          and scheduling assumptions.
         </li>
         <li>
-          Assume partial synchrony (DLS, 1988): the system is asynchronous
-          most of the time, but there are periods where messages arrive within
-          some bound. You do not need to know the bound. You just need it to
-          eventually exist. This is the assumption every production system
-          makes.
+          Assume partial synchrony. In one common formulation, after some unknown time,
+          processing and message delays remain bounded. A protocol can then eventually
+          keep a leader stable long enough to finish. The Dwork, Lynch, and Stockmeyer{" "} <a href="https://dl.acm.org/doi/10.1145/42283.42285">paper</a> formalizes
+          this family of assumptions.
         </li>
         <li>
-          Give up on guaranteed termination and accept termination with
-          probability 1. Paxos and Raft both do this. They terminate as long
-          as the stable leader can talk to a majority for long enough, which
-          in practice is almost always.
+          Require enough functioning nodes and sufficiently favorable communication.
+          Paxos and Raft preserve safety through late messages; they need those
+          conditions to progress. Raft&apos;s randomized election timeouts reduce
+          repeated split votes without guaranteeing termination under arbitrary delays.
         </li>
       </ul>
       <p>
-        The thing I kept getting wrong for years: safety is a property of
-        every execution. Liveness is a property of executions that actually
-        happen. You can guarantee the hard one (agreement) for free, in every
-        model, with quorum intersection. You can only hope for the
-        easy-looking one (termination) under extra assumptions. People get
-        this backwards constantly. I did.
+        I used to blur the distinction between those claims. During a partition, a
+        correct protocol may stop accepting writes to preserve agreement. Restoring
+        communication lets it try again. Quorum intersection says nothing about when
+        enough replies will arrive.
       </p>
 
       <h2>Paxos</h2>
       <p>
-        Lamport published Paxos in 1989 (1998 in journal form). It is built on
-        the quorum-intersection idea. It is correct. For about twenty years it
-        was the only game in town, and almost nobody understood it.
+        Lamport wrote the original Paxos work in 1989; the journal paper appeared in
+        1998. Basic Paxos chooses one value. In <a
+        href="https://lamport.azurewebsites.net/pubs/paxos-simple.pdf">Paxos Made
+        Simple</a>, later proposals must preserve any value already chosen by a
+        majority.
       </p>
       <p>
-        The cast: Proposers propose values, Acceptors vote on them, Learners
-        find out what was decided. The mechanism is a two-phase dance that
-        makes it impossible to choose two different values:
+        Proposers put values forward, acceptors record promises and accepted proposals,
+        and learners discover what was chosen. Each instance has two phases:
       </p>
       <ol>
         <li>
-          <strong>Phase 1, Prepare/Promise.</strong> Proposer picks a unique,
-          increasing ballot number <code>n</code> and sends{" "}
-          <code>Prepare(n)</code> to a majority of acceptors. An acceptor
-          promises not to accept any ballot smaller than <code>n</code>, and
-          reports back any value it has already accepted in a previous ballot.
+          <strong>Prepare and promise.</strong> A proposer chooses a unique ballot
+          number <code>n</code> and sends <code>Prepare(n)</code>. Acceptors that
+          promise not to accept lower ballots return their highest previously accepted
+          proposal, if any. The proposer waits for a quorum of promises.
         </li>
         <li>
-          <strong>Phase 2, Accept/Accepted.</strong> The proposer takes the
-          highest-numbered value reported by any acceptor (or its own value if
-          none reported) and sends <code>Accept(n, value)</code> to a
-          majority. Acceptors accept it (unless they have promised something
-          higher) and tell the learners.
+          <strong>Accept.</strong> From those replies, the proposer uses the value
+          attached to the highest accepted ballot. If no acceptor reported an accepted
+          proposal, it can use its own value. It sends <code>Accept(n, value)</code>;
+          acceptors accept unless they have promised a higher ballot. A value is chosen
+          when a quorum accepts it.
         </li>
       </ol>
 
       <Figure>
         <Diagram viewBox="0 0 720 380" title="basic Paxos — the two-phase dance" paxos />
         <Caption>
-          Two proposers can race, but the ballot numbering plus the rule
-          &quot;use the highest already-accepted value&quot; guarantees that
-          once a majority accepts a value, any later proposer picks up that
-          same value. Any two majorities share an acceptor. That acceptor
-          carries the chosen value forward. Agreement is structural.
+          Overlapping quorums and the rule for selecting a previously accepted value
+          work together. Ballot numbers alone would not preserve a decision. Acceptors
+          must retain their promises and accepted proposals through recovery.
         </Caption>
       </Figure>
 
       <p>
-        The safety argument is one paragraph. Suppose value{" "}
-        <code>v</code> is chosen in ballot <code>n</code>. Any proposer in a
-        later ballot <code>n&apos; &gt; n</code> must reach a majority of
-        acceptors, and that majority overlaps the one that accepted{" "}
-        <code>v</code>. The overlapping acceptor either already promised not
-        to accept below <code>n&apos;</code> (so it must have reported{" "}
-        <code>v</code> in phase 1) or it hasn&apos;t, in which case{" "}
-        <code>v</code> couldn&apos;t have been chosen yet. Either way, the
-        proposer in <code>n&apos;</code> is forced to propose{" "}
-        <code>v</code>. No conflicting value can ever be chosen.
+        Suppose <code>v</code> was chosen in ballot <code>n</code>. A later prepare
+        quorum overlaps the accepting quorum. Replies carry accepted ballot numbers, and
+        the proposer must select the value from the highest one it sees. The full proof
+        uses induction over ballots to show that any intervening higher accepted
+        proposal also carries <code>v</code>. The shared acceptor may report a later
+        ballot, provided it preserves the chosen value.
       </p>
       <p>
-        So why did everyone hate Paxos? Because the basic algorithm agrees on
-        a single value. A database wants to agree on an ordered log of
-        thousands of values. The extension to Multi-Paxos is
-        &quot;obvious&quot;: make the proposer a stable leader and run phase 2
-        repeatedly for each log slot. That obviousness hides roughly every
-        engineering problem you will hit in production. Disk persistence of
-        ballot numbers. Log catch-up for lagging followers. Snapshotting and
-        log compaction. Membership changes. Leader election when the leader
-        dies. Lamport&apos;s paper did not cover these. Google&apos;s{" "}
-        <em>Paxos Made Live</em> (Chandra et al., 2007) is a 14-page
-        confession of how much pain the &quot;obvious&quot; parts caused a
-        very strong team.
+        A database needs a sequence of decisions. Multi-Paxos uses separate instances
+        for log slots and lets a stable leader avoid repeating the full prepare phase
+        for every entry. An implementation must also persist ballots,
+        fill gaps, catch up followers, compact the log, and replace a leader. Chandra,
+        Griesemer, and Redstone&apos;s <a
+        href="https://dl.acm.org/doi/10.1145/1281100.1281103">Paxos Made Live</a>{" "}
+        describes that work in Google&apos;s Chubby service.
       </p>
       <p>
-        Lamport himself later wrote <em>Paxos Made Simple</em> (2001), a
-        plain-English rewrite, because the original&apos;s fictional Greek
-        island parliament made an already-hard algorithm harder to read. The
-        rewrite is genuinely clear. It needed to exist.
+        <em>Paxos Made Simple</em>, Lamport&apos;s 2001 explanation, is a more direct
+        starting point than the fictional parliament in the original paper. I find it
+        easier to read once the distinction between accepting a proposal and choosing a
+        value is clear.
       </p>
 
       <h2>Raft</h2>
       <p>
-        In 2014, Ongaro and Ousterhout published Raft with one stated goal
-        that no prior consensus paper had prioritized: understandability. They
-        measured progress by how many students could answer questions about
-        the algorithm after learning it. Raft is not more correct than Paxos.
-        It is more learnable, and that turned out to matter more than anything
-        else.
+        Ongaro and Ousterhout&apos;s <a href="https://raft.github.io/raft.pdf">2014 Raft
+        paper</a> puts leader election and log recovery in the main explanation. The
+        authors also compared student understanding of Raft and Paxos. My reason for
+        finding it easier is that I can follow a command from append through
+        commitment, then ask what happens to that same command after a leader fails.
       </p>
       <p>
-        The structural move: decompose consensus into three sub-problems that
-        you can understand one at a time.
+        Raft separates election, replication, and safety:
       </p>
       <ul>
         <li>
-          <strong>Leader election.</strong> One node is the leader, the others
-          are followers. Time is divided into terms, each with at most one
-          leader. A candidate wins an election by getting a majority of votes
-          for its term. If it doesn&apos;t, a randomized election timeout
-          makes split votes unlikely on the next round.
+          <strong>Leader election.</strong> Terms label election attempts. A node votes
+          at most once per term, and a candidate needs a majority. A term can have no
+          leader, but cannot have two elected leaders. Randomized timeouts help
+          candidates avoid repeatedly splitting the vote.
         </li>
         <li>
-          <strong>Log replication.</strong> The leader accepts writes,
-          appends them to its log, replicates the entry to followers, and
-          commits once a majority has replicated. Committed entries are
-          durable and will not be lost.
+          <strong>Log replication.</strong> The leader appends commands and sends them
+          to followers. It can directly commit an entry from its current term once a
+          majority has stored it. Entries from older terms need the additional
+          current-term commitment rule; counting replicas alone is insufficient for
+          them.
         </li>
         <li>
-          <strong>Safety.</strong> If any entry is committed in term{" "}
-          <code>t</code>, no leader of a later term can overwrite it. The
-          mechanism is the same quorum-overlap argument as Paxos, applied to
-          log indices instead of bare values.
+          <strong>Safety.</strong> A future elected leader must contain every committed
+          entry. The election restriction and log-matching rules preserve that property.
+          Nodes must persist the required state before replying.
         </li>
       </ul>
 
       <Figure>
         <Diagram viewBox="0 0 720 360" title="Raft — terms, elections, and log replication" raft />
         <Caption>
-          Terms are logical time. Each term elects at most one leader. The
-          leader&apos;s log is the source of truth. Followers replicate. A
-          newer leader always has all committed entries from prior terms. The
-          election restriction (a candidate must have an up-to-date log to
-          win) guarantees this. Conflicting entries from a stale leader get
-          overwritten once the new leader replicates past that index.
+          A new term can replace a leader, but committed entries survive. Followers
+          reject stale terms and reconcile conflicting uncommitted suffixes with the
+          elected leader. A leader&apos;s mere possession of an entry does not make that
+          entry committed.
         </Caption>
       </Figure>
 
       <p>
-        The thing Raft gets right that Multi-Paxos papers hand-wave is the
-        election restriction. A candidate can only win if its log is at least
-        as up-to-date as a majority of the cluster. So any elected leader is
-        guaranteed to contain every committed entry, which means a new leader
-        never has to fetch missing data to become safe. It just needs to
-        overwrite the uncommitted junk. That single rule replaces an entire
-        category of recovery edge cases in Paxos implementations.
+        The log comparison has an exact order: compare the last entry&apos;s term first,
+        then its index if the terms match. A longer log can therefore lose to a shorter
+        log ending in a later term. Together with Raft&apos;s commit rules, this
+        restriction ensures that every elected leader contains the committed history.
+        Reconciliation still has work to do on the uncommitted suffix.
       </p>
 
-      <h2>the parts the papers skip</h2>
+      <h2>why an old entry on a majority can still be unsafe</h2>
       <p>
-        Three things separate a textbook Raft from a Raft you would run:
+        The current-term rule is easy to overlook because &quot;stored on a
+        majority&quot; sounds sufficient. The following is an illustrative trace of the
+        problem in Figure 8 of the Raft paper. All five nodes begin with a common
+        prefix. Each event after that concerns the next log position:
+      </p>
+      <ol>
+        <li>
+          In term 2, leader A stores <code>x</code> on A and B, then fails before
+          reaching a majority.
+        </li>
+        <li>
+          E wins term 3 with votes from C, D, and E. It appends a conflicting{" "}
+          <code>y</code> from term 3, but stores it only on itself before losing
+          contact.
+        </li>
+        <li>
+          A returns and wins term 4 with A, B, and C. Those voters have no term-3 entry.
+          A copies <code>x</code> to C, so the term-2 entry now exists on a majority: A,
+          B, and C.
+        </li>
+      </ol>
+      <p>
+        If A fails again here, E can win a later election with C, D, and E. E&apos;s
+        last log term is 3; C&apos;s is 2. C can legally vote for E, whose log will
+        replace <code>x</code> with <code>y</code>. The three stored copies did not make
+        the older entry safe to acknowledge as committed.
+      </p>
+      <p>
+        Instead, A must get an entry from its current term, term 4, stored on a
+        majority. Committing that entry also commits its preceding log prefix, including
+        {" "}<code>x</code>. A no-op can supply the new entry when there is no client command
+        to append. Sections 5.4.2–5.4.3 of the paper explain why this rule, the election
+        restriction, and log matching preserve the prefix across every later election.
+        The trace above shows the counterexample that the current-term rule excludes.
+      </p>
+
+      <h2>what an implementation still has to handle</h2>
+      <p>
+        Storage, membership, and reads can break the guarantee even when election and
+        replication work:
       </p>
       <ul>
         <li>
-          <strong>Log compaction.</strong> You cannot keep every write in the
-          log forever. Periodically you take a snapshot of the applied state,
-          write it to disk, and truncate the log up to that point. A follower
-          that is hopelessly behind gets the snapshot via{" "}
-          <code>InstallSnapshot</code>, not a million log entries. This is
-          where most homegrown Rafts break. I have seen it happen twice.
+          <strong>Log compaction.</strong> A snapshot captures applied state together
+          with the log position it represents. Only then can covered entries be
+          discarded safely. A far-behind follower may receive that state through{" "}
+          <code>InstallSnapshot</code>. Snapshot persistence, installation, and
+          interrupted recovery all need to agree about the boundary.
         </li>
         <li>
-          <strong>Membership changes.</strong> Adding or removing a node
-          changes the definition of &quot;majority.&quot; If you do it
-          naively you can have two non-overlapping majorities active at once,
-          which is split brain by construction. Raft&apos;s solution is joint
-          consensus: a transitional configuration where a decision needs
-          majorities of both the old and new cluster. Only once that
-          stabilizes do you switch to the new configuration alone.
+          <strong>Membership changes.</strong> Changing the voting population can create
+          disjoint quorums if done carelessly. Raft&apos;s joint-consensus approach
+          temporarily requires majorities of both the old and new configurations before
+          completing the transition. Some implementations use constrained single-node
+          changes with their own safety rules.
         </li>
         <li>
-          <strong>Linearizability for reads.</strong> Raft gives you a totally
-          ordered log. Reads served by the leader are linearizable only if the
-          leader first confirms it is still the leader. Otherwise a stale
-          leader from an old term can serve outdated reads.{" "}
-          <code>ReadIndex</code> and <code>LeaseRead</code> are the two ways
-          to make reads safe without writing to the log for every read. This
-          is not optional. People have lost data by skipping it.
+          <strong>Linearizable reads.</strong> An isolated old leader can still believe
+          it is in charge. Before answering a linearizable read, a leader needs evidence
+          of current authority and must have applied the required committed state.{" "}
+          <code>ReadIndex</code> uses quorum confirmation; <code>LeaseRead</code> relies
+          on additional timing and clock assumptions.
         </li>
       </ul>
 
-      <h2>who runs what</h2>
+      <h2>where these protocols show up</h2>
       <ul>
         <li>
-          <strong>etcd, Consul, TiKV, CockroachDB</strong> run Raft. The Raft
-          ecosystem is where most new systems land, because the paper plus
-          Ongaro&apos;s thesis tell you enough to actually ship.
+          <strong>etcd, Consul, TiKV, and CockroachDB</strong> use Raft for replicated
+          state, with their own storage and read-path choices.
         </li>
         <li>
-          <strong>ZooKeeper</strong> runs Zab (Zookeeper Atomic Broadcast), a
-          Paxos-family protocol with a stable leader. Pre-dates Raft, solves
-          the same problems, harder to learn.
+          <strong>ZooKeeper</strong> uses Zab, an atomic-broadcast protocol with a
+          leader. It predates Raft and also preserves committed order through leader
+          changes.
         </li>
         <li>
-          <strong>Spanner</strong> runs Paxos per shard group. The paxos
-          group elects a leader that serves writes. Reads use TrueTime and
-          replica timestamps for external consistency. The engineering around
-          it is where Google&apos;s investment lives.
+          <strong>Spanner</strong> uses Paxos groups to replicate data. Its externally
+          consistent transactions combine that replication with timestamp rules and
+          TrueTime.
         </li>
         <li>
-          <strong>Cassandra</strong> uses Lightweight Transactions (LWT),
-          which is an in-cluster Paxos per partition, for operations that need
-          linearizability. Expensive (4 round trips worst case) and disabled
-          by default. The fact that it is disabled by default tells you
-          something about how expensive it is.
+          <strong>Cassandra</strong> uses Paxos for lightweight transactions. Clients
+          request those conditional operations explicitly. The classic protocol adds
+          several network phases compared with an ordinary write, so the consistency
+          requirement comes with a different latency cost.
         </li>
       </ul>
 
       <p>
-        Consensus is about making nodes agree while some of them are lying
-        about whether they are alive. Safety is a proof. Liveness is a hope.
-        You pay in latency for the proof and you accept that the hope
-        sometimes fails. Paxos and Raft weaken termination and assume partial
-        synchrony. CRDTs weaken safety and give you eventual consistency.
-        Blockchain consensus weakens the fault model itself and assumes some
-        nodes are actively malicious, which is a different and harder problem
-        that I wrote about separately.
+        Consensus is useful when operations need one agreed order. Some applications can
+        instead merge concurrent updates with a CRDT, under a different consistency
+        contract. Byzantine protocols handle a broader fault model in which a replica
+        can send contradictory messages. Each choice changes the guarantees an
+        application can rely on.
       </p>
       <p>
-        The thing I find beautiful about this subject is that the safety
-        argument is a counting argument. Two majorities overlap. That is it.
-        The hardest problem in distributed systems reduces to the pigeonhole
-        principle, and everything else is engineering. I did not appreciate
-        that for a long time.
+        For me, the revealing test of a consensus explanation is to stop it just after
+        an acknowledgment and replace the leader. Which node carries the evidence
+        forward? What has it persisted, and which vote must it refuse? In the Raft
+        trace, a majority of old copies fails that test. The current-term commit
+        supplies the missing link between the write and every future election.
       </p>
 
       <section className="references">
@@ -373,16 +368,15 @@ export default function Post() {
           <li>
             Lamport (1998, written 1989). &quot;The Part-Time
             Parliament.&quot;{" "}
-            <a href="https://lamport.org/publications/pubs.html#lamport98">
-              lamport.org
+            <a href="https://lamport.azurewebsites.net/pubs/lamport-paxos.pdf">
+              Author’s PDF
             </a>
-            . The original Paxos paper. The Greek island framing is the
-            reason nobody understood it.
+            . The original Paxos paper, presented through a fictional parliament.
           </li>
           <li>
             Lamport (2001). &quot;Paxos Made Simple.&quot;{" "}
-            <a href="https://lamport.org/publications/pubs.html#paxos-simple">
-              lamport.org
+            <a href="https://lamport.azurewebsites.net/pubs/paxos-simple.pdf">
+              Author’s PDF
             </a>
             . The plain-English rewrite. Read this first.
           </li>
@@ -392,7 +386,7 @@ export default function Post() {
               PODC paper
             </a>
             . Google&apos;s account of engineering Multi-Paxos into
-            Chubby. Painful.
+            Chubby, including the gaps between an algorithm and an operating service.
           </li>
           <li>
             Ongaro, Ousterhout (2014). &quot;In Search of an
@@ -409,7 +403,7 @@ export default function Post() {
             <a href="https://dl.acm.org/doi/10.1145/42283.42285">
               JACM paper
             </a>
-            . The partial synchrony model that everything real assumes.
+            . Formal timing models for proving progress beyond full asynchrony.
           </li>
         </ol>
       </section>
