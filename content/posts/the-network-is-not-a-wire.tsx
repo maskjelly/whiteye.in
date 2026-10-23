@@ -13,97 +13,139 @@ export default function Post() {
   return (
     <article className="prose-mono">
       <p className="lead">
-        Put 125 MB ahead of a packet on a 100 Mbps link and it waits about ten seconds. The link can run at full throughput the whole time. That is the awkward thing about a queue: a bandwidth graph can look fine while an interactive request becomes unusable.
+        In the script&apos;s output, stage A and stage B both have p99=0 ms. The combined path has p99=100 ms. I supplied all 1,000 synthetic request timings to the <a href="https://github.com/maskjelly/whiteye.in/blob/main/scripts/blog-models.py">reproduction</a>, so I can see exactly where the summaries lost information: they kept the delay and discarded the identity of the slow requests. Before explaining that result, I want to follow the places where a request can wait.
       </p>
 
       <p>
-        I got interested in this while debugging a bad p99. The median looked normal; bandwidth didn&apos;t seem to be the problem. I had missed a queue at one hop. Since then, I start by drawing the request&apos;s path and marking where it can wait. The congestion-control algorithm is only one part of that drawing.
+        Here is a FIFO with <code>125 MB</code> ahead of our small packet and a 100 Mbps link to drain it. The units need converting before I divide: <code>100 Mbps / 8 = 12.5 MB/s</code>, in decimal bytes. At that rate, clearing the backlog takes ten seconds. Put another way, 125 MB occupies 1,000 megabits of the link&apos;s capacity. It could be busy for the entire wait, making the throughput graph look excellent while the shell command or call behind the backlog stalls. I need the bytes to leave faster to shorten that wait. Giving them a bigger buffer would only allow a longer backlog.
       </p>
 
-      <h2>where a packet waits</h2>
+      <h2>after send() returns</h2>
       <p>
-        After <code>send()</code> succeeds, the bytes may still be on your machine. They can wait in the socket send buffer, then in the NIC&apos;s transmit ring. Switches and routers have queues too. At the destination, arrival at the network stack still leaves the application waiting to be scheduled.
+        Start the request&apos;s path at <code>send()</code>. A successful return can
+        mean the bytes are still in the sending machine&apos;s socket send buffer.
+        They may wait again at the NIC&apos;s transmit ring, then in switches and
+        routers. At the far end, the receiving application has to be scheduled even
+        after the bytes reach its network stack. I would put those waits on the
+        drawing alongside the physical links.
       </p>
 
       <Figure>
         <Diagram viewBox="0 0 720 300" title="a packet crosses a queue at every hop" packetHops />
         <Caption>
-        A buffer absorbs a burst while the next link catches up. Every packet behind that burst pays in waiting time, even if its own processing takes almost no work.
-      </Caption>
+          The buffer absorbs a burst that the next link cannot send immediately.
+          Our small packet arrives behind it and waits for bytes belonging to
+          other requests.
+        </Caption>
       </Figure>
 
       <p>
-        For a FIFO draining at a fixed rate, divide the bytes ahead by the departure rate to estimate the wait. Arrive before a burst and you may see almost none of it; arrive just after and you inherit the backlog. An average hides that difference. A high p99 is a reason to investigate, though retransmissions or application scheduling could be responsible too.
+        Hold the FIFO&apos;s departure rate fixed and divide the bytes ahead by
+        that rate for the approximate wait. Arrive just before
+        a burst and the queue may be empty; arrive just after and those bytes are
+        now ahead of you. That split can vanish in an average. It makes queueing
+        worth checking when p99 rises, alongside retransmissions and time waiting
+        for the application to run.
       </p>
 
-      <h2>how a sender finds the limit</h2>
+      <h2>waiting for a congestion signal</h2>
       <p>
-        The sender rarely knows the capacity of every link, much less the other traffic using it. It gets acknowledgments back and infers what is happening from their timing. Loss and ECN marks add evidence of congestion. All of this feedback is delayed. While one sender reacts, others are adjusting their rates as well.
+        From the sender&apos;s end, most of those queues are out of sight. It has
+        acknowledgments for delivery and timing, plus loss or ECN marks as possible
+        congestion signals. It rarely knows every link&apos;s capacity. And while it
+        waits for feedback, other senders change how much capacity is available.
+        They are making their own decisions from delayed feedback too.
       </p>
       <p>
-        Consider Reno with a congestion window of 64 segments. During congestion avoidance, it adds roughly one segment per RTT: 65, then 66, and so on. Three duplicate acknowledgments trigger a loss response that roughly halves the window; a timeout cuts it more severely. Jacobson&apos;s <a href="https://ee.lbl.gov/papers/congavoid.pdf">1988 paper</a> explains the feedback needed after congestion collapse. That slow climb followed by a sharp cut is the sawtooth in the diagram.
+        For Reno, picture the sender with a window of 64 segments in congestion avoidance. Give it an RTT of successful delivery and it can grow to about 65; another, about 66. Then three duplicate acknowledgments arrive. The loss response roughly halves the window, so the climb starts again from lower down. A timeout is a more severe setback. That repeated climb and cut gives the diagram its sawtooth. Jacobson&apos;s <a href="https://ee.lbl.gov/papers/congavoid.pdf">1988 paper</a> traces the feedback problem that led to congestion collapse.
       </p>
 
       <Figure>
         <Diagram viewBox="0 0 720 280" title="Reno-style probing and a BBR model reference" aimdVsBbr />
         <Caption>
-        Reno roughly halves its window on a congestion event. CUBIC has a different growth curve and normally retains 70%. The BBR line is a schematic reference; a real BBR sender probes and changes its rate.
-      </Caption>
+          After a congestion event, Reno roughly halves its window and CUBIC usually
+          keeps 70%, then follows a different growth curve. The BBR line marks a
+          model reference; probing moves an actual sender&apos;s rate around it.
+        </Caption>
       </Figure>
 
       <p>
-        CUBIC grows its window with a cubic function of time since the last congestion event, as specified in <a href="https://datatracker.ietf.org/doc/rfc9438/">RFC 9438</a>. Its usual loss response leaves 70% of the window. Despite those differences from Reno, either controller can fill a large buffer if its congestion signal arrives only when that buffer overflows.
-      </p>
-
-      <h2>bufferbloat</h2>
-      <p>
-        A burst should subside and let a queue drain. Bufferbloat starts when the backlog sticks around. A bigger buffer can make this worse: the sender keeps probing, sees no overflow yet, and leaves still more bytes waiting. This is the behavior Gettys and Nichols describe in <a href="https://queue.acm.org/detail.cfm?id=2071893">Bufferbloat: Dark Buffers in the Internet</a>.
+        For CUBIC, start a loss event with a window of 100 segments. Its usual decrease would leave 70, or 70%, after which growth follows a cubic function of elapsed time since the congestion event. <a href="https://datatracker.ietf.org/doc/rfc9438/">RFC 9438</a> specifies the rule. Follow it or Reno while our router keeps accepting packets: neither sees an overflow signal yet. They can continue probing upward while bytes are already piling up in that router. Changing how the window grows has left the signal arriving too late.
       </p>
       <p>
-        The opening example uses decimal units: <code>100 Mbps / 8 = 12.5 MB/s</code>, so draining <code>125 MB</code> takes ten seconds. That is an idealized FIFO calculation, separate from my debugging incident. It explains why buying bandwidth and enlarging a buffer can have very different effects on a call or an interactive shell.
+        Let the burst drain and the buffer has done useful work. Let the backlog
+        persist and we have bufferbloat. Extra buffer space can move the overflow
+        signal further away, so the sender leaves more bytes waiting before it
+        learns to back off. Gettys and Nichols describe this failure in <a
+        href="https://queue.acm.org/detail.cfm?id=2071893">Bufferbloat: Dark Buffers in
+        the Internet</a>. Our ten-second FIFO makes its cost easy to see: all that
+        latency while the throughput graph still looks busy.
       </p>
 
       <Figure>
         <Diagram viewBox="0 0 720 280" title="bufferbloat — latency spikes before loss arrives" bufferbloat />
         <Caption>
-        Drops or ECN marks can signal congestion before overflow. Buffer sizing and queue management work together; neither eliminates the capacity limit.
-      </Caption>
+          We can drop or ECN-mark a packet before the buffer fills. Choosing when
+          to signal congestion changes the wait, alongside choosing the buffer size.
+          Neither increases the link&apos;s delivery rate.
+        </Caption>
       </Figure>
 
+      <h2>CoDel looks for a queue that stays</h2>
       <p>
-        CoDel asks how long packets waited before leaving the queue. Its useful statistic is the recent minimum. With the usual settings from <a href="https://www.rfc-editor.org/rfc/rfc8289.html">RFC 8289</a>, the target is 5 ms and the interval is 100 ms. If even the minimum stays above the target for an interval, normal bursts have had time to drain and a persistent backlog remains. One packet waiting 6 ms does not meet that condition. This is why treating 5 ms as a per-packet expiry time gets CoDel wrong.
+        Six milliseconds of waiting by itself tells me little. Perhaps this packet arrived just after a burst and the next few will find an empty queue. CoDel watches the least waiting time among recent departures to distinguish that case. The defaults in <a href="https://www.rfc-editor.org/rfc/rfc8289.html">RFC 8289</a> use 5 ms as the target. The other number, a 100 ms interval, is what keeps me from reading that target as an expiration date on each packet. If even the least-delayed departures stay above the target through that interval, the backlog has persisted. A burst has had time to clear before we act on a standing queue.
       </p>
       <p>
-        A router can therefore drop or ECN-mark before it runs out of space, asking senders to back off sooner. fq_codel also gives flows separate queues and schedules between them. An SSH flow can get a turn while a bulk transfer still has a backlog. <a href="https://www.rfc-editor.org/rfc/rfc8290.html">RFC 8290</a> describes how it handles these sparse flows. The location matters. Enabling fq_codel on a host gives it control over its own queue, with no power to drain a backlog at another router.
-      </p>
-
-      <h2>what BBR estimates</h2>
-      <p>
-        Take a 100 Mbps path with a 20 ms baseline RTT. Its bandwidth-delay product is <code>12.5 MB/s × 0.020 s = 0.25 MB</code>: roughly 250 kB in flight keeps the path busy. An extra 1 MB waiting at that bottleneck adds another 80 ms without raising its delivery rate. These are model values, not observations from a test. BBR estimates the delivery rate and baseline RTT to find that operating point, as Cardwell and colleagues explain in their <a href="https://research.google/pubs/pub45646/">2016 paper</a>. It also paces departures to spread packets over time.
-      </p>
-      <p>
-        Those estimates have to be refreshed. To discover spare bandwidth, the sender must try sending faster. To observe baseline RTT, it needs a chance to measure without its own standing queue. BBR probes for both, which is why its sending rate varies. The flat line in the diagram cannot describe the actual controller. Probes can themselves build queues, and competing flows complicate the estimate.
-      </p>
-      <p>
-        The 2016 paper describes the original BBR. Later versions have changed its response to loss and its behavior alongside other flows, so a useful comparison names the version and the competing traffic. I would measure delivered rate and loaded latency together. A congestion controller can adjust what a sender offers; it cannot reserve capacity across the path or guarantee a deadline.
+        CoDel can now send the warning as a drop or ECN mark while the buffer still has space. Add fq_codel and we can also change which flow gets the next turn. With a sparse SSH flow in its own queue, packets need not sit behind a bulk transfer&apos;s entire backlog. <a href="https://www.rfc-editor.org/rfc/rfc8290.html">RFC 8290</a> describes that treatment of sparse flows. I would first locate the queue I mean to fix. Enabling fq_codel on a host changes that host&apos;s scheduling; it cannot pull bytes out of a backlog already waiting in another router.
       </p>
 
-      <h2>why the tail grows</h2>
+      <h2>250 kB in flight, another 1 MB waiting</h2>
       <p>
-        Here is another small calculation. Suppose each of ten independent hops has a 1% chance of being slow. All ten avoid that state with probability <code>0.99^10</code>; at least one is slow with probability <code>1 − 0.99^10 ≈ 9.6%</code>. That is the probability of encountering a slow hop. Computing a request&apos;s latency still requires knowing how much delay that state adds.
+        For the same link, take an otherwise unqueued RTT of 20 ms. During that time it sends about 250 kB: <code>12.5 MB/s × 0.020 s = 0.25 MB</code>. That is the bandwidth-delay product, our estimate of what needs to be in flight to keep this path busy. What if I add 1 MB of queue at the bottleneck? At 12.5 MB/s those extra bytes take another 80 ms to clear, without raising the delivery rate.
       </p>
       <p>
-        Actual hops can share a cause of congestion, breaking the independence assumption. There is another trap in adding component p99s. Construct a trace of 1,000 requests through A and B: six spend 100 ms in A, six different requests spend 100 ms in B, and all other stage times are zero. Each stage&apos;s p99 is zero because 99.4% of its samples are zero. The total is 100 ms for 1.2% of requests, making the end-to-end p99 100 ms. The slow requests have to stay paired across stages for the calculation to work.
+        BBR needs estimates for the two inputs we just multiplied: delivery rate
+        and baseline RTT. It uses them to find an operating point and paces packet
+        departures instead of releasing everything at once. Cardwell and colleagues&apos; <a
+        href="https://research.google/pubs/pub45646/">2016 paper</a> describes the
+        original model. To find spare bandwidth, the sender has to try sending
+        faster. To observe baseline RTT, it needs a measurement without its own
+        standing queue in the way. Those probes move its sending rate, which is
+        why I would not read the diagram&apos;s flat BBR reference as a trace of
+        the controller running.
       </p>
       <p>
-        Server selection has a similar queueing problem. One random choice can land on a busy server while another sits free. Choose the shorter of two sampled queues and that risk drops sharply. Mitzenmacher studied a related model in his <a href="https://www.eecs.harvard.edu/~michaelm/postscripts/mythesis.pdf">power of two choices work</a>: place n jobs into n initially empty queues. With one random choice, the maximum load is <code>O(log n / log log n)</code>; with two, it is <code>O(log log n)</code>, with high probability. Real service queues also have jobs finishing, unequal request costs, and stale reports to contend with.
+        A bandwidth probe can itself build a queue. Put competing flows on the
+        path and the estimates get harder to interpret. Later BBR versions changed
+        loss response and behavior alongside other flows, so a useful comparison
+        needs the version and the competing traffic beside its results. I would
+        look at delivered rate together with latency under load. Adjusting the
+        offered load gives the sender some control, but it reserves no capacity
+        along the path from which to guarantee a request&apos;s deadline.
+      </p>
+
+      <h2>p99 needs the requests to stay paired</h2>
+      <p>
+        There is a probability calculation I want to keep separate from the p99
+        trace. Give each of ten independent hops a 1% chance of being slow.
+        The chance of avoiding every slow hop is <code>0.99^10</code>, so the
+        chance of meeting at least one is <code>1 − 0.99^10 ≈ 9.6%</code>.
+        We have counted encounters with a slow hop. We still need the delay that
+        &quot;slow&quot; adds to calculate request latency. Shared congestion could
+        also make the independence assumption wrong.
       </p>
       <p>
-        For a p99 investigation, I would compare idle RTT with RTT during a bulk transfer. If RTT climbs while server processing stays steady, queues along the network path are worth inspecting. If RTT holds steady and an application span grows, I would look at server waits and connection pools. Queue-depth and drop counters can help distinguish the explanations.
+        Run the script and inspect the request IDs before looking at the percentiles. In stage A, requests 1–6 each take 100 ms. Stage B delays a different set, 7–12, by the same amount. All other times are zero. That puts 994 zeros at the beginning of either sorted stage array: 99.4% of the 1,000 samples. Nearest-rank p99 asks for sample 990, which is still zero in both.
+      </p>
+      <p>
+        Adding the stages with <code>zip</code> keeps each request with its own timings. There are now twelve slow sums and only 988 zeros. Look for sample 990 in that sorted array: it has to be one of the 100 ms requests. The printed end-to-end p99 is therefore 100 ms. Both stage summaries had printed 0 ms. I supplied these synthetic times, with exact request identities, so there are no real clocks to align and no trace to reconstruct. Reducing each stage to a percentile was enough to lose the information.
       </p>
 
       <p>
-        The queue I missed is why I want that comparison before changing a socket setting. A sender&apos;s congestion controller and a router&apos;s scheduler act at different places. After changing either, I would repeat the same traffic and check loaded latency alongside throughput. The useful result is a shorter wait for the requests that were slow.
+        Dispatch adds another place for a request to wait. A random choice might put it on a busy server while an idle one is available; sampling two queues and choosing the shorter makes that less likely. In Mitzenmacher&apos;s <a href="https://www.eecs.harvard.edu/~michaelm/postscripts/mythesis.pdf">power of two choices work</a>, I can compare those choices in a static setup: n jobs enter n initially empty queues. The maximum load with one random choice has the bound <code>O(log n / log log n)</code>, with high probability. Allowing two choices improves that bound to <code>O(log log n)</code>. I would try sampling in a server design, then check the things this static setup left out. Jobs depart, their costs differ, and a queue report may already be stale when the dispatcher acts on it.
+      </p>
+      <p>
+        To investigate a real p99, I would first compare idle RTT with RTT during a bulk transfer. Rising RTT with steady server processing would send me along the network path looking for queued bytes. If RTT stayed flat, I would follow a growing application span into the server queues and connection pools instead. Queue-depth and drop counters could help test either explanation. Then I could change the controller&apos;s offered traffic or the scheduler&apos;s choice of the next packet and repeat the experiment. I would keep the traffic the same before and after, recording delivered rate and latency under load. The request timings would stay paired until that comparison was done.
       </p>
 
       <section className="references">

@@ -14,154 +14,19 @@ export default function Post() {
   return (
     <article className="prose-mono">
       <p className="lead">
-        In the C++ example below, the payload is a plain <code>int</code>. Only the ready flag is atomic. That can be safe for one-shot publication, but the reader must observe a particular store to the flag. Reading true connects the payload write to its later use; reading false gives the consumer no such permission. The interesting part is explaining that connection.
+        I spent a week finding out why lock-free code that worked on x86 lost messages
+        on a Graviton instance. I kept looking at the processor before checking
+        whether the language allowed what I had written.
+      </p>
+      <p>
+        A ready flag is where that mistake is easiest to see. The reader checks
+        one address, then uses data at another. How does the first load make the
+        second safe?
       </p>
 
+      <h2>the store that makes a payload readable</h2>
       <p>
-        I ran into this with lock-free code that worked on x86 and lost messages on a Graviton instance. Finding the cause took a week. I had been mixing up what the CPU allows with what makes the source program valid. Store buffers helped me understand the hardware behavior. To fix the source, I needed the language&apos;s synchronization rules.
-      </p>
-
-      <h2>program order and what another core sees</h2>
-      <p>
-        A modern out-of-order CPU can execute independent instructions before earlier
-        instructions have finished. It still has to preserve the architectural behavior
-        promised to the running thread. Execution order inside the core is therefore
-        different from the order another core can observe memory operations.
-      </p>
-      <p>
-        A memory model puts limits on what a thread may observe, leaving room for different CPU designs. Coherence covers just one location at a time. All cores can agree about the writes to <code>x</code> and still lack a rule connecting <code>x</code> to a ready flag at another address.
-      </p>
-      <p>
-        x86 gives ordinary cacheable memory relatively strong ordering. ARM allows more freedom unless an ordering operation or a dependency with the required architectural guarantees constrains it. That difference catches code moved to Graviton or Apple Silicon. But I have to check the source first: a C++ or Rust data race is undefined behavior even if the generated x86 instructions happen to do what I wanted.
-      </p>
-
-      <h2>the store buffer</h2>
-      <p>
-        A core needs ownership of a cache line before it can make a store visible
-        through the cache-coherence system. Waiting for that ownership on every store
-        would stall execution. A store buffer lets the core retain pending writes and
-        continue. The writes become visible to other cores as the required cache lines
-        and coherence permissions become available.
-      </p>
-
-      <Figure>
-        <Diagram viewBox="0 0 720 360" title="the store buffer — stores defer, loads hurry" storebuffer />
-        <Caption>
-        A pending store and a later load to another address can coexist. Loading the stored address instead may forward the core&apos;s own buffered value, while other cores still see the old one.
-      </Caption>
-      </Figure>
-
-      <p>
-        Two behaviors follow from that arrangement:
-      </p>
-      <ul>
-        <li>
-          <strong>Forwarding to the same core.</strong> A load can read an earlier
-          pending store to the same address from the buffer. The core need not wait for
-          that store to become visible elsewhere.
-        </li>
-        <li>
-          <strong>A load passing a store.</strong> A later load from a different address
-          can finish while an earlier store is still buffered. This allows observations
-          that a single global ordering of all operations would forbid.
-        </li>
-      </ul>
-
-      <h2>x86 TSO</h2>
-      <p>
-        Owens, Sarkar, and Sewell&apos;s <a
-        href="https://www.cl.cam.ac.uk/~pes20/weakmemory/x86tso-paper.tphols.pdf">2009
-        x86-TSO model</a> accounts for ordinary aligned accesses to cacheable memory
-        using a per-core FIFO store buffer. The ordering rules relevant here are:
-      </p>
-      <ul>
-        <li>
-          Stores from one core become visible in their program order. Another core does
-          not observe the second store before the first.
-        </li>
-        <li>
-          Loads preserve their order with other loads in the architectural observations
-          the model permits.
-        </li>
-        <li>
-          A load from an address sees the appropriate earlier store from its own core,
-          including a store still in the buffer.
-        </li>
-        <li>
-          A later load may pass an earlier store to a different address. The load can
-          finish before the store becomes globally visible.
-        </li>
-      </ul>
-      <p>
-        That last rule permits the classic store-buffering test. Initially both
-        locations are zero; each core writes one location, then reads the other:
-      </p>
-      <Code lang="c">{`// Hardware litmus pseudocode; x and y initially 0.
-// Thread 0            // Thread 1
-x = 1;                 y = 1;
-r0 = y;                r1 = x;`}</Code>
-      <p>
-        Both reads can return zero on x86: each core buffers its own write and reads the other location before that write becomes visible. Try fitting this into one global interleaving that preserves program order. <code>r0 = 0</code> puts the load of y before the store to y; <code>r1 = 0</code> puts the load of x before the store to x. Add the program-order edges and you get a cycle: write x → read y → write y → read x → write x. No sequentially consistent interleaving can do that. The store buffers explain how the hardware can.
-      </p>
-      <p>
-        This x86 model covers ordinary aligned cacheable accesses. Streaming stores and device memory have other rules. Applying the model to a program also requires checking what accesses the compiler actually emitted.
-      </p>
-
-      <h2>ARM</h2>
-      <p>
-        With ARM, even independent store-store or load-load pairs may be observed out of order. Dependencies rule out some outcomes, but only under their specific architectural rules. Adding a branch in the source does not give me a general acquire operation.
-      </p>
-      <p>
-        Publication needs ordering on both sides. The producer writes the payload before releasing the flag; the consumer acquires the flag before using the payload. Express that pair in the source and the compiler can choose the machine instructions it needs.
-      </p>
-
-      <Figure>
-        <Diagram viewBox="0 0 720 340" title="what may reorder — x86 TSO vs ARM relaxed" reorderTable />
-        <Caption>
-        A guide to the ordinary-access cases used here. Barriers and acquire/release operations add constraints; the table does not cover every instruction or memory type.
-      </Caption>
-      </Figure>
-
-      <h2>the message-passing litmus test</h2>
-      <p>
-        Both locations start at zero. Read each line as a hardware access, in the displayed order. The C-like notation is a litmus-test sketch; using plain shared C variables this way would introduce a data race.
-      </p>
-      <Code lang="c">{`// Hardware litmus pseudocode, not unsynchronized C.
-// x and y initially 0
-
-// Thread 0            // Thread 1
-x = 1;                 r1 = y;
-y = 1;                 r2 = x;`}</Code>
-      <p>
-        Look for <code>r1 = 1, r2 = 0</code>. The reader has seen the flag in y and then obtained the old payload from x.
-      </p>
-      <ul>
-        <li>
-          <strong>x86 TSO forbids that outcome</strong> for these ordinary accesses. The
-          writer&apos;s stores retain their order, as do the reader&apos;s loads.
-          Seeing{" "} <code>y = 1</code> before loading <code>x</code> therefore
-          requires seeing the earlier store to <code>x</code> too.
-        </li>
-        <li>
-        <strong>ARM can allow it</strong> without extra ordering. A release store to the flag and an acquire load reading that store supply the publication relationship.
-      </li>
-      </ul>
-      <p>
-        An atomic pointer creates the same question. Its address can be loaded atomically while the object it points to still lacks a publication guarantee. The initialization writes must happen before the reader uses that object.
-      </p>
-
-      <Figure>
-        <Diagram viewBox="0 0 720 320" title="message passing — the outcome that should not be possible" litmusMP />
-        <Caption>
-        An acquire load that reads the old flag value has not observed the producer&apos;s release. It cannot use that release to justify reading the payload.
-      </Caption>
-      </Figure>
-
-      <h2>the source-language publication rule</h2>
-      <p>
-        This one-shot C++ example makes the relationship explicit. The two functions run
-        on different threads after initialization, each at most once. There is no reset
-        or reuse of the payload:
+        Here only <code>ready</code> is atomic; <code>payload</code> is a plain int. Start both threads after initialization and call each function once:
       </p>
       <Code lang="cpp">{`#include <atomic>
 #include <cassert>
@@ -180,53 +45,197 @@ void consumer() {
   }
 }`}</Code>
       <p>
-        Suppose the load returns true. There is only one store of true, the producer&apos;s release, so that is the store it reads. The release synchronizes with the acquire. The payload write comes before the release and the payload read comes after the acquire, establishing a happens-before path between them. The plain <code>int</code> is safe. If the flag is false, the consumer simply skips the payload; this function contains no retry loop.
+        There is only one true value for the consumer to find: the one the
+        producer stored. If the load returns true, we can join that release store
+        to this acquire load. C++ calls the edge synchronizes-with. Now trace the
+        whole path from the payload write, through the flag, to the assertion.
+        The write happens before the read, so a plain int works here.
       </p>
       <p>
-        Change both flag operations to relaxed and that path disappears. The flag remains atomic, but its value no longer justifies reading the plain payload. Reusing the payload needs another rule too: this example does not let the producer overwrite it while the consumer reads. Rust&apos;s <a href="https://doc.rust-lang.org/std/sync/atomic/enum.Ordering.html">atomic ordering documentation</a> describes the same release/acquire relationship, alongside the need to obey Rust&apos;s aliasing rules for shared non-atomic storage.
-      </p>
-
-      <h2>barriers and acquire/release</h2>
-      <p>
-        &quot;Drain the store buffer&quot; is an incomplete description of a barrier. On x86, <code>mfence</code>, <code>sfence</code>, and <code>lfence</code> have different guarantees. On ARM, <code>dmb</code> orders data-memory accesses, <code>dsb</code> adds completion requirements, and <code>isb</code> handles instruction synchronization. Substituting one for another requires checking the actual instruction rules.
+        A false flag sends the consumer straight back out. It never touches the payload and never retries. The producer also gets no second turn with this payload. Another write would need separate coordination with the reader.
       </p>
       <p>
-        For publication, acquire/release can express the required direction without a full barrier. Ordinary x86 loads and stores often need no added fence for this, although the compiler still has to honor the ordering. Cost follows the generated code, contention, and architecture.
-      </p>
-      <ul>
-        <li>
-          <strong>A release store</strong> orders the preceding operations for a reader
-          that synchronizes with it. A typical AArch64 mapping uses <code>stlr</code>;
-          an ordinary x86 store can already supply the required hardware ordering.
-        </li>
-        <li>
-          <strong>An acquire load</strong> constrains later operations. On AArch64 it
-          can use <code>ldar</code>. To synchronize with a release, it must read from
-          that release or the applicable release sequence, as defined by the language
-          model.
-        </li>
-        <li>
-        C++ names the pair <code>memory_order_release</code> and <code>memory_order_acquire</code> on <code>atomic&lt;T&gt;</code>; Rust uses <code>Ordering::Release</code> and <code>Ordering::Acquire</code>. The <a href="https://doc.rust-lang.org/std/sync/atomic/enum.Ordering.html">Rust documentation</a> states the language-level guarantees before any choice of machine instruction.
-      </li>
-      </ul>
-      <p>
-        I start with an ordering I can defend. Sequentially consistent atomics add a common order for those operations, which can make a first proof easier to follow. Then I look at the generated code and measure the cost. An independent counter may need only relaxed ordering because it publishes no other data. The ready flag above does carry that responsibility.
+        Change both flag operations to relaxed and that path breaks. We still
+        read and write the flag atomically; we have lost the ordering for the
+        payload. I would ask the same question about an atomic pointer: what
+        publishes the object at that address? Rust has the corresponding
+        {" "}<a href="https://doc.rust-lang.org/std/sync/atomic/enum.Ordering.html">Ordering::Release
+        and Ordering::Acquire</a> operations, though publishing an object also
+        requires obeying Rust&apos;s aliasing rules for the non-atomic storage.
       </p>
 
-      <h2>sequence counters</h2>
+      <h2>how a store can still be waiting</h2>
       <p>
-        A sequence counter lets a reader detect whether a writer overlapped its read.
-        Writers must be serialized. A writer marks the counter odd, updates the data,
-        then makes the counter even again. This sketch shows the idea, with ordering and
-        access primitives omitted:
+        A core may have to wait to write a cache line. If another core owns the
+        line, for example, the coherence protocol has work to do before this core
+        can change it. Keeping the store in a buffer lets later instructions make
+        progress during that wait. The buffer entry can drain once the core has
+        the line and permission to write it. Until then, another core may still
+        read the old value.
+      </p>
+      <Figure>
+        <Diagram viewBox="0 0 720 360" title="the store buffer — stores defer, loads hurry" storebuffer />
+        <Caption>
+          The pending store can wait while a load from another address finishes.
+          A load from the stored address may instead read the core&apos;s buffered
+          value, ahead of the other cores.
+        </Caption>
+      </Figure>
+      <p>
+        That forwarding matters. A thread can read its own recent write even while
+        everyone else still sees the old value. For a different address, there may
+        be nothing in the buffer to wait for, so a later load can finish ahead of
+        the earlier store. There goes the assumption that all accesses fit into one
+        global order that respects every thread&apos;s source order.
+      </p>
+      <p>
+        Out-of-order execution inside a core is a separate part of this story.
+        Independent instructions can execute before earlier ones finish, provided
+        the processor preserves the architectural behavior promised to its running
+        thread. That promise does not tell us the order in which another core can
+        observe memory accesses. A memory model supplies those constraints.
+        Coherence alone covers one location: cores can agree about writes to
+        {" "}<code>x</code> without any rule connecting them to writes at the ready
+        flag&apos;s address.
+      </p>
+
+      <h2>both readers get zero</h2>
+      <p>
+        The <a
+        href="https://www.cl.cam.ac.uk/~pes20/weakmemory/x86tso-paper.tphols.pdf">x86-TSO
+        model by Owens, Sarkar, and Sewell</a> describes ordinary aligned accesses to
+        cacheable memory with a FIFO store buffer for each core. Stores leave that
+        buffer in program order. Loads keep their order relative to other loads, and
+        a load sees the appropriate earlier store from its own core, including one
+        still buffered. But a load may pass a pending store to a different address.
+      </p>
+      <p>
+        Start both locations at zero and give each core one store followed by a load
+        of the other location:
+      </p>
+      <Code lang="c">{`// Hardware litmus pseudocode; x and y initially 0.
+// Thread 0            // Thread 1
+x = 1;                 y = 1;
+r0 = y;                r1 = x;`}</Code>
+      <p>
+        Zero in both registers is allowed on x86. Both stores can remain buffered
+        while each core reads the other location and gets zero. Neither core needs
+        to observe its own store late.
+      </p>
+      <p>
+        Either zero fits into an SC schedule on its own. Asking for both causes trouble. For <code>r0 = 0</code>, read y has to come before write y. For <code>r1 = 0</code>, read x has to come before write x. Add the two threads&apos; program order and the arrows return to their starting point: write x → read y → write y → read x → write x. Those four events cannot fit along one forward timeline.
+      </p>
+      <p>
+        The <a href="https://github.com/maskjelly/whiteye.in/blob/main/scripts/blog-models.py">enumerator</a> made that easy to check. Only six SC schedules respect the two thread orders. Between them they return (0, 1), (1, 0), and (1, 1). With independent store-buffer flushes, it finds one extra pair: (0, 0). The entire buffered search has 34 states, small enough to inspect. I ran it with <code>python3 scripts/blog-models.py</code>; the output is from that model, with no CPU litmus run involved.
+      </p>
+
+      <p>
+        So far the accesses have all been ordinary aligned accesses to cacheable memory. I would consult the other architectural rules for streaming stores or device memory. There is also a check to make before looking at assembly: does the source contain a C++ or Rust data race? If so, favorable x86 instructions cannot make that program valid.
+      </p>
+
+      <h2>the flag arrives, the payload does not</h2>
+      <p>
+        Message passing has a different pair of dependencies. Here the writer stores
+        x and then y; the reader loads y and then x. Again both locations start at
+        zero. This is hardware litmus pseudocode, because running the same sketch
+        with plain shared C variables would introduce a data race:
+      </p>
+      <Code lang="c">{`// Hardware litmus pseudocode, not unsynchronized C.
+// x and y initially 0
+
+// Thread 0            // Thread 1
+x = 1;                 r1 = y;
+y = 1;                 r2 = x;`}</Code>
+      <p>
+        Here the result to look for is <code>r1 = 1, r2 = 0</code>, a new flag followed by an old payload. Try putting that on x86&apos;s timeline. The write to x must leave before the write to y, and the reader must load y before x. Once y has become 1 for that reader, the earlier x store is already visible. Under the ordinary-access TSO rules, this pair of results has no valid execution.
+      </p>
+      <p>
+        ARM permits more freedom. Even independent store-store and load-load pairs
+        can be observed out of order, so this result can occur without added
+        ordering. Certain dependencies constrain the possibilities under ARM&apos;s
+        architectural rules. An extra source-level branch is no substitute for a
+        general acquire operation. This difference matters when code moves to
+        Graviton or Apple Silicon, even though source-language validity must be
+        settled before reasoning about either machine.
+      </p>
+      <Figure>
+        <Diagram viewBox="0 0 720 340" title="what may reorder — x86 TSO vs ARM relaxed" reorderTable />
+        <Caption>
+          Ordinary-access cases behind the two litmus tests. Acquire/release and
+          barriers constrain the allowed observations; other instructions and memory
+          types require more than this table.
+        </Caption>
+      </Figure>
+      <p>
+        Return to the C++ example. Release keeps the payload write on the producer&apos;s
+        side of publication; acquire orders the consumer&apos;s later use. Both sides
+        belong in the source so the compiler can select the required instructions.
+        The load must actually read the release, or the applicable release sequence
+        defined by the language model. Calling an unrelated load acquire creates no
+        connection to our producer.
+      </p>
+      <Figure>
+        <Diagram viewBox="0 0 720 320" title="message passing — the outcome that should not be possible" litmusMP />
+        <Caption>
+          A reader that gets the old flag value has missed the producer&apos;s release.
+          That load does not establish that the payload is safe to read.
+        </Caption>
+      </Figure>
+
+      <h2>which ordering do we need?</h2>
+      <p>
+        I find &quot;drain the store buffer&quot; too crude a description of a barrier.
+        x86 has <code>mfence</code>, <code>sfence</code>, and <code>lfence</code>,
+        with different guarantees. ARM&apos;s <code>dmb</code> orders data-memory
+        accesses; <code>dsb</code> adds completion requirements. Instruction
+        synchronization is the job of <code>isb</code>. Choosing among them requires
+        the instruction rules for the memory being accessed.
+      </p>
+      <p>
+        I compiled the <a href="https://github.com/maskjelly/whiteye.in/blob/main/scripts/blog-publication.cpp">same
+        C++ example</a> with Apple clang 21.0.0 (clang-2100.3.34.2), C++20, and
+        -O2. For x86_64-apple-macos, the flag store was movb and the load was movzbl,
+        with no added fence. For arm64-apple-macos with -mcpu=generic, they were
+        stlrb and ldarb. Those are byte operations because ready is a bool. The
+        release still orders the producer&apos;s earlier work, and acquire the
+        consumer&apos;s later work; the x86 listing simply needs no extra fence
+        instruction for this example.
+      </p>
+      <p>
+        The default arm64 target gave me a detail worth checking: its load was
+        ldaprb, which my first search for ldarb missed. Adding -mcpu=generic changed
+        it to ldarb. Arm&apos;s <a href="https://developer.arm.com/community/arm-community-blogs/b/tools-software-ides-blog/posts/enabling-rcpc-in-gcc-and-llvm">RCpc
+        compiler note</a> explains why a supported target can use the LDAPR family
+        for C++ acquire loads. So I cannot infer the source ordering from one
+        expected mnemonic. The <a href="https://github.com/maskjelly/whiteye.in/blob/main/scripts/blog-publication-asm.sh">commands</a>{" "}
+        save all three listings and the compiler version. This checks the generated
+        code for those settings, without measuring its runtime cost.
+      </p>
+
+      <p>
+        I start with an ordering I can defend. Sequentially consistent atomics add
+        a common order for those operations, which can make the first proof easier.
+        I only weaken an operation when I can explain why the proof still holds. Then
+        I inspect the generated code and measure on the target architecture under
+        the relevant contention.
+        An independent counter might need only relaxed ordering. Our ready flag
+        publishes other data, so its job includes more than keeping its own value
+        atomic.
+      </p>
+
+      <h2>a retry does not erase a race</h2>
+      <p>
+        Sequence counters make this distinction harder to ignore. A writer marks a
+        counter odd, changes the data, then makes it even. Writers must be serialized.
+        Stripped of the ordering and access primitives, the writer looks like this:
       </p>
       <Code lang="c">{`// Sketch only: writer serialization and ordering omitted.
 seq++;          // odd: write in progress
 write(data);
 seq++;          // even: write done`}</Code>
       <p>
-        The reader samples the sequence number around its data reads and retries if the
-        counter changed or was odd:
+        A reader brackets its data reads with counter samples and retries if it
+        finds an odd value or a change:
       </p>
       <Code lang="c">{`// Sketch only: platform-specific access/barrier rules omitted.
 do {
@@ -235,21 +244,39 @@ do {
   s2 = seq;
 } while (s1 != s2 || s1 & 1);`}</Code>
       <p>
-        For a valid sequence-counter implementation, equal even values let the reader accept the snapshot, provided the counter did not wrap during the attempt. The data reads must stay between the checks. A final acquire load cannot hold earlier reads in place: acquire constrains what follows it. The source-language issue is more severe. Retrying cannot undo a C++ or Rust data race, so copying this sketch with plain shared variables would still be unsafe.
+        Equal even values let a valid implementation accept the snapshot, assuming
+        the counter did not wrap during the attempt. But the sketch leaves the hard
+        parts open. What keeps the data reads between the two checks? A final acquire
+        load cannot hold earlier reads in place; acquire constrains later operations.
+        And what makes a data read legal while a writer could be changing that data?
+        Once plain C++ or Rust reads race with a writer, we already have undefined
+        behavior. Discovering a changed counter afterward does not repair those reads.
       </p>
       <p>
-        In Linux, <code>read_seqcount_begin</code> and <code>read_seqcount_retry</code> provide the access and ordering rules for the kernel&apos;s model. The <a href="https://www.kernel.org/doc/html/latest/locking/seqlock.html">sequence-counter documentation</a> spells out writer serialization and preemption constraints. <code>READ_ONCE</code> and <code>WRITE_ONCE</code> constrain the compiler&apos;s treatment of individual accesses; ordering still needs its own argument. LKMM and <code>herd7</code> can check whether a proposed execution is allowed.
+        I would start a kernel implementation with Linux&apos;s
+        {" "}<a href="https://www.kernel.org/doc/html/latest/locking/seqlock.html">sequence-counter
+        documentation</a>: use <code>read_seqcount_begin</code> and
+        {" "}<code>read_seqcount_retry</code>, and meet the writer serialization and
+        preemption requirements. Copying <code>READ_ONCE</code> and
+        {" "}<code>WRITE_ONCE</code> into the sketch would constrain the compiler&apos;s
+        treatment of those accesses, but would still leave us to establish their
+        ordering. I can then ask LKMM and <code>herd7</code> whether the proposed
+        rules allow a reader to accept a bad snapshot.
       </p>
-
       <p>
-        For the one-shot example, I can point to the exact store the reader observes and follow the happens-before path to the payload. The sequence-counter sketch still needs those details supplied. That is what I look for in lock-free code now. A stress test samples what happened on one machine; the argument has to rule out the bad execution on every supported implementation.
+        In the one-shot publication example I can name the store the reader observed
+        and trace a happens-before path to the payload. The sequence-counter sketch
+        still owes us those details. That is what I look for in lock-free code now.
+        I would still stress-test it. A quiet run, though, cannot tell me which
+        execution the next compiler or processor might allow.
       </p>
 
       <div className="correction">
-        <strong>correction:</strong> an earlier version mixed up acquire/release
-        instructions and barriers. This version distinguishes their roles and labels the
-        sketches as pseudocode. The ARM Architecture Reference Manual has
-        the full rules for each instruction and memory type.
+        <strong>correction:</strong> The earlier version treated acquire/release
+        instructions as barriers. I have corrected that mistake. The litmus tests
+        and sequence-counter sketches are pseudocode; the C++ publication example
+        is valid source. ARM&apos;s Architecture Reference Manual gives the full rules
+        for each instruction and memory type.
       </div>
 
       <section className="references">

@@ -13,231 +13,165 @@ export default function Post() {
   return (
     <article className="prose-mono">
       <p className="lead">
-        A leader sends one history to you and a different history to another replica.
-        Both messages really came from the leader. Checking the sender&apos;s identity
-        won&apos;t tell you which history to keep. A Byzantine participant can follow the
-        protocol selectively, including voting for conflicting proposals.
+        With three replicas and two votes required, I can leave two conflicting histories supported by quorums that share only the liar. Neither honest replica has to vote twice. Add a fourth replica and require three votes, and every quorum pair has an honest voter in common. That is the result of the small set check below. The protocol still has to make that honest voter refuse the conflicting history, including after the leader changes.
       </p>
 
       <p>
-        Raft and Paxos exclude that behavior from their fault model. Their replicas may
-        crash, but the safety argument assumes they obey the voting rules and preserve
-        required state. When different organizations operate replicas, that assumption
-        can be too strong. What evidence remains trustworthy after a leader contradicts
-        itself? PBFT makes that question concrete.
+        Raft and Paxos assume that replicas obey the voting rules and keep the required state through a crash. A replica that votes for conflicting proposals has stepped outside that model. Signing both proposals would only confirm who contradicted itself. If different organizations operate the replicas, I need to decide whether I can trust them to follow those rules. PBFT gives me a way to trace a proposal when one primary refuses to do so.
       </p>
 
-      <h2>the generals problem</h2>
+      <h2>two orders from the commander</h2>
       <p>
-        Lamport, Shostak, and Pease&apos;s <a
-        href="https://lamport.azurewebsites.net/pubs/byz.pdf">1982 paper</a> uses
-        generals communicating by messenger. Loyal generals need to agree on an action
-        even if some participants send false instructions. If the commander is loyal,
-        the loyal lieutenants should follow its order; if the commander is faulty, they
-        must still agree with one another.
+        In Lamport, Shostak, and Pease&apos;s <a
+        href="https://lamport.azurewebsites.net/pubs/byz.pdf">1982 paper</a>, generals
+        send orders by messenger. When the commander is loyal, all loyal lieutenants
+        should decide on that commander&apos;s order. Now let the commander tell one to
+        {" "}<code>&quot;attack&quot;</code> and another to <code>&quot;retreat&quot;</code>;
+        the commander is faulty, but the loyal lieutenants still have to agree with
+        each other. Asking them to forward what they heard adds another possible
+        liar: a faulty lieutenant can invent an order it never received.
       </p>
       <p>
-        A faulty commander can tell one lieutenant <code>&quot;attack&quot;</code> and
-        another <code>&quot;retreat&quot;</code>. A faulty lieutenant can also lie when
-        forwarding an order. Sending contradictory accounts to different peers is
-        equivocation. Authentication identifies the sender; it cannot stop that sender
-        signing both messages.
+        Sending those conflicting accounts is equivocation. Even with an identified
+        sender, each lieutenant has only its own copy of the order to work from.
+        The sender may have told everyone else something different.
       </p>
 
       <Figure>
         <Diagram viewBox="0 0 720 300" title="a traitorous commander — two honest
         lieutenants, two different orders" byzCommander />
         <Caption>
-          The two loyal lieutenants must reach the same decision despite receiving
-          different orders. Neither can take the commander&apos;s message as the
-          trustworthy answer.
+          Both loyal lieutenants heard from the commander, and their orders disagree.
+          A decision rule has to bring them to the same answer even in this case.
         </Caption>
       </Figure>
 
-      <h2>where 3f+1 comes from</h2>
+      <h2>the overlap must outnumber the faults</h2>
       <p>
-        For majority-based crash-tolerant replication, <code>2f+1</code> replicas allow
-        progress after <code>f</code> crashes. PBFT uses <code>3f+1</code> replicas and
-        quorums of <code>2f+1</code> to tolerate up to <code>f</code> Byzantine faults.
-        Faulty replicas can vote on both sides, so the overlap must contain an honest
-        participant.
+        I started the <a href="https://github.com/maskjelly/whiteye.in/blob/main/scripts/blog-models.py">enumerator</a> with three replicas and asked for two votes. Its three pairs of quorums include &#123;0, 1&#125; paired with &#123;0, 2&#125;. Replica 0 is the entire overlap. If it lies, it can give each of the other replicas a different history and a second vote to go with it. Replicas 1 and 2 need never contradict themselves. In the script&apos;s output, the minimum overlap is one; remove faulty replica 0 and the honest overlap falls to zero.
       </p>
       <p>
-        Two sets of <code>2f+1</code> voters drawn from <code>3f+1</code> replicas
-        overlap in at least <code>2(2f+1) − (3f+1) = f+1</code> places. Even if every
-        faulty replica is in that intersection, one honest replica remains. It must
-        retain its state and apply the voting and locking rules across leader changes
-        to prevent the quorums from certifying conflicting decisions.
+        Now add replica 3 and ask for three votes. There are six pairs to check this time. Every intersection contains at least two replicas, so removing 0 always leaves someone. That remaining honest voter is what I was missing with three replicas. The script checks the sets, not PBFT: no messages or elections run in this model.
+      </p>
+      <p>
+        I can work backward from those counts. How many replies can I demand if all <code>f</code> faulty replicas refuse to answer? At most <code>N−f</code>, so <code>q ≤ N−f</code>. Now let the faulty ones answer both ways instead. Two sets of <code>q</code> votes drawn from <code>N</code> replicas must share at least <code>2q−N</code> names. I need that overlap to contain more than the <code>f</code> names the attacker controls: <code>2q−N &gt; f</code>.
+      </p>
+      <p>
+        Try the largest reachable quorum, <code>q=N−f</code>. Substitution leaves <code>N−2f &gt; f</code>, or <code>N &gt; 3f</code>. Hence <code>3f+1</code> is the first integer replica count that works. Stop at <code>N=3f</code> and the smallest overlap is exactly <code>f</code>; the attacker can occupy all of it. Replica 0 did just that in our three-replica check.
+      </p>
+      <p>
+        Use PBFT&apos;s counts in the same calculation: <code>N=3f+1</code>, <code>q=2f+1</code>, hence <code>2(2f+1) − (3f+1) = f+1</code> shared voters. Spend the entire budget of <code>f</code> faults on that overlap and there is still a voter left. A crash-only majority can survive <code>f</code> crashes with <code>2f+1</code> replicas because it trusts the shared voter&apos;s behavior. Replica 0 showed why I could not use that argument here. I still owe the honest voter a rule: what state must it remember, and which vote must it refuse after a leader change? The protocol&apos;s voting and locking rules have to answer that.
       </p>
 
       <Figure>
         <Diagram viewBox="0 0 720 300" title="quorum overlap with at most f Byzantine replicas" threeFPlusOne />
         <Caption>
-          Any two Byzantine quorums of 2f+1 intersect in at least f+1 participants,
-          including an honest one. The fault budget is f total faulty replicas, not f malicious replicas
-          plus another f crashes.
+          Even if all f faulty replicas sit in the overlap, one of its f+1 voters
+          is honest. A crashed replica uses the same fault budget as a malicious one;
+          allowing f of each would exceed it.
         </Caption>
       </Figure>
 
       <p>
-        Availability puts an upper bound on the quorum size. Faulty replicas can all
-        stay silent, leaving <code>N-f</code> possible replies. A quorum of size{" "}
-        <code>q</code> must satisfy{" "} <code>q ≤ N−f</code>. Safety requires an
-        overlap larger than the fault budget:{" "} <code>2q−N &gt; f</code>.
-        Substituting the largest usable quorum gives{" "} <code>N−2f &gt; f</code>, or
-        {" "}<code>N &gt; 3f</code>. The smallest integer replica count is therefore
-        {" "}<code>3f+1</code> for this quorum construction. At <code>N=3f</code>, the
-        overlap could consist entirely of the{" "} <code>f</code> faulty replicas.
-      </p>
-      <p>
-        With <code>f=1</code>, four replicas use three-vote quorums. Any two such
-        quorums share at least two replicas, so one shared voter must be honest. Three
-        replicas cannot provide the same protection with two-vote quorums: their only
-        shared voter could be the faulty one. This bound applies to the quorum
-        construction above; other timing, authentication, and decision models can give
-        different Byzantine agreement bounds.
+        I read <code>3f+1</code> with those two conditions attached: collect a quorum
+        while faulty replicas are silent, and keep an honest voter in every
+        intersection. Change the timing, authentication, or decision model for
+        Byzantine agreement and the bound may change. The enumeration checks this
+        particular construction.
       </p>
 
-      <h2>PBFT</h2>
+
+      <h2>following a proposal through PBFT</h2>
       <p>
         Castro and Liskov&apos;s <a
         href="https://pdos.csail.mit.edu/6.824/papers/castro-practicalbft.pdf">1999 PBFT
-        paper</a> replicates a deterministic service among known replicas with
-        authenticated communication. It avoids expensive public-key operations on every
-        normal-path message. Safety holds through arbitrary delays; progress requires
-        communication to become sufficiently well behaved.
+        paper</a> supplies the rules missing from the set check. Its replicas run
+        a deterministic service, know the membership, and authenticate messages.
+        The normal path avoids doing a public-key operation for every message.
+        We can delay messages arbitrarily and retain safety, although progress can
+        stop. To make progress, communication must eventually behave well enough
+        for a correct primary to finish its work.
       </p>
       <p>
-        In a stable view, the primary proposes an order and replicas exchange evidence
-        before executing it:
+        For the message trace, I&apos;ll call the faulty primary P. Its three backups, A, B, and C, all follow the protocol. P picks a sequence number and view, then sends a <code>pre-prepare</code> naming the request digest. Give A and B a proposal for <code>x</code>. Give C a proposal for <code>y</code> at that very same position in that view. P has contradicted itself, but each backup has only its own proposal to check before accepting it.
       </p>
-      <ol>
-        <li>
-          <strong>Pre-prepare.</strong> The primary assigns a sequence number and sends
-          a <code>pre-prepare</code> containing the request&apos;s digest and view.
-          Replicas check the proposal before accepting it for that position.
-        </li>
-        <li>
-          <strong>Prepare.</strong> Backups multicast <code>prepare</code> messages. In
-          the original protocol, a replica becomes prepared with the matching
-          pre-prepare and <code>2f</code> matching prepares from distinct backups
-          (including its own if it is a backup). That certificate ties the request to its
-          sequence number within the view.
-        </li>
-        <li>
-          <strong>Commit.</strong> A prepared replica multicasts <code>commit</code>.
-          Once it has <code>2f+1</code> matching commits, including its own, it can
-          execute after earlier requests in the sequence have executed. A client waits
-          for <code>f+1</code> matching replies, which ensures at least one came from an
-          honest replica.
-        </li>
-      </ol>
+      <p>
+        A and B multicast <code>prepare</code> messages for <code>x</code>. C sends
+        one for <code>y</code>. In the original protocol, being prepared requires the
+        matching pre-prepare and <code>2f</code> matching prepares from distinct
+        backups. A backup counts its own prepare. Here <code>f=1</code>, so A and B
+        each have the two backup prepares needed for <code>x</code>, along with
+        P&apos;s matching pre-prepare. Both can become prepared. C has only its own
+        prepare for <code>y</code>.
+      </p>
+      <p>
+        P can&apos;t add a second backup prepare by sending another message under its
+        own name. Its authority as primary let it propose conflicting histories;
+        it doesn&apos;t let it impersonate another voter. The prepared certificate ties
+        {" "}<code>x</code> to this sequence number in this view.
+      </p>
+      <p>
+        I can follow that argument within one view. What will the next primary
+        know? After becoming prepared, a replica multicasts <code>commit</code>.
+        A prepared replica needs
+        {" "}<code>2f+1</code> matching commits, including its own, before executing the
+        request, and earlier sequence numbers must have executed first. In our
+        four-replica case, three commits include at least two honest senders. Both
+        were prepared for <code>x</code> before sending those commits.
+      </p>
+      <p>
+        Try to collect three view-change reports while avoiding both honest
+        prepared replicas. Only two replicas remain, so it can&apos;t be done. At
+        least one report carries evidence of <code>x</code> to the replacement
+        primary. Section 4.4 of the paper spells out how the new primary must
+        check the reports and choose a continuation; honest replicas check that
+        evidence before voting in the new view. The commit phase makes execution
+        depend on evidence that reaches across this change of primary. It also
+        explains why preserving protocol state through recovery matters: a replica
+        that forgets what it prepared can&apos;t supply the evidence this argument needs.
+      </p>
+      <p>
+        A timeout lets replicas attempt another primary when P stalls or misbehaves.
+        They still have to check the prepared certificates before accepting the new
+        view. On the client side, <code>f+1</code> matching replies are enough to
+        include at least one honest replica; a single reply could have come from P.
+      </p>
 
       <Figure>
         <Diagram viewBox="0 0 720 380" title="PBFT — three phases, quadratic chatter" pbft />
         <Caption>
-          Prepare and commit use all-to-all communication in PBFT, so the normal path
-          has O(n^2) messages across n replicas. Stable-leader Multi-Paxos uses O(n)
-          messages. Other Byzantine-tolerant protocols reduce this cost.
+          Pre-prepare assigns the position. Prepare gathers evidence within the view;
+          commit makes it safe to execute across a later view change. PBFT&apos;s
+          all-to-all prepare and commit rounds cost O(n^2) messages, against O(n)
+          for stable-leader Multi-Paxos. Other BFT protocols can reduce that cost.
         </Caption>
       </Figure>
 
+      <h2>paying for the exchanged evidence</h2>
       <p>
-        Take four replicas: faulty primary P and honest backups A, B, and C. P pre-prepares <code>x</code> to A and B, and a
-        conflicting <code>y</code> to C at the same sequence number in the same view. A
-        and B each send a prepare for <code>x</code>. Their two backup prepares,
-        together with P&apos;s matching pre-prepare, are enough for A and B to become
-        prepared. C has only its own prepare for <code>y</code>. P cannot supply the
-        missing second backup prepare by sending another message under its own name.
+        For one replica in a group of 100, there are 99 outgoing destinations in an all-to-all round. Do that for every sender and I have <code>100 × 99 = 9,900</code> directed sends to account for. It is tempting to turn that straight into a cost per request. I still need the primary&apos;s and backups&apos; actual message counts, the number of requests sharing a batch, and the sizes and authentication work that the hardware must handle.
       </p>
       <p>
-        Why have a commit phase after that? An honest replica sends a commit only after
-        it is prepared. A set of three commits therefore includes two honest prepared
-        replicas. Any three-replica view-change set must include at least one of those
-        two, carrying evidence of <code>x</code> into the replacement leader&apos;s
-        selection. Section 4.4 of the PBFT paper gives the rules for checking those
-        reports and constructing the new view.
-      </p>
-      <p>
-        Timeouts let replicas try another primary when the current one stalls or
-        misbehaves. Prepared certificates determine which continuation they can accept.
+        In the <a href="https://arxiv.org/abs/1803.05069">HotStuff paper</a>, I can stop drawing an arrow from every voter to every recipient. The votes first meet at a collector. With a threshold signature, the evidence leaving that collector is a compact quorum certificate, so each recipient has one thing to check instead of the whole vote list. The paper gets linear communication under partial synchrony and responsive progress with a correct leader. <a href="https://dRx.digital/assets/Tendermint.pdf">Tendermint</a> also rotates proposers, but I&apos;d need another message trace for it. Its vote rounds use gossip. The fact that a proposer rotates gives me no message count on its own.
       </p>
 
-      <h2>the communication cost</h2>
+      <h2>who gets a vote?</h2>
       <p>
-        An all-to-all round among 100 replicas has <code>100 × 99 = 9,900</code>{" "}
-        directed sends if each sends once to every other replica. PBFT&apos;s exact
-        count differs because the primary and backups have different roles; batching
-        also changes work per request. Throughput depends on packet sizes,
-        authentication costs, and hardware.
+        What stops replica 0 from renaming itself a thousand times? The configured membership does, both in the set check and in PBFT&apos;s A, B, C, and P. Each name has one known owner. For open participation, counting names would hand an attacker as many votes as it could invent. That is the Sybil problem. Proof of work gives influence to computing effort rather than names. More names can&apos;t create more committed stake. With proof of stake, I&apos;d count that stake, then check the protocol&apos;s rules for the penalties a voter faces. After either choice, we have assigned influence; we have yet to say how those votes agree on a history.
       </p>
       <p>
-        <a href="https://arxiv.org/abs/1803.05069">HotStuff</a> reduces communication
-        using quorum certificates that can have a compact threshold signature. Replicas
-        send votes to a collector; a certificate combines enough votes into evidence the
-        others can verify. The paper gives a partially synchronous protocol with linear
-        communication and responsive progress under a correct leader. <a
-        href="https://dRx.digital/assets/Tendermint.pdf">Tendermint</a>{" "} also uses
-        rotating proposers and vote rounds. Its gossip of votes has a different
-        communication pattern; it is not the linear scheme from HotStuff.
+        With a Bitcoin-style history, each additional confirmation can make a replacement by reorganization less likely, under the protocol&apos;s assumptions. A client still relies on that probability. <a href="https://arxiv.org/abs/1710.09437">Buterin and Griffith&apos;s Casper FFG paper</a> adds checkpoint votes with accountable safety. Two conflicting finalized checkpoints would implicate a threshold of stake in broken voting rules, for which it can be penalized. Clients get a different kind of evidence from a BFT certificate than from a count of confirmations.
       </p>
 
-      <h2>public membership adds another problem</h2>
+      <h2>choosing the fault assumption</h2>
       <p>
-        A permissioned protocol knows which replicas have votes. In an open network, an
-        attacker could create thousands of identities to gain thousands of votes. Proof of work weights influence by computing effort; proof of stake
-        weights it by committed stake, with penalties defined by the protocol.
-        These Sybil-resistance mechanisms determine who gets influence; consensus
-        determines how those voters agree.
+        Bring P back under the same operator as A, B, and C. I might now be willing to trust all four to persist their voting state and follow the rules, in which case Raft or Paxos could be enough. But a software bug could still produce the two proposals we traced, and a compromise could produce them deliberately. The backups would see the same x and y whether I owned P or somebody else did. I&apos;d still use checksums against corruption, plus isolation and operational controls for the risks they can reduce. I can use those protections without full BFT, while keeping the crash model&apos;s limit explicit. Adding machines doesn&apos;t make it handle arbitrary messages.
       </p>
       <p>
-        Bitcoin-style longest-chain consensus has probabilistic settlement: further
-        blocks reduce the chance of a reorganization under its assumptions. Casper FFG,
-        described in <a href="https://arxiv.org/abs/1710.09437">Buterin and
-        Griffith&apos;s paper</a>, adds checkpoint votes with an accountable-safety
-        property. Conflicting finalized checkpoints imply that a threshold of stake
-        violated the rules and can be penalized. A block count and a BFT certificate
-        therefore provide different evidence of finality.
+        Leave P with another organization and require safety despite its contradictions, and I need an argument like the PBFT trace. Known membership also leaves decisions outside that trace. Who may admit a new member or replace its key? What happens when a member refuses to cooperate? An open network needs a rule for voting weight as well. Proof of stake with BFT-style finality is one possible answer, rather than a consequence of allowing anyone to participate.
       </p>
-
-      <h2>when the fault model fits</h2>
       <p>
-        Choose the trust assumption before the replica count:
-      </p>
-      <ul>
-        <li>
-          <strong>One operator controls the cluster.</strong> Raft or Paxos is often a
-          reasonable choice when replicas are trusted to follow the protocol. Bugs and
-          compromised machines can still cause arbitrary faults. Checksums, isolation,
-          and operational controls address parts of that risk without a full BFT
-          deployment.
-        </li>
-        <li>
-          <strong>Several organizations share a service.</strong> Known membership with
-          limited mutual trust is a natural setting for PBFT-class designs. The group
-          must also decide how to admit members, replace keys, and handle a participant
-          that stops cooperating.
-        </li>
-        <li>
-          <strong>Participation is open.</strong> The design needs a Sybil-resistance
-          mechanism and a way to determine voting weight or membership. Proof of stake
-          with BFT-style finality is one option among several.
-        </li>
-      </ul>
-      <p>
-        BFT&apos;s extra protection costs replicas and communication. The
-        {" "}<code>2f+1</code> and <code>3f+1</code> counts compare the same f under
-        different fault assumptions. They do not imply a fixed percentage increase in
-        operating cost; message complexity depends on the protocol.
-      </p>
-
-      <p>
-        The four-replica example is the part I find most useful. P can manufacture
-        contradictory proposals, but it cannot manufacture A&apos;s or B&apos;s
-        authenticated prepares. An honest replica can then carry that evidence into a
-        later view, provided it preserves protocol state through recovery and checks
-        the evidence before voting again. Extra replicas cannot make up for either
-        missing obligation.
+        For f=1, the two formulas ask for three crash-tolerant replicas or four Byzantine-tolerant ones. The fault count includes different behavior in each case. Neither formula prices a request: that depends on the protocol&apos;s message exchange and the system running it, and a fixed operating-cost percentage would need a deployment measurement. The set check stops at finding the honest overlap. The PBFT trace then tells me what its honest voter must retain, and why the next primary cannot simply discard that evidence.
       </p>
 
       <section className="references">

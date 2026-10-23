@@ -14,40 +14,161 @@ export default function Post() {
   return (
     <article className="prose-mono">
       <p className="lead">
-        A polynomial can take four multiply-add steps to evaluate and still produce one
-        result every clock. The trick is to have several evaluations in flight, each at
-        a different stage. Reading about FPGA trading systems made me want to understand
-        that distinction properly: what determines the delay for one input, and what
-        determines the rate at which a circuit can accept the next?
+        The first answer comes out on cycle 4. The next comes out on cycle 5.
+        Each has gone through four dependent multiply-add steps. That is the
+        distinction I wanted to follow through accounts of FPGA trading systems:
+        how long one evaluation takes, and how soon the circuit can start another.
+      </p>
+      <p>
+        Those cycle numbers come from a Python model, with one clock assigned to
+        each arithmetic stage. I haven&apos;t built trading hardware. I can check
+        the schedule, then use the DSP48E2 documentation to ask what mapping it to
+        an FPGA would involve. The financial examples raise a separate question:
+        what must the arithmetic preserve for its answer to be useful?
+      </p>
+
+      <h2>following one input through four steps</h2>
+      <p>
+        Take a degree-four polynomial:
+      </p>
+      <Code lang="text">{`p(x) = a₀ + a₁x + a₂x² + a₃x³ + a₄x⁴`}</Code>
+      <p>
+        Regrouping it with Horner&apos;s method gets rid of the separate powers of x:
+      </p>
+      <Code lang="text">{`p(x) = a₀ + x·(a₁ + x·(a₂ + x·(a₃ + x·a₄)))`}</Code>
+      <p>
+        Begin at a₄, inside the innermost brackets. Getting to a₃ costs one multiply and one add. Reaching a₂ costs another pair, and so on until a₀. That makes four of each operation here, or <code>n</code> multiplications and <code>n</code> additions for degree <code>n</code>. The bracket on the right has to finish before we can work on the next one to its left.
+      </p>
+      <p>
+        I used 1, 2, 3, 4, 5 as the coefficients in the <a href="https://github.com/maskjelly/whiteye.in/blob/main/scripts/blog-models.py">clocked check</a>. Working through x=2 gives this trail: 5 → 14 → 31 → 64 → 129. Each arrow means double the previous answer and add the next coefficient. In the pipeline run, that input enters on cycle 2 and returns 129 on cycle 6. With x=0 through x=4 arriving in order, the outputs are 1, 15, 129, 547, and 1593, on cycles 4 through 8. I check every one against a separate Horner calculation with an assertion.
+      </p>
+      <Figure>
+        <Diagram
+          viewBox="0 0 720 360"
+          title="Horner datapath — degree 4, pipelined"
+          datapath
+        />
+        <Caption>
+        One multiply-add and a register per box. I have allowed one clock for each box here; using a DSP&apos;s internal registers could change that count. The target clock period is still an open question.
+      </Caption>
+      </Figure>
+      <p>
+        By cycle 3 the model has four evaluations in flight. They are at different steps: x=0 is about to finish, while x=3 has only just arrived. On the next clock, the completed answer leaves and x=4 takes the vacant first stage. The four-clock journey for an input has not become shorter. We have arranged for the next input to be only one clock behind it.
+      </p>
+      <p>
+        Calling the clock period <code>T</code> gives latency <code>4T</code> and,
+        once the pipeline fills, throughput <code>1/T</code>. Every evaluation
+        still obeys its dependencies. The overlap is between different inputs.
+        Multivariate Horner evaluation can nest variables too, though choosing
+        their order changes how much arithmetic is left to do.
+      </p>
+      <p>
+        The partial result alone is not enough to pass between stages. It needs its original x alongside it. Otherwise, when the second stage is working on x=2, it might multiply by the 3 that has just arrived at the first stage. That would quietly change the polynomial being evaluated. The script carries the pair together.
+      </p>
+
+      <h2>what the DSP block actually offers</h2>
+      <p>
+        What clock could those four stages sustain? Python leaves that question
+        open. AMD&apos;s <a
+        href="https://docs.amd.com/api/khub/documents/pTysoma4TYgNH95BrY1Sbw/content">UG579
+        guide</a> gives something concrete to map onto: the UltraScale+ DSP48E2
+        has a 27×18-bit multiplier, an arithmetic unit, and optional pipeline
+        registers. With suitable register settings, a slice can accept an
+        operation every clock while an earlier result is still inside it.
+      </p>
+      <p>
+        Degree eight requires eight Horner arithmetic steps. Their widths,
+        register settings, and routing determine how those steps map to a device.
+        The delayed copies of <code>x</code> need to follow that schedule as well.
+        Changing coefficients adds another question: which set does an evaluation
+        use if the update happens while it is halfway through? All its stages
+        need one coherent set.
+      </p>
+      <p>
+        The script uses Python integers. It has therefore left overflow and
+        rounding out of the exercise. Fixed point can save resources when the
+        ranges are known, but I would need room for every intermediate, including
+        that growing partial result, and an error budget for rounding. Floating
+        point also costs hardware, with support that varies across FPGA families.
+        Choosing it would still leave accuracy to check.
+      </p>
+      <p>
+        For an accepted input, this arithmetic path has a useful property: its
+        work does not depend on a branch or a variable loop count. I can count
+        the steps. Getting the input accepted is a separate matter if shared
+        memory, backpressure, or a variable-length parser can hold it up.
+      </p>
+
+      <h2>what is known before the tick arrives?</h2>
+      <p>
+        Fitting the coefficients could happen well before any live input arrives. The evaluator would then reuse them as the inputs change. Our example has only x; a multivariate version could be <code>p(x₁,…,xₙ) = Σ cᵢ · x₁^a · x₂^b … xₙ^z</code>. I can supply those inputs and work forward through the arithmetic, without searching for a root.
+      </p>
+      <p>
+        &quot;Polynomial computation&quot; also covers a much harder job.
+        Solving a system means finding inputs
+        that satisfy its equations. That can be expensive: Buchberger, F4, and
+        F5 are Gröbner-basis methods for versions of this problem; resultants and
+        homotopy methods are other approaches. Our Horner chain is doing the
+        simpler job of evaluating at a supplied input. Its remaining design
+        choices concern how to arrange the arithmetic and represent the numbers.
+      </p>
+      <p>
+        For a volatility surface, take strike <code>K</code> and maturity <code>T</code>. I could write a basis expansion <code>σ(K,T) = Σ cᵢⱼ · fᵢ(K) · gⱼ(T)</code> and choose polynomial basis functions to make the arithmetic regular. That choice would say nothing about whether the fitted prices make sense together. <a href="https://arxiv.org/abs/1204.0646">Gatheral and Jacquier&apos;s arbitrage-free SVI work</a> addresses that consistency problem for SVI. SVI itself is nonpolynomial; a polynomial fit would need constraints of its own.
+      </p>
+      <p>
+        Even choosing a curve model changes what belongs before the first
+        multiply. For fixed-income cubic splines and B-splines, an input selects
+        an interval and its coefficients before the polynomial can be evaluated.
+        {" "}<a
+        href="https://www.nber.org/papers/w1594">Nelson-Siegel</a> uses exponential
+        terms. Choosing that model would mean mapping those terms too; calling
+        all of these &quot;curve evaluation&quot; hides the difference.
+      </p>
+      <p>
+        Delta is where I would be especially wary of accepting a fit on price
+        error alone. Differentiating a polynomial price approximation in
+        {" "}<code>S</code> gives another polynomial, so the arithmetic remains
+        convenient. The approximation error has a derivative too. How large
+        can that be if the price error is small?
+      </p>
+      <p>
+        Here is an error that makes the problem visible: ε Tₙ(x), where Tₙ is a Chebyshev polynomial and ε=10⁻⁶. From its <a href="https://dlmf.nist.gov/18.5.E1">cosine form</a>, I know its magnitude stays within ε everywhere on [-1, 1]. For the slope I used x=1, where each Tₙ is 1. Differentiating <code>Tₙ₊₁ = 2xTₙ − Tₙ₋₁</code> at that point leaves <code>Dₙ₊₁ = 2 + 2Dₙ − Dₙ₋₁</code>. Starting at D₀=0 and D₁=1, the script gets a slope error of 0.000064 at degree 8, 0.001024 at degree 32, and 0.004096 at degree 64. That last value is 4,096 times ε. The bound on the values never changed.
+      </p>
+      <p>
+        This gives a specific reason to check the derivative separately. The
+        small value-error bound by itself does not carry over to the slope.
+        These are constructed errors, rather than errors measured on a fitted
+        price surface; they show what the value bound leaves open. A delta
+        calculation would need its own accuracy check, including rounding at
+        the chosen arithmetic width.
       </p>
 
       <p>
-        I haven&apos;t built trading hardware; I&apos;m working from papers and
-        specifications here. Horner&apos;s method supplies a small enough arithmetic
-        graph to follow by hand, and the DSP48E2 documentation shows what mapping it to
-        hardware involves. Trading adds a useful complication: after accounting for
-        nanoseconds inside a circuit, a cross-country network still has milliseconds of
-        propagation delay.
+        For a cross-venue pricing relationship written as algebraic inequalities,
+        I would ask the same question about preparation: can fitting or region
+        analysis leave only a few conditions to evaluate online? That reduction
+        needs to be worked out for the particular model. Polynomials make a small
+        example I can inspect. Neural networks can map to FPGAs too, with their
+        own graph sizes and precision costs. These public sources give me no
+        basis for saying how often proprietary strategies choose either.
       </p>
 
-      <h2>two different latency budgets</h2>
+      <h2>from a packet to the polynomial</h2>
       <p>
-        The familiar US examples are Nasdaq&apos;s Carteret site in New Jersey and
-        CME&apos;s Aurora site in Illinois. A colocated system competes over the time
-        between receiving market data and emitting an order. A strategy connecting the
-        two regions also pays for the cross-country path. Saving nanoseconds on the
-        first path cannot remove milliseconds from the second.
+        The script can simply supply x=2. Where would that input come from in a
+        trading system? Following Nasdaq&apos;s <a
+        href="https://www.nasdaqtrader.com/technicalspecifications">protocol
+        specifications</a>, one possible path starts with an FPGA network
+        interface receiving packets without waiting for the OS networking stack.
+        A hardware decoder extracts the relevant ITCH messages. An order-book
+        block applies their updates to selected price levels, with some state
+        held in on-chip RAM as the feed and strategy allow. Missing or out-of-order
+        packets need explicit handling, or those book values may no longer
+        describe the intended market state.
       </p>
       <p>
-        At 10 Gbps, serializing one byte takes <code>8 / 10¹⁰ = 0.8 ns</code>, before
-        encoding and protocol overhead. That number follows directly from the line rate.
-        The often-quoted order of 100 ns for a main-memory access is much less portable:
-        the CPU, memory subsystem, and access pattern matter. A dedicated FPGA path can
-        avoid CPU cache misses and branch mispredictions, but its own memory, parsing,
-        and I/O still consume time. Each stage needs a timing boundary before numbers
-        from different designs can be compared.
+        Selected book values can now enter the Horner chain. What comes out still needs a decision and risk checks before anything goes on the wire. An encoder could then build an OUCH order-entry message for the Nasdaq connection in question. A CPU can configure and supervise the circuit without seeing each tick. Counting the four arithmetic stages alone leaves all of that other work unaccounted for.
       </p>
-
       <Figure>
         <Diagram
           viewBox="0 0 720 470"
@@ -63,213 +184,37 @@ export default function Post() {
           ]}
         />
         <Caption>
-          Illustrative timings for the stages, not measurements of a system I built. The
-          cross-country link is shown alongside the local processing stages to make the
-          units visible. The stage numbers depend on the implementation and cannot
-          establish an end-to-end trading latency.
-        </Caption>
+        The labels suggest scales for the blocks, including a cross-country link. I cannot add them into a trading-latency claim: they are illustrative, with neither hardware measurements nor defined timing boundaries behind them.
+      </Caption>
       </Figure>
-
-      <h2>why use a polynomial model</h2>
       <p>
-        With fixed coefficients, a polynomial gives the circuit a known sequence of
-        additions and multiplications. There is no search to finish before producing a
-        value. That makes it a useful example of bounded online work. A neural network
-        can also map to an FPGA; its graph size and arithmetic precision lead to a
-        different resource budget. Public descriptions do not establish how often
-        proprietary trading models use either approach.
+        Before using a number from that diagram, I would want to know where
+        timing begins and ends. At the first received bit, or after the last
+        required field arrives? At the first outbound bit, or after the complete
+        order message? Moving those boundaries changes how much serialization
+        and processing the number includes.
       </p>
       <p>
-        Several financial models expose related arithmetic, though they should not all
-        be described as polynomials:
-      </p>
-      <ul>
-        <li>
-          <strong>Volatility surfaces.</strong> A fitted surface over strike{" "}
-          <code>K</code> and maturity <code>T</code> can use a basis expansion such as{" "} <code>σ(K,T) = Σ cᵢⱼ · fᵢ(K) · gⱼ(T)</code>. A polynomial basis makes
-          evaluation regular. SVI is another parametric representation, but is not
-          itself a polynomial. <a href="https://arxiv.org/abs/1204.0646">Gatheral and
-          Jacquier</a> study how to calibrate SVI without static arbitrage. A polynomial
-          surface also needs suitable constraints; ease of evaluation says nothing about
-          whether its fitted prices are consistent.
-        </li>
-        <li>
-          <strong>Cross-venue conditions.</strong> Some pricing relationships can be
-          expressed as algebraic inequalities. If a strategy can reduce its online
-          decision to evaluating those conditions, expensive fitting or region analysis
-          can happen off the immediate response path. The exact reduction depends on the
-          model.
-        </li>
-        <li>
-          <strong>Fixed-income curves.</strong> Cubic splines and B-splines use
-          piecewise polynomials. <a
-          href="https://www.nber.org/papers/w1594">Nelson-Siegel</a>{" "} uses
-          exponential terms and is a different curve representation. Selecting the
-          interval and evaluating its coefficients are separate steps for a spline.
-        </li>
-        <li>
-          <strong>Risk sensitivities.</strong> Differentiating a polynomial price
-          approximation gives another polynomial. For a model in <code>S</code>, its
-          derivative supplies an approximation to delta. Differentiation is simple, but
-          delta accuracy needs its own check: a bound on price error alone does not give
-          the same bound on derivative error.
-        </li>
-      </ul>
-      <p>
-        The arithmetic problem is to evaluate a fixed expression such as{" "}
-        <code>p(x₁,…,xₙ) = Σ cᵢ · x₁^a · x₂^b … xₙ^z</code> repeatedly as live inputs
-        change. How the coefficients were found is a different computation, usually on a
-        slower path.
+        At 10 Gbps, eight bits take <code>8 / 10¹⁰ = 0.8 ns</code> to send. That much follows from the line rate, before encoding or protocol overhead. A rough 100 ns estimate for main-memory access needs more context. Which CPU and memory subsystem? Was the access sequential, random, or contended? I have no such details for that number. Moving this path into FPGA fabric gets rid of the CPU&apos;s cache misses and branch mispredictions, but I still owe measurements for the parser, memory, and I/O.
       </p>
 
-      <h2>evaluation and solving are different jobs</h2>
+      <h2>the milliseconds outside the circuit</h2>
       <p>
-        Solving a polynomial system means finding inputs that satisfy its equations.
-        Gröbner-basis methods such as Buchberger, F4, and F5, along with resultants and
-        homotopy methods, address versions of that problem. General systems can be very
-        expensive to solve. Evaluating a fitted expression at a known input is a much
-        smaller task with a different algorithm.
+        The cross-country link in the diagram needs its own explanation. For a
+        colocated system, I would measure from market-data arrival to order
+        emission at that venue. Connecting Nasdaq&apos;s Carteret site in New
+        Jersey with CME&apos;s Aurora site in Illinois adds the travel between
+        the two regions. That delay is already measured in milliseconds.
       </p>
       <p>
-        For evaluation, the coefficients and arithmetic structure are already available.
-        The hardware designer chooses how to arrange the operations and represent the
-        numbers. Horner&apos;s method gives a direct arrangement with a fixed operation
-        count, so a circuit can compute the result without a data-dependent search for a
-        root.
+        I can compare propagation alone by giving both routes an illustrative
+        length of 1,100 km. With silica fiber&apos;s refractive index roughly 1.5,
+        {" "}<code>v = c/n</code> gives about <code>0.67c</code>: a travel time near
+        5.5 ms. Radio through air travels close to c, giving a lower bound near
+        3.7 ms over that distance. The gap is about 1.8 ms before equipment
+        overhead. A real route adds distance, and radio also has to satisfy
+        line-of-sight constraints.
       </p>
-
-      <h2>Horner evaluation</h2>
-      <p>
-        Start with a univariate polynomial written as a sum of powers:
-      </p>
-      <Code lang="text">{`p(x) = a₀ + a₁x + a₂x² + a₃x³ + a₄x⁴`}</Code>
-      <p>
-        Horner&apos;s method rewrites it in nested form:
-      </p>
-      <Code lang="text">{`p(x) = a₀ + x·(a₁ + x·(a₂ + x·(a₃ + x·a₄)))`}</Code>
-      <p>
-        A degree-<code>n</code> polynomial needs <code>n</code> multiplications and{" "}
-        <code>n</code> additions in this form. Each stage consumes the previous result,
-        so one evaluation has a dependency chain. With multiple inputs in flight,
-        however, different stages can work on different inputs at the same time.
-        Multivariate evaluation can nest the variables too, although the nesting order
-        affects the work.
-      </p>
-
-      <Figure>
-        <Diagram
-          viewBox="0 0 720 360"
-          title="Horner datapath — degree 4, pipelined"
-          datapath
-        />
-        <Caption>
-          Four conceptual multiply-accumulate stages. Each multiplies the running value
-          by <code>x</code> and adds a coefficient. The drawing assumes one registered
-          stage per operation; a real DSP implementation may need more internal
-          registers to meet its clock target.
-        </Caption>
-      </Figure>
-
-      <p>
-        Under the drawing&apos;s one-cycle-per-stage assumption, input A takes four
-        clock periods to cross the chain. Input B can enter one clock after A and finish
-        one clock after it. Once full, the four stages work on four different inputs at
-        once. If the clock period is <code>T</code>, the arithmetic latency is
-        {" "}<code>4T</code> and the result rate is <code>1/T</code>. This is an illustrative
-        schedule, not a measured clock rate or implementation result.
-      </p>
-      <p>
-        The real DSP block imposes more choices. AMD&apos;s <a
-        href="https://docs.amd.com/api/khub/documents/pTysoma4TYgNH95BrY1Sbw/content">UG579
-        guide</a> describes the UltraScale+ DSP48E2&apos;s 27×18-bit multiplier,
-        arithmetic unit, and optional pipeline registers. Appropriate pipelining can let
-        a slice accept a new operation each clock while an individual result takes
-        several clocks. A degree-eight Horner chain has eight arithmetic steps; its
-        cycle count depends on widths, register settings, and routing. Copies of{" "}
-        <code>x</code> must be delayed to meet their corresponding partial results, and
-        coefficient updates need to reach the stages coherently.
-      </p>
-      <p>
-        Two details can invalidate the appealing schedule:
-      </p>
-      <ul>
-        <li>
-          <strong>Numeric precision.</strong> Fixed-point arithmetic can save resources
-          when the value ranges are known. The design still needs bounds for
-          intermediates, rounding behavior, and overflow. A coefficient that fits at the
-          input does not prove that a later partial sum will fit. Floating-point support
-          varies across FPGA families. A model needs an error budget before either
-          representation can be called sufficient.
-        </li>
-        <li>
-          <strong>A fixed path.</strong> The straight arithmetic sequence avoids a
-          data-dependent branch or loop count. That helps bound its latency.
-          Backpressure, shared memory, or a variable-length parser elsewhere in the
-          design can still delay when an input enters that sequence.
-        </li>
-      </ul>
-
-      <h2>putting the arithmetic in a feed path</h2>
-      <p>
-        The arithmetic circuit needs inputs that agree about the state of the market. A
-        simplified feed path might connect these stages, using the message formats in
-        Nasdaq&apos;s <a
-        href="https://www.nasdaqtrader.com/technicalspecifications">protocol
-        specifications</a>:
-      </p>
-      <ol>
-        <li>
-          A network interface receives the market-data packets. The FPGA can contain
-          that interface itself rather than waiting for the OS networking stack.
-        </li>
-        <li>
-          A hardware decoder parses the relevant ITCH messages and turns them into book
-          updates. Handling missing or out-of-order feed packets needs rules of its own.
-        </li>
-        <li>
-          An order-book block updates the selected price levels. On-chip RAM can hold
-          some of this state, but the representation depends on the feed and the
-          strategy&apos;s requirements.
-        </li>
-        <li>
-          Selected book values enter the model pipeline. A Horner chain evaluates the
-          polynomial with the configured precision and produces a result after its fixed
-          stage latency.
-        </li>
-        <li>
-          Decision logic checks the result and the required risk limits. An order
-          encoder then produces the outbound protocol message, such as OUCH for an
-          appropriate Nasdaq connection.
-        </li>
-      </ol>
-      <p>
-        A CPU can configure and supervise the path without handling each tick. The
-        boundary used to report latency still matters. Timing from the first received
-        bit includes a different amount of work from timing after the last required
-        field has arrived. Likewise, reaching the first outbound bit is different from
-        completing the order message. The stage values in the diagram do not specify
-        those boundaries, so adding them up would not establish a measured trading
-        response time.
-      </p>
-
-      <h2>what the transmission medium changes</h2>
-      <p>
-        For silica fiber, a refractive index around 1.5 gives a propagation speed near{" "} <code>0.67c</code>, using <code>v = c/n</code>. Radio through air travels
-        close to c. Over an illustrative 1,100 km route, that puts fiber propagation at
-        about 5.5 ms and the air-path lower bound near 3.7 ms. Actual paths add
-        distance, equipment delay, and constraints such as line of sight.
-      </p>
-      <p>
-        On equal-length paths, that is roughly a 1.8 ms difference before equipment
-        overhead. For scale, the diagram&apos;s 10–40 ns arithmetic stage fits into 1.8
-        ms between 45,000 and 180,000 times. This division compares illustrative
-        budgets; it does not measure an advantage available to a particular trader.
-        Straighter fiber routes and microwave links address that part of the budget. The
-        Spread Networks account in <em>Flash Boys</em> and the microwave reporting
-        linked below give some history, but the physical comparison does not depend on
-        their reported construction costs.
-      </p>
-
       <Figure>
         <Diagram
           viewBox="0 0 720 280"
@@ -277,63 +222,42 @@ export default function Post() {
           compare
         />
         <Caption>
-          These are illustrative route timings. Radio is about 50% faster in propagation
-          speed than light in fiber with n=1.5, which means about one-third less travel
-          time over the same distance. Route length and equipment change the end-to-end
-          saving.
+          At equal distance and fiber index n=1.5, radio&apos;s roughly 50% higher
+          propagation speed saves about one-third of the travel time. Actual
+          savings depend on the route and its equipment.
         </Caption>
       </Figure>
-
       <p>
-        A shorter arithmetic chain changes local processing time. A straighter route
-        changes propagation time. For a strategy that crosses both regions, the
-        end-to-end budget must include both. A strategy trading only at a colocated
-        venue has a different path to measure, so the cross-country comparison cannot
-        tell us where its engineering effort belongs.
+        Against the diagram&apos;s illustrative 10–40 ns arithmetic budget, that
+        1.8 ms gap is 45,000–180,000 times as long. I am comparing scales here;
+        neither number measures a trading advantage. A straighter fiber route
+        or a microwave link can reduce the travel delay. The Spread Networks
+        account in <em>Flash Boys</em> and the microwave reporting below describe
+        that competition. Their reported construction costs are background;
+        the propagation calculation depends on distance and speed.
+      </p>
+      <p>
+        I would not use that ratio to dismiss the local arithmetic. A
+        cross-region strategy pays for both travel and processing. A strategy
+        confined to one colocated venue has a different path to measure, and
+        the 1.8 ms comparison says little about where it should spend engineering
+        effort. The useful budget follows the strategy&apos;s actual path.
       </p>
 
-      <h2>latency arbitrage and front-running</h2>
+      <h2>what speed says about the trade</h2>
       <p>
-        These terms describe different uses of information. A faster feed or processor
-        does not, by itself, tell you which behavior is taking place.
-      </p>
-      <ul>
-        <li>
-          <strong>Latency arbitrage</strong> uses a price change observed on one venue
-          to trade against a quote that has not yet adjusted elsewhere. The important
-          input is the price information available to the trader. This description alone
-          does not settle the legality of a particular practice or venue arrangement.
-        </li>
-        <li>
-          <strong>Front-running</strong> involves trading ahead using knowledge of a
-          pending transaction, often a customer&apos;s. For a concrete US rule, <a
-          href="https://www.finra.org/rules-guidance/rulebooks/finra-rules/5270">FINRA
-          Rule 5270</a> restricts trading while holding material nonpublic information
-          about an imminent block transaction, subject to its stated provisions.
-        </li>
-      </ul>
-      <p>
-        The same hardware capability says little about the source of a trader&apos;s
-        information. A claim about front-running has to identify the conduct and the
-        applicable rule. The circuit question remains: how quickly can it turn an
-        allowed input into an allowed output?
-      </p>
-
-      <h2>what the arithmetic example establishes</h2>
-      <p>
-        The same reasoning applies to radar signal processing, packet inspection, and
-        control systems with bounded response times. An FPGA can be a good fit for a
-        fixed arithmetic graph. A CPU, microcontroller, DSP, or ASIC may fit a different
-        budget better; programmable logic is not automatically the right answer for
-        every real-time problem.
+        Following the input also helps keep two trading descriptions separate.
+        In latency arbitrage, the input may be a price change at one venue,
+        while a quote at another has yet to adjust. Front-running involves
+        knowledge of a pending transaction, often a customer&apos;s, and trading
+        ahead of it. The same kind of fast circuit could act on either input;
+        its speed tells me little about how the information was obtained.
       </p>
       <p>
-        Horner gives the degree-four example four dependent multiply-add steps. The
-        pipeline schedule shows how to overlap different inputs; it does not shorten
-        that dependency chain for any one input. Another arrangement may expose more
-        parallel work at the cost of more arithmetic resources. Choosing between them
-        requires an input-rate target and an error budget, followed by synthesis and
-        timing analysis on a particular device.
+        <a href="https://www.finra.org/rules-guidance/rulebooks/finra-rules/5270">FINRA Rule 5270</a> supplies a more specific test in the US: its restrictions concern trading with material nonpublic information about an imminent block transaction, under the rule&apos;s provisions. I would need the facts of the trade and the applicable rule before calling an activity front-running. Nor does describing it as &quot;latency arbitrage&quot; settle its legality for a venue arrangement.
+      </p>
+      <p>
+        I would take this schedule into synthesis only after choosing the arithmetic widths, registers, and target device. Then the timing report could answer the question Python left open: what clock period works, and how many stages does it need? That is also the appeal for radar processing, packet inspection, or a control loop with a deadline. It is a reason to compare hardware, though. A CPU, microcontroller, DSP, or ASIC could meet the input rate and error budget more cheaply. For this polynomial I could also try spending more arithmetic resources on parallel evaluation. I have a schedule to compare those choices against.
       </p>
 
       <section className="references">

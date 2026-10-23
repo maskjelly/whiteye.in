@@ -5,267 +5,151 @@ export const meta = {
   title: "the log is the database",
   date: "may 03, 2026",
   updated: "oct 23, 2026",
-  description: "What a log lets you rebuild, what must survive beside it, and how recovery changes between Postgres, an LSM tree, and Kafka.",
-  readingTime: "12 min",
+  description: "What survived a SQLite writer exit, then following recovery state through Postgres, an LSM tree, and Kafka.",
+  readingTime: "13 min",
 }
 
 export default function Post() {
   return (
     <article className="prose-mono">
       <p className="lead">
-        A transaction can commit while its changed table pages are still in RAM. The
-        database first makes their recovery records durable in a write-ahead log.
-        After a crash, it can redo the changes, but how much state can that retained
-        log recover?
+        I committed one row, then made the SQLite writer exit without closing its connection. Copying just the main database afterward gave me an empty table. Copying the same file with its WAL gave me the committed row. These were two copies of one stopped writer&apos;s files, after one successful commit.
       </p>
 
       <p>
-        I kept running into logs while reading about storage and distributed systems.
-        Kreps&apos;s <a
-        href="https://www.linkedin.com/blog/engineering/distributed-systems/log-what-every-software-engineer-should-know-about-real-time-datas-unifying">essay
-        on the log</a> gave me a way to connect them: save ordered records, then build
-        the state you need from those records. Recovery puts limits on that idea:
-        Postgres still needs its data files, and a Kafka consumer needs enough retained
-        input. A log cannot replay records that have been discarded.
+        I wanted the empty table in the base file and the new row in WAL. The <a href="https://github.com/maskjelly/whiteye.in/blob/main/scripts/blog-sqlite-wal.py">reproduction</a> printed Python 3.14.5 and SQLite 3.53.1 for this run. I chose WAL mode with 4,096-byte pages. For sync I used FULL; for wal_autocheckpoint I used 0, keeping automatic checkpointing out of the commit. The child checkpoints its newly created table before it inserts anything. To leave the next change in WAL, I put os._exit(0) immediately after the insert&apos;s commit, before a connection close could checkpoint it. I get 8,192 bytes of main database and 4,152 bytes of WAL. The writer is gone before I start copying, so neither file can change underneath me.
+      </p>
+      <p>
+        Neither copy got the -shm file. That omission was harmless here: SQLite could rebuild its index. The main-file-only copy had no such way to reconstruct the row I had left in WAL. The <a href="https://www.sqlite.org/wal.html">SQLite explanation</a> treats WAL as part of the saved database until a checkpoint moves the changes into the base file. That&apos;s what these two copies let me observe. I tested an abrupt process exit, with the machine still running. A power cut or a device ignoring sync would require another experiment.
+      </p>
+      <p>
+        In the smaller <a href="https://github.com/maskjelly/whiteye.in/blob/main/scripts/blog-models.py">replay check</a>, the whole update is two assignments: A=1 and B=1. I keep changing what was already on the pages before replay. The (0, 0) run has both pages to update. With either mixed pair, (1, 0) or (0, 1), one assignment repeats a write that was already there. At (1, 1), both assignments do that. Replay still assigns 1 to both and finishes at (1, 1) in every run. Repeating either assignment causes no harm. This loop gets valid, complete records and whole page values as inputs. Validating WAL or repairing a torn page would take work it doesn&apos;t attempt.
+      </p>
+      <p>
+        There is another input hiding in plain sight: those starting pages. For a
+        real database, replay needs a suitable starting state and the records after
+        it. Keeping only the current WAL directory would throw away part of what
+        recovery needs. I find this a useful limit on the title of this post.
+      </p>
+      <p>
+        Kreps&apos;s <a href="https://www.linkedin.com/blog/engineering/distributed-systems/log-what-every-software-engineer-should-know-about-real-time-datas-unifying">essay on the log</a> helped me connect the logs I kept finding in storage and distributed systems. Several views can be built from the same ordered records. The SQLite copy makes me ask what else I have to save, and when I may throw an old record away. For Postgres that includes the data files. For a Kafka projection it might be a snapshot and retained events. Those surviving inputs determine whether the next replay can work.
       </p>
 
-      <h2>a log and the state it protects</h2>
+      <h2>what the two-page loop leaves out</h2>
       <p>
-        A WAL-based engine serves reads from table and index files. Recovery starts at
-        a known point and replays the required WAL tail over those files. Earlier work
-        is already in the checkpointed state; replay need not start at the database&apos;s
-        first transaction. Today&apos;s WAL files alone cannot restore a lost database.
-        The state they build on must survive too.
+        Give A the role of a changed row and B its index entry on another page. If commit waits for both page writes, the client waits with it. WAL gives the database another route: put the recovery records into a sequential stream and persist them along with the commit record. It can then acknowledge the durable commit and let background writers catch up with the dirty pages. Several transactions may even share the flush through group commit. All of this still relies on storage doing what a successful flush promises.
       </p>
       <p>
-        Postgres pairs a WAL with heap and index pages. InnoDB has a redo log, alongside
-        MySQL&apos;s separate binary log for replication. SQLite offers WAL mode or a
-        rollback journal, and RocksDB combines a WAL with sorted files. The record
-        formats and recovery requirements differ. Copy-on-write engines use another
-        commit protocol to preserve durable state.
+        In Postgres I&apos;d draw the persistence arrows separately from the changes in RAM. A page may already be dirty in the buffer pool while its WAL isn&apos;t yet durable. Sending that page to disk has to wait for the corresponding WAL. Otherwise I could keep a change and lose the record needed to recover it. Sending an acknowledgment for a durable synchronous commit has to wait for the commit record&apos;s flush as well. Those are the two dependencies I take from the <a href="https://www.postgresql.org/docs/17/wal-intro.html">WAL documentation</a>.
+      </p>
+      <p>
+        Suppose the heap page reached disk and the index page didn&apos;t. That&apos;s our (1, 0) case: redo can supply the missing index change from durable WAL. Reverse the persistence rule and we could instead save a changed page while losing its only recovery record with RAM. That&apos;s the case the write-ahead rule prevents. Postgres starts redo at the required recovery point and handles uncommitted work through transaction visibility. There is no general WAL undo pass to describe here.
       </p>
 
       <Figure>
         <Diagram viewBox="0 0 720 320" title="WAL-based recovery: data files and a log tail" logPlusIndex />
         <Caption>
-          Log records reach durable storage before the data pages they protect.
-          Recovery needs those data files and the required log tail. Replication can
-          reuse the records if the follower has a suitable starting copy.
+          The data files supply a starting state and the retained WAL tail supplies
+          the changes to replay. A replica needs a suitable starting copy too.
         </Caption>
       </Figure>
 
-      <h2>why write the log first</h2>
       <p>
-        A transaction changes a row and an index entry on another page. Waiting for both
-        pages to reach disk before commit puts both writes on the client&apos;s
-        critical path. The WAL collects recovery records into a sequential stream.
-        Once those and the commit record are durable, the database can acknowledge the
-        transaction and write the dirty pages later.
+        Restart already has the table and index files to work from. Redo begins at the required point in WAL and brings those pages forward; revisiting the database&apos;s first transaction would be needless. Now remove the data files entirely and keep only a recent WAL tail. There is no suitable starting database left for that tail to update. That&apos;s why I&apos;d keep a base copy in the backup plan. The buffered table and index files are also what ordinary reads use.
       </p>
       <p>
-        <a
-        href="https://www.postgresql.org/docs/17/wal-intro.html">PostgreSQL&apos;s WAL
-        documentation</a> requires recovery records to be flushed before the data pages
-        they protect. Pages can already be changed in RAM; &quot;write ahead&quot;
-        refers to persistence. Raft also uses an ordered log, but a leader&apos;s local
-        append is insufficient to establish cluster agreement on committed commands.
+        After a checkpoint, replay need not start as far back: the files have made recorded progress. An older WAL segment can become unnecessary for recovery. That doesn&apos;t by itself authorize recycling it; replication or archiving may still need it. I&apos;d want to point to the saved state that makes each old segment disposable before trying to shrink the WAL directory.
+      </p>
+      <p>
+        Moving checkpoints closer together means less replay after a crash and more page-writing work before it. There is a WAL cost too. With full-page writes enabled, the first modification of a page after a checkpoint saves an image of the whole page in WAL. A partially written page can then be repaired during recovery, a failure the two-value model never attempts. The <a href="https://www.postgresql.org/docs/17/wal-configuration.html">checkpoint documentation</a> describes this trade-off.
+      </p>
+      <p>
+        Switch engines and I have to start this reconstruction again. Postgres leaves heap and index pages beside its WAL. With InnoDB I&apos;d inspect redo separately from MySQL&apos;s binary log used for replication. SQLite&apos;s choice of WAL mode or rollback journal changes the recovery path. RocksDB puts WAL beside sorted files. I need the record format and the files each procedure expects, not just a directory named log. A copy-on-write engine preserves its committed state through a different protocol again.
       </p>
 
-      <h2>what the WAL saves you from</h2>
+      <h2>when the saved state is sorted files</h2>
       <p>
-        With Postgres configured for durable commits:
-      </p>
-      <ol>
-        <li>
-          The transaction changes pages in the buffer pool and generates WAL. Those
-          pages are now dirty.
-        </li>
-        <li>
-          Before a dirty page can be written to disk, its WAL records must be durable.
-          Before acknowledging a synchronous commit, the database also flushes the
-          transaction&apos;s commit record.
-        </li>
-        <li>
-          The client receives the acknowledgment; background writers and checkpoints
-          can finish writing the data pages afterwards.
-        </li>
-        <li>
-          After a crash, recovery redoes records from the required recovery point.
-          Postgres handles uncommitted work through transaction visibility rules rather
-          than a general WAL undo pass.
-        </li>
-      </ol>
-      <p>
-        Suppose the changed heap page survives a crash but the index page still has its
-        old contents. Recovery can redo the missing index change because its records
-        were durable before either page was written. Allowing pages to reach disk first
-        would leave a window for a change to survive while its recovery record vanished
-        with RAM.
+        The first RocksDB option I&apos;d check is <code>WriteOptions::sync</code>. Its <a href="https://github.com/facebook/rocksdb/wiki/basic-operations">basic operations guide</a> says a default write can return after handing the data to the OS; asking for sync makes it wait for the persistence step. So the file set alone isn&apos;t enough to interpret an acknowledgment. The default <a href="https://github.com/facebook/rocksdb/wiki/RocksDB-Overview">write path</a> has already put the change in WAL and in a memtable ordered by key. Let that in-memory table fill and a flush can save its records as an immutable SSTable, usually placed in level 0. Recovery needs WAL while those writes are not yet safe in the sorted files. The sorting is by key, whereas WAL keeps change order. That arrangement lets the engine write a sorted batch at a time.
       </p>
       <p>
-        Group commit can make several transactions&apos; queued commit records durable
-        with one flush. It reduces the cost per transaction, provided storage honors the
-        flush; the data pages can still be written later.
+        I added a small lookup to the model to see the deletion problem directly. The older run contains k=old. The newer one contains an unrelated key, so looking for k still returns old. Put a tombstone for k in the newer run and the result becomes absent. Remove just that tombstone and the lookup returns old again. The output is old, null, old. Maps stand in for the sorted runs here, with the newer map checked first; this is a point-lookup model, not a RocksDB run.
       </p>
       <p>
-        A checkpoint establishes how far the data files have caught up and records where
-        replay must begin. Postgres can recycle older WAL once recovery and consumers
-        such as replication or archiving no longer need it. Its <a
-        href="https://www.postgresql.org/docs/17/wal-configuration.html">checkpoint
-        documentation</a> describes the tradeoff: more frequent checkpoints mean less
-        replay work and more page writes. They also increase WAL traffic when full-page
-        writes are enabled: the first page change after a checkpoint logs a full-page
-        image to protect against partial page writes.
-      </p>
-
-      <h2>the LSM tree</h2>
-      <p>
-        A log-structured merge tree batches writes in memory, then flushes sorted,
-        immutable SSTables. The WAL protects writes until they reach those files. An
-        SSTable&apos;s key order supports lookups; the WAL records changes in
-        chronological order.
-      </p>
-      <p>
-        By default, a <a
-        href="https://github.com/facebook/rocksdb/wiki/RocksDB-Overview">RocksDB</a>{" "}
-        write enters the WAL and a sorted memtable; durability depends on the WAL sync
-        settings. A full memtable flushes to an SSTable, usually at level 0. Reads may
-        search both memory and several files, with Bloom filters ruling out files that
-        cannot contain the key.
-      </p>
-      <p>
-        Updates leave multiple versions of a key until <a
-        href="https://github.com/facebook/rocksdb/wiki/Compaction">compaction</a> can
-        remove the old ones. Deletion writes a tombstone because an older file may
-        still contain the value. Drop the tombstone too soon and that value can reappear
-        on a lookup. Compaction merges sorted files and removes obsolete records only
-        when snapshots and the remaining files no longer need them.
+        The tombstone had been hiding a value that still existed. Before <a href="https://github.com/facebook/rocksdb/wiki/Compaction">compaction</a> discards it, the engine has to account for old files and snapshots that may still need those versions. Updates can leave old versions under the same constraints. I need to follow every still-reachable version before treating one record as garbage. A definite negative from a file&apos;s Bloom filter can let a lookup skip that file, but missing the key in a newer file is still no evidence of deletion.
       </p>
 
       <Figure>
         <Diagram viewBox="0 0 720 360" title="LSM tree — append, flush, compact" lsmTree />
         <Caption>
-          Each write avoids an in-place disk update, but compaction later reads and
-          rewrites the records, sometimes repeatedly. Sequential writes improve
-          throughput while leaving background I/O to pay for.
+          Follow one write beyond the foreground operation. It can enter a flushed
+          file and be rewritten through several compactions, even though the initial
+          write avoided changing a disk block in place.
         </Caption>
       </Figure>
 
       <p>
-        The postponed work shows up in three kinds of amplification:
+        One application write may be finished while the storage engine still has a lot of writing ahead of it. First WAL, then a flushed SSTable, then whichever compactions rewrite that record: I&apos;d count the bytes at every step. That total gives write amplification relative to the logical write. Sequential I/O can improve throughput, but every rewrite still enters the byte count. The B-tree comparison needs its workload and configuration too, since a small change can require a whole-page write there.
       </p>
-      <ul>
-        <li>
-          <strong>Write amplification.</strong> One logical write can enter the WAL, an
-          SSTable flush, and several compaction rewrites. B-trees also write whole pages
-          for smaller changes. The workload and configuration decide which engine
-          writes fewer bytes.
-        </li>
-        <li>
-          <strong>Read amplification.</strong> A B-tree follows a path to a leaf. An LSM
-          lookup may search several sorted runs. Caches and Bloom filters can avoid much
-          of that I/O, especially for keys that are absent.
-        </li>
-        <li>
-          <strong>Space amplification.</strong> LSMs retain old values and tombstones
-          until compaction can remove them. B-trees lose space to fragmentation and
-          partially filled pages. Both store more than the live payload.
-        </li>
-      </ul>
       <p>
-        RocksDB and Cassandra are useful LSM implementations to study alongside
-        page-based designs such as Postgres and InnoDB. A fair comparison has to measure
-        foreground latency and the background I/O needed to sustain it. A short ingestion
-        test can finish with a backlog of compaction still growing.
+        For read amplification I&apos;d follow a lookup, through whatever sorted runs an LSM needs or down the B-tree&apos;s path to a leaf. Counting those steps alone would miss what caching can save. The LSM might also get a definite negative from a Bloom filter and avoid a file entirely, which helps when the key is absent. For space amplification I&apos;d count more than live payload. The old versions and tombstones still take disk space while they wait for compaction to make them disposable. For the B-tree, I would count partly empty pages and fragmentation too. Those costs belong beside the write count.
+      </p>
+      <p>
+        This makes a short ingestion run a poor basis for my comparison of RocksDB
+        or Cassandra with Postgres or InnoDB. It can finish while compaction falls
+        further behind each second. I&apos;d measure foreground latency alongside the
+        background I/O over a run long enough to show whether that work keeps up.
+        These are benchmark requirements, not measurements from the redo script.
       </p>
 
-      <h2>Kafka</h2>
+      <h2>how much input does a new search index need?</h2>
       <p>
-        Kafka exposes the retained stream as a service. A search index and an analytics
-        pipeline can read the same records, keep their own state, and advance at
-        different rates. Kreps describes this as a log and its materialized views:
-        records can outlive a particular representation.
+        Kafka exposes retained records to independent applications. Search can build
+        an index while analytics maintains its state, and a database or cache can
+        hold another queryable projection. This is the log and its materialized views
+        in Kreps&apos;s essay. For me, the useful check is whether the records can
+        rebuild a view after its current representation is gone.
       </p>
       <p>
-        Producers append to partitions; consumers track offsets. Records are ordered
-        within a partition. Separate partitions provide no global sequence, and
-        retention limits how far back replay can go. If the stream is an
-        application&apos;s authoritative input, its views depend on what remains:
+        The earliest retained offset is where a new search consumer can begin. I would list what the index needs and ask whether any required record has already expired. If nothing is missing, replaying the retained history can build it. Otherwise it needs a suitable snapshot plus the events after that snapshot. Calling the stream authoritative doesn&apos;t put an expired event back. A topic that lacks input needed for reconstruction is an incomplete backup.
       </p>
-      <ul>
-        <li>
-          A database can hold a queryable projection of a topic and rebuild it from
-          retained events, provided they contain everything the projection needs.
-        </li>
-        <li>
-          Other consumers can build a cache or analytics view from the same input.
-          Offsets show each consumer&apos;s progress. Search may reflect an event that
-          analytics has not consumed yet; sharing a topic does not make their updates
-          atomic.
-        </li>
-        <li>
-          A new consumer can replay from the earliest retained offset. Rebuilding from
-          the beginning needs enough history or a starting snapshot. If earlier records
-          have expired, the topic alone is an incomplete backup.
-        </li>
-      </ul>
+      <p>
+        Ordering has a boundary here too. Producers append to partitions, and
+        consumers record progress as offsets. A partition has an order; separate
+        partitions provide no global sequence. Search and analytics also make their
+        updates independently. Search may already reflect a change that analytics
+        hasn&apos;t reached. An offset records that consumer&apos;s progress, without
+        making both views advance atomically.
+      </p>
 
       <Figure>
         <Diagram viewBox="0 0 720 320" title="the log as spine — one history, many views" logSpine />
         <Caption>
-          Each view advances through the same retained stream independently. Its
-          recoverability depends on the scope of ordering and how much history remains.
+          Before rebuilding a view, account for its starting state and retained input.
+          Search and analytics can be at different offsets in that input.
         </Caption>
       </Figure>
 
-      <h2>getting database changes into the stream</h2>
+      <h2>the cancellation arrives twice</h2>
       <p>
-        An application commits an order cancellation in Postgres, then publishes it to
-        Kafka. A crash between the two leaves a cancelled order and no event for other
-        services. Reverse the order and consumers may act on a transaction that never
-        commits. Change data capture (CDC) follows committed database changes to avoid
-        this application-level dual write.
+        The script has one more loop. Begin with an open order and a zero counter, then deliver its cancellation twice. After both deliveries, the status is cancelled and the counter is 2. Repeating the assignment did no harm. Repeating the increment did. The record survived; that was never enough to decide what a second delivery should do.
       </p>
       <p>
-        Postgres logical decoding exposes row-level changes from the WAL; Debezium can
-        publish them to Kafka. Its <a
-        href="https://debezium.io/documentation/reference/stable/connectors/postgresql.html">Postgres
-        connector documentation</a> describes the retry window: events may be emitted
-        before the connector saves its source offset. After a crash, it can emit those
-        events again when it resumes from the saved offset. CDC alone does not guarantee
-        exactly-once delivery, and partitioning still decides which events stay ordered.
+        Before the consumer can make that mistake, the application has to get the cancellation out of Postgres. Try committing the order update and then publishing to Kafka. Stop the application between those calls: the order is cancelled, and nobody received the event. Try the reverse order and a consumer might act before a database transaction that later fails. Neither order joins the two writes into one transaction.
       </p>
       <p>
-        Setting the order&apos;s state to <code>cancelled</code> again can be harmless.
-        Incrementing a cancellation counter again counts a second effect. The consumer
-        needs an idempotent update, or it must record each applied event atomically with
-        its effect. An end-to-end exactly-once claim has to cover that write as well as
-        the connector&apos;s delivery settings.
+        A CDC connector can take over publication by following committed database changes. In Postgres, logical decoding turns WAL into row-level changes that Debezium can send to Kafka. The crash window then moves. Debezium&apos;s <a href="https://debezium.io/documentation/reference/stable/connectors/postgresql.html">Postgres connector documentation</a> includes the case where a connector emits an event but crashes before saving the source offset. It resumes from the offset it did save, and may therefore publish that event a second time. The cancellation consumer still has a job to do. For an end-to-end exactly-once claim, I&apos;d have to follow its effect as well as delivery, and keep the partition boundaries attached to any claim about order.
       </p>
       <p>
-        CDC history also differs from event sourcing. A row update records a storage
-        change; a domain event records an action, such as an order cancellation, and the
-        context consumers need. Write that event into an outbox table in the same
-        transaction as the order update, then let CDC publish it. Debezium&apos;s <a
-        href="https://debezium.io/documentation/reference/stable/transformations/outbox-event-router.html">outbox
-        event router</a> supports this pattern. The transaction ties state to event;
-        consumers still need retry handling. Watching arbitrary row changes cannot
-        recover business intent the application never recorded.
-      </p>
-
-      <p>
-        The failure model sets the promise. A WAL protects changes a local crash might
-        lose. Raft helps replicas agree on commands; PBFT must also tolerate replicas
-        sending conflicting messages. CPU memory ordering is concerned with order too,
-        but coherence leaves no durable history after power loss.
+        For the counter, one possible fix is to store the applied event ID atomically with its effect. On retry, finding the ID would tell the consumer to skip the increment. That adds state and a requirement on the consumer&apos;s write. Assigning <code>cancelled</code> to the status had no such problem in the toy loop; it was already idempotent. I can&apos;t settle exactly-once effects by choosing connector settings alone.
       </p>
       <p>
-        I still look for the log early when reading a design. Then I follow what happens
-        when old records are deleted. Postgres needs a suitable base copy and the
-        required WAL. A Kafka projection needs enough retained events, or a compatible
-        snapshot and the events after it. Identify the checkpoint, snapshot, or retained
-        starting state before removing history, then test recovery using only that state
-        and the records the system promises to keep.
+        A row update also leaves me asking why it changed. CDC can only pass on what was recorded. For event sourcing, I would save the cancellation itself as a domain event, including the context its consumer needs. With an outbox, I can put an explicit event row in the same transaction as the order update. CDC can carry that row onward through Debezium&apos;s <a href="https://debezium.io/documentation/reference/stable/transformations/outbox-event-router.html">outbox event router</a>. The transaction has tied the order update to creation of its event. Delivery of that event may still repeat, which the consumer has to handle.
+      </p>
+      <p>
+        Before replaying anything, I still need to know which records were allowed to become committed. Local WAL can recover changes after a crash. A Raft leader also needs agreement from replicas; its own append cannot establish commitment. PBFT has to carry evidence past replicas that send contradictory messages. CPU memory ordering concerns order at another boundary again. Cache coherence leaves nothing durable to replay after power loss.
+      </p>
+      <p>
+        The SQLite main-file copy opened and returned zero rows. Supplying WAL brought the row back. For a recovery drill, I&apos;d start with a file list: the Postgres base copy and required WAL, or a Kafka projection&apos;s retained events and any compatible snapshot. Then rebuild using only that material. The two-page model was given its starting state and committed records, which is why it always reached (1, 1). Finding and retaining those inputs is work the model never had to do.
       </p>
 
       <section className="references">
