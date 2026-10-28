@@ -1,5 +1,7 @@
 import type { Metadata } from "next"
 import "./globals.css"
+import { Arrival } from "@/components/arrival"
+import { arrivalUrl, arrivalSiteId } from "@/lib/arrival/config"
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://whiteye.in"),
@@ -37,7 +39,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" data-rs-theme="slate" data-rs-color-mode="dark">
-      <body>{children}</body>
+      <head>
+        {arrivalUrl && <link rel="alternate" type="application/json" title="Optional agent check-in" href={`${arrivalUrl}/api/agent/manifest/${arrivalSiteId}`} />}
+      </head>
+      <body>{children}<Arrival /></body>
     </html>
   )
 }
