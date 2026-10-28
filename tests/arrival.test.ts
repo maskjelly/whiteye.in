@@ -48,3 +48,25 @@ test('Arrival skips prefetches and a reporting outage leaves content available',
     await expect(pending[0]).resolves.toBeUndefined()
   }finally{globalThis.fetch=originalFetch}
 })
+
+test('fetch-only Claude clients read both pages without an introduction while requests are reported', async () => {
+  const originalFetch=globalThis.fetch
+  const reports: {url:string,body:any}[]=[]
+  globalThis.fetch=(async(url:any,options:any)=>{
+    reports.push({url:String(url),body:JSON.parse(options.body)})
+    return Response.json({})
+  }) as typeof fetch
+  const pending:Promise<any>[]=[]
+  try {
+    for(const path of ['/resume','/plain-corners']) {
+      const response=await middleware(new NextRequest('https://whiteye.in'+path,{
+        headers:{'user-agent':'Mozilla/5.0 (compatible; Claude-User/1.0; +claude-user@anthropic.com)'}
+      }),{waitUntil:(promise:Promise<any>)=>pending.push(promise)} as any)
+      expect(response.headers.get('x-middleware-next')).toBe('1')
+    }
+    await Promise.all(pending)
+    expect(reports).toHaveLength(2)
+    expect(reports.every(r=>r.url.endsWith('/api/ingest')&&r.body.entryDisposition==='fetch_only')).toBe(true)
+    expect(reports.map(r=>r.body.path)).toEqual(['/resume','/plain-corners'])
+  }finally{globalThis.fetch=originalFetch}
+})
