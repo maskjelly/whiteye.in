@@ -13,7 +13,7 @@
     "test": "bun test"
   },
   "dependencies": {
-    "@arrival/next": "https://github.com/maskjelly/arrival/releases/download/sdk-v0.2.2/arrival-next-0.2.2.tgz",
+    "@arrival/next": "https://github.com/maskjelly/arrival/releases/download/sdk-v0.2.3/arrival-next-0.2.3.tgz",
     "lucide-react": "^0.503.0",
     "next": "15.3.8",
     "react": "^19.0.0",

@@ -49,7 +49,7 @@ test('Arrival skips prefetches and a reporting outage leaves content available',
   }finally{globalThis.fetch=originalFetch}
 })
 
-test('fetch-only Claude clients read both pages without an introduction while requests are reported', async () => {
+test('known and unfamiliar HTTP fetch tools read both pages while requests are reported', async () => {
   const originalFetch=globalThis.fetch
   const reports: {url:string,body:any}[]=[]
   globalThis.fetch=(async(url:any,options:any)=>{
@@ -58,15 +58,15 @@ test('fetch-only Claude clients read both pages without an introduction while re
   }) as typeof fetch
   const pending:Promise<any>[]=[]
   try {
-    for(const path of ['/resume','/plain-corners']) {
+    for(const agent of ['Mozilla/5.0 (compatible; Claude-User/1.0; +claude-user@anthropic.com)','UnfamiliarAgent/1.0','curl/8.0']) for(const path of ['/resume','/plain-corners']) {
       const response=await middleware(new NextRequest('https://whiteye.in'+path,{
-        headers:{'user-agent':'Mozilla/5.0 (compatible; Claude-User/1.0; +claude-user@anthropic.com)'}
+        headers:{'user-agent':agent}
       }),{waitUntil:(promise:Promise<any>)=>pending.push(promise)} as any)
       expect(response.headers.get('x-middleware-next')).toBe('1')
     }
     await Promise.all(pending)
-    expect(reports).toHaveLength(2)
+    expect(reports).toHaveLength(6)
     expect(reports.every(r=>r.url.endsWith('/api/ingest')&&r.body.entryDisposition==='fetch_only')).toBe(true)
-    expect(reports.map(r=>r.body.path)).toEqual(['/resume','/plain-corners'])
+    expect(reports.map(r=>r.body.path)).toEqual(['/resume','/plain-corners','/resume','/plain-corners','/resume','/plain-corners'])
   }finally{globalThis.fetch=originalFetch}
 })
