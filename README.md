@@ -64,8 +64,7 @@ Tests cover first-click safety, flags, flood reveal, wins and losses, dealing, s
 
 Wallpaper and icon credits are in `public/xp/credits.txt`. The reference asset license is included in `public/xp/ASSET-LICENSE.txt`.
 
-Arrival observes optional task check-ins and website visits. The browser snippet is in `components/arrival.tsx`; `middleware.ts` separately reports HTTP requests, including crawlers that do not run JavaScript. Both preserve website access during collector outages.
 
-Set `NEXT_PUBLIC_ARRIVAL_URL` to the deployed collector origin and `ARRIVAL_INGEST_KEY` to the private server ingestion key in Vercel's Production environment, then redeploy. The key is never included in browser code. The public protocol is linked in HTML and available at `/.well-known/arrival.json`. Arrival's configured site origin must match `https://whiteye.in`.
+Arrival uses the standard published `@arrival/next` integration. `middleware.ts` exports the package middleware; the root layout includes its browser component. No copied reporter or custom check-in endpoint is used.
 
-IP forwarding is used only when running on Vercel, through its platform helper. The middleware records arrival at the website, not the final page response status. Prefetches are skipped. Browser and server records remain separate; an HTTP tool that does not retain cookies can produce separate visits per request. Task answers require a cooperative agent capable of submitting the optional check-in.
+Vercel Production settings: `NEXT_PUBLIC_ARRIVAL_URL`, `NEXT_PUBLIC_ARRIVAL_SITE_ID` and private `ARRIVAL_INGEST_KEY`, supplied by the customer setup screen. Questions and entry behavior are managed in Whiteye's private workspace. The middleware handles discovery, forms/URL answers, clearance and background reporting. Search indexers and unknown clients are observed; outages fail open.

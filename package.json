@@ -13,7 +13,7 @@
     "test": "bun test"
   },
   "dependencies": {
-    "@vercel/functions": "3.10.4",
+    "@arrival/next": "https://github.com/maskjelly/arrival/releases/download/sdk-v0.2.0/arrival-next-0.2.0.tgz",
     "lucide-react": "^0.503.0",
     "next": "15.3.8",
     "react": "^19.0.0",
