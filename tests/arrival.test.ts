@@ -13,7 +13,7 @@ test('Arrival observes page arrivals in the background and excludes secrets and 
   delete process.env.VERCEL
   const reports: any[] = []
   globalThis.fetch = (async (_url: any, options: any) => {
-    if(String(_url).includes('/api/entry/policy/')) return Response.json({mode:'observe'})
+    if(String(_url).endsWith('/api/entry/start')) return Response.json({mode:'observe'})
     reports.push(JSON.parse(options.body))
     return new Response('{}', {status:200})
   }) as typeof fetch

@@ -5,7 +5,7 @@
     "": {
       "name": "whiteye",
       "dependencies": {
-        "@arrival/next": "https://github.com/maskjelly/arrival/releases/download/sdk-v0.2.0/arrival-next-0.2.0.tgz",
+        "@arrival/next": "https://github.com/maskjelly/arrival/releases/download/sdk-v0.2.1/arrival-next-0.2.1.tgz",
         "lucide-react": "^0.503.0",
         "next": "15.3.8",
         "react": "^19.0.0",
@@ -30,7 +30,7 @@
   "packages": {
     "@alloc/quick-lru": ["@alloc/quick-lru@5.2.0", "", {}, "sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw=="],
 
-    "@arrival/next": ["@arrival/next@https://github.com/maskjelly/arrival/releases/download/sdk-v0.2.0/arrival-next-0.2.0.tgz", { "peerDependencies": { "next": ">=15", "react": ">=19" } }, "sha512-UEjB3ZmUoK1O4gHS/g03k5Hz71hvy7y+8BZGuN2Q3sF8gZIU5metVORWRJDYL3tjbIZXd3LiHyO8GhYYACyrlA=="],
+    "@arrival/next": ["@arrival/next@https://github.com/maskjelly/arrival/releases/download/sdk-v0.2.1/arrival-next-0.2.1.tgz", { "peerDependencies": { "next": ">=15", "react": ">=19" } }, "sha512-Chw4tji49/JCkotfAM4XyTSeYKPj+XmRf59IPBL9p23m2q9N1tcXF/gwzBFKmbloOYZIBlhBM2Tgul2nup5iMQ=="],
 
     "@colordx/core": ["@colordx/core@5.8.0", "", {}, "sha512-cG0QJAO6VkaRUlIb0zOzX9gfJgs1pjoOL9gZ/PK1kfvBs0GCkADu5oQh6gPxXgQnZ3gV575h+lQRC0NlMDTclA=="],
 
