@@ -84,7 +84,7 @@ export function XpDesktop({
   const pathname = usePathname()
   const router = useRouter()
   const [windows, setWindows] = useState<WindowState[]>(() =>
-    pathname === "/"
+    pathname === "/xp"
       ? []
       : [{ id: "page", minimized: false, maximized: false, z: 2 }]
   )
@@ -100,7 +100,7 @@ export function XpDesktop({
   const startRef = useRef<HTMLDivElement>(null)
   const previousPath = useRef(pathname)
   const visibleWindows = windows.filter(
-    (item) => !item.minimized && (item.id !== "page" || pathname !== "/")
+    (item) => !item.minimized && (item.id !== "page" || pathname !== "/xp")
   )
   const activeId = [...visibleWindows].sort((a, b) => b.z - a.z)[0]?.id
 
@@ -121,7 +121,7 @@ export function XpDesktop({
     if (previousPath.current === pathname) return
     previousPath.current = pathname
     setStartOpen(false)
-    if (pathname !== "/") open("page")
+    if (pathname !== "/xp") open("page")
     else {
       setWindows((current) => current.filter((item) => item.id !== "page"))
     }
@@ -207,7 +207,7 @@ export function XpDesktop({
   }
   function close(id: AppId) {
     setWindows((current) => current.filter((item) => item.id !== id))
-    if (id === "page") router.push("/")
+    if (id === "page") router.push("/xp")
   }
   function minimize(id: AppId) {
     setWindows((current) =>
@@ -235,7 +235,7 @@ export function XpDesktop({
     setWindows([])
     setPowerOpen(false)
     setDesktopNotice(true)
-    if (pathname !== "/") router.push("/")
+    if (pathname !== "/xp") router.push("/xp")
   }
   function playChime() {
     if (soundOn) {
@@ -288,7 +288,7 @@ export function XpDesktop({
         const href = (event.target as HTMLElement)
           .closest("a")
           ?.getAttribute("href")
-        if (href === pathname && pathname !== "/") open("page")
+        if (href === pathname && pathname !== "/xp") open("page")
       }}
     >
       <a className="skip-link" href="#desktop-windows">
@@ -366,7 +366,7 @@ export function XpDesktop({
         </div>
         <div id="desktop-windows" tabIndex={-1}>
           {windows
-            .filter((item) => item.id !== "page" || pathname !== "/")
+            .filter((item) => item.id !== "page" || pathname !== "/xp")
             .map((item) => (
               <XpWindow
                 key={item.id}
@@ -570,7 +570,7 @@ export function XpDesktop({
         </div>
         <div className="taskbar-apps">
           {windows
-            .filter((item) => item.id !== "page" || pathname !== "/")
+            .filter((item) => item.id !== "page" || pathname !== "/xp")
             .map((item) => (
               <button
                 key={item.id}
@@ -973,7 +973,7 @@ function XpWindow({
               onClick={() =>
                 browser
                   ? router.push(
-                      pathname.startsWith("/xp/blog/") ? "/xp/blog" : "/"
+                      pathname.startsWith("/xp/blog/") ? "/xp/blog" : "/xp"
                     )
                   : open("welcome")
               }

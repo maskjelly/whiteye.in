@@ -11,7 +11,7 @@ export function socialImage({
   path?: string
   meta?: string
 }) {
-  const titleSize = title.length > 60 ? 54 : title.length > 40 ? 64 : 78
+  const titleSize = title.length > 60 ? 56 : title.length > 40 ? 66 : 80
   return new ImageResponse(
     (
       <div
@@ -20,9 +20,9 @@ export function socialImage({
           height: "100%",
           display: "flex",
           flexDirection: "column",
-          background: "#f3efe4",
-          color: "#242119",
-          padding: "70px 80px",
+          background: "#ffffff",
+          color: "#111111",
+          padding: "72px 80px",
           fontFamily: "sans-serif",
         }}
       >
@@ -31,31 +31,25 @@ export function socialImage({
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
-            color: "#244b80",
-            fontSize: 17,
-            letterSpacing: 5,
+            color: "#8a8a8a",
+            fontSize: 22,
+            letterSpacing: 1,
           }}
         >
-          <span>AARYAN · WHITEYE.IN</span>
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <div style={{ width: 14, height: 14, borderRadius: 999, background: "#111111" }} />
+            <span style={{ color: "#111111", fontWeight: 600 }}>aaryan</span>
+          </div>
           <span>{meta ?? "WRITING"}</span>
         </div>
         <div
           style={{
             display: "flex",
-            width: "100%",
-            height: 1,
-            background: "#d2c8b5",
-            marginTop: 22,
-          }}
-        />
-        <div
-          style={{
-            display: "flex",
             fontSize: titleSize,
             fontWeight: 700,
-            letterSpacing: -2.5,
-            lineHeight: 1.12,
-            marginTop: 54,
+            letterSpacing: -3,
+            lineHeight: 1.1,
+            marginTop: 72,
             maxWidth: 1000,
           }}
         >
@@ -64,9 +58,9 @@ export function socialImage({
         <div
           style={{
             display: "flex",
-            color: "#625d52",
-            fontSize: 26,
-            lineHeight: 1.5,
+            color: "#4b4b4b",
+            fontSize: 28,
+            lineHeight: 1.45,
             marginTop: 28,
             maxWidth: 940,
           }}
@@ -78,12 +72,12 @@ export function socialImage({
             display: "flex",
             justifyContent: "space-between",
             marginTop: "auto",
-            color: "#817968",
-            fontSize: 18,
+            color: "#8a8a8a",
+            fontSize: 22,
           }}
         >
           <span>{path}</span>
-          <span>software, systems, and notes.</span>
+          <span>Aaryan Singh</span>
         </div>
       </div>
     ),

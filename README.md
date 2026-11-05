@@ -1,18 +1,40 @@
 # whiteye.in
 
-Aaryan’s personal website: an interactive Windows XP desktop, engineering essays, and a live analytics dashboard for the rushort Rust URL shortener. Built with Next.js, React, and TypeScript.
+Aaryan's personal website: a static, minimal profile with measured results, projects, work history, open-source credits and engineering essays. Built with Next.js, React and TypeScript, deployed on Vercel.
 
-The homepage starts with a clear desktop. All shortcuts fit without scrolling: they wrap into columns on desktop and a compact grid on phones. Open folders and apps by clicking their icons; use Show desktop to return to the wallpaper.
+## Design goals
 
-The desktop includes movable and resizable windows, a Start menu, taskbar, search, project and work folders, and the original writing, now, and setup pages. Games includes beginner Minesweeper and draw-one Klondike Solitaire with hints and undo. Games keep their state while minimized; closing or refreshing starts over.
+- **Instant load.** Every public page is prerendered at build time. The route's CSS is inlined into the HTML (`experimental.inlineCss`), fonts are the system stack (no font requests), and there are no images above the fold. The only client JavaScript on the main site is the command menu, theme toggle and the essay table of contents; the React runtime loads deferred and does not block paint.
+- **Mobile first.** One column, 16px gutters on phones, touch-sized targets, no horizontal scroll, the command menu becomes a bottom sheet under 640px.
+- **Light and dark.** System preference by default, a toggle (`t`) that persists in `localStorage`, applied by an inline script before first paint.
+- **Keyboard.** `⌘K` / `Ctrl+K` / `/` opens the command menu (pages, essays, actions, links). `g` then `h`, `w`, `n`, `r` or `u` jumps to home, writing, now, résumé or uses.
 
-Internet Explorer opens real websites in a sandboxed iframe, with an address bar, bookmarks, refresh, and back/forward for addresses opened from its controls. Links within external pages keep their own browser history; cross-origin rules prevent reading their current address. Sites that forbid embedding can be opened using the external-tab link. HTTP pages require opening separately when the portfolio is served over HTTPS. No proxy is used to bypass site restrictions.
+## SEO and GEO
+
+- Canonical URLs, Open Graph and Twitter cards, generated social images for every page.
+- JSON-LD on every page sharing one `Person` identity (`https://whiteye.in/#person`): `WebSite` and `ProfilePage` on the home page, `Blog` on the index, `TechArticle` on essays, `ItemList` of projects, `WebPage` on now and uses.
+- `robots.txt` allows search and AI crawlers explicitly; `sitemap.xml` carries real last-modified dates.
+- `/llms.txt` is a short map for language models; `/llms-full.txt` is the whole profile, projects, contributions, measurements and essay summaries as plain text. `/resume.txt` and `/feed.xml` remain.
+- Security headers, no `X-Powered-By`, long cache lifetimes for text and static assets.
+
+## Routes
+
+| Route | What |
+| --- | --- |
+| `/` | Home: hero, measured results, now, highlights, projects, work, open source, writing, links |
+| `/blog`, `/blog/[slug]` | Essays, with reading progress, table of contents and prev/next |
+| `/now`, `/uses` | Current work; hardware and stack |
+| `/resume` | Full profile with benchmarks, contributions and a downloadable PDF |
+| `/plain-corners`, `/oracle`, `/telemetry` | Project pages |
+| `/xp`, `/xp/blog` | The original interactive Windows XP desktop, kept as an easter egg |
+
+Content lives in `lib/resume-data.json` (profile, experience, projects, highlights), `lib/contributions.json`, `lib/work-items.ts`, `lib/project-items.ts` and `content/posts`. Styles are in `app/globals.css` (tokens at the top). The command menu and shortcuts are `components/site-chrome.tsx`.
 
 ## Résumé
 
 `/resume` is a static HTML profile with work history, public project links, scoped benchmarks and linked merged contributions. It has canonical metadata, Person/ProfilePage structured data, a dedicated social image, print styles and a downloadable one-page PDF. `/resume.txt` serves plain text without JavaScript; `/llms.txt` links the public sources. Robots allows crawling and the sitemap includes `/resume`.
 
-The profile and text route share `lib/resume-data.json`. Product and retrieval evidence was checked on October 5, 2026. Contribution counts are unchanged; the star snapshot remains dated October 2. The instantKV entry covers the source MVP, BM25 search, native OpenCode MCP, five full retrieval datasets and a separate GPT-6 Luna QA evaluation. The interactive homepage, work folder and now page link to the profile.
+The profile, text route, home page and `llms-full.txt` share `lib/resume-data.json`. Product and retrieval evidence was checked on October 5, 2026. Contribution counts are unchanged; the star snapshot remains dated October 2. The instantKV entry covers the source MVP, BM25 search, native OpenCode MCP, five full retrieval datasets and a separate GPT-6 Luna QA evaluation. The home page, work folder and now page link to the profile.
 
 Regenerate the one-page PDF after profile changes with `python3 scripts/build-resume.py` (requires `reportlab` and `pypdf`). It reads the same profile, embeds fonts, and checks page count, key text and project links. Render the result and inspect it before publishing.
 
@@ -23,9 +45,9 @@ bun install
 bun run dev
 ```
 
-Open http://localhost:3000. The desktop lives in `components/xp-desktop.tsx`, its content in `components/xp-apps.tsx`, and its styles in `app/xp.css`. Games use `components/xp-games.tsx`, `lib/xp-games.ts`, and `app/games.css`.
+Open http://localhost:3000. The XP desktop at `/xp` lives in `components/xp-desktop.tsx`, its content in `components/xp-apps.tsx`, and its styles in `app/xp.css`. Games use `components/xp-games.tsx`, `lib/xp-games.ts`, and `app/games.css`.
 
-Work history and projects are maintained in `lib/work-items.ts` and `lib/project-items.ts`. Essays live in `content/posts` and ship in two reading experiences: the plain reader-facing blog at `/blog` (`app/(site)/blog`) and the desktop-window version at `/xp/blog` (`app/(xp)/xp/blog`). Both render the same components from `lib/post-components.ts`; `/blog` is canonical in page metadata, the sitemap, and the RSS feed. The now page is `app/(xp)/now/page.tsx`.
+Work history and projects are maintained in `lib/work-items.ts` and `lib/project-items.ts`. Essays live in `content/posts` and ship in two reading experiences: the plain reader-facing blog at `/blog` (`app/(site)/blog`) and the desktop-window version at `/xp/blog` (`app/(xp)/xp/blog`). Both render the same components from `lib/post-components.ts`; `/blog` is canonical in page metadata, the sitemap, and the RSS feed. The now page is `app/(site)/now/page.tsx`.
 
 ## Live service analytics
 

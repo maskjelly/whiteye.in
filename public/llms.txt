@@ -1,19 +1,46 @@
 # Aaryan Singh — whiteye.in
 
-Software engineer working across products, AI agents and systems. Public work history, projects and measured results are available without an account.
+> Software engineer working across products, AI agents and systems. Founding engineer at ReferRush (Feb 2025 – Sep 2026), early engineer at Extraordinary, now building Rust agent memory (instantKV) and an agent runtime (Morse). 47 merged pull requests across 13 external open-source repositories. University of Waterloo dropout. Based in Assam, India.
+
+Everything here is public and readable without an account or JavaScript. Benchmark numbers describe specific hardware, workloads and transports; each page links its measurement conditions.
 
 ## Profile
-- [Résumé](https://whiteye.in/resume): Work history, selected projects, open-source contributions and benchmark conditions.
-- [Plain-text résumé](https://whiteye.in/resume.txt): Text version with project and evidence URLs.
-- [PDF résumé](https://whiteye.in/Aaryan-Singh-Resume.pdf): One-page résumé.
+- [Home](https://whiteye.in): Overview, measured results, current work, projects, work history, open source and writing.
+- [Résumé](https://whiteye.in/resume): Work history, selected projects, open-source contributions with links to each merged PR, and benchmark conditions.
+- [Plain-text résumé](https://whiteye.in/resume.txt): The same profile as text with project and evidence URLs.
+- [PDF résumé](https://whiteye.in/Aaryan-Singh-Resume.pdf): One page.
+- [Now](https://whiteye.in/now): What I am working on this month.
+- [Uses](https://whiteye.in/uses): Hardware, editor and stack.
 - [GitHub](https://github.com/maskjelly): Public repositories and contributions.
+- [X](https://x.com/aaryantwt)
+- Email: aaryan@whiteye.in
 
-## Writing and software
-- [Engineering essays](https://whiteye.in/blog)
-- [Current work](https://whiteye.in/now)
-- [instantKV](https://instantkv.com): Local-first agent memory in Rust; bounded BM25 search, topic/tag/time filters and native OpenCode MCP.
-- [instantKV benchmarks](https://instantkv.com/benchmarks/): Full retrieval datasets, answer accuracy, sampled RAM, latency, limits and raw reports.
-- [Service telemetry](https://whiteye.in/telemetry): rushort metrics; includes synthetic traffic.
-- [Plain Corners](https://whiteye.in/plain-corners): Native macOS utility.
+## Writing
+- [Essays index](https://whiteye.in/blog) · [RSS](https://whiteye.in/feed.xml)
+- [rushort: 16.8M redirects/s on M4 Pro loopback](https://whiteye.in/blog/16m-rps-rust-url-shortener)
+- [polynomials at the speed of silicon](https://whiteye.in/blog/polynomials-at-the-speed-of-silicon)
+- [your storage is lying to you](https://whiteye.in/blog/your-storage-is-lying-to-you)
+- [byzantine fault tolerance, and when nodes lie](https://whiteye.in/blog/byzantine-fault-tolerance-when-nodes-lie)
+- [the consensus problem, and why raft exists](https://whiteye.in/blog/the-consensus-problem-and-why-raft-exists)
+- [memory ordering is not what you think](https://whiteye.in/blog/memory-ordering-is-not-what-you-think)
+- [the log is the database](https://whiteye.in/blog/the-log-is-the-database)
+- [the network is not a wire](https://whiteye.in/blog/the-network-is-not-a-wire)
 
-Benchmark numbers describe specific hardware, workloads and transports. ReferRush figures describe the platform. The résumé page links the measurement reports and marks planned functionality.
+## Software
+- [instantKV](https://instantkv.com): Local-first agent memory in Rust; bounded BM25 search, topic/tag/time filters, revisioned writes and native OpenCode MCP. Source: https://github.com/maskjelly/instantKV
+- [instantKV benchmarks](https://instantkv.com/benchmarks/): LongMemEval-S 95.13% Recall@10 (500 questions, 14.34 MiB sampled server RAM, M4 Pro); LoCoMo, BEIR SciFact, ArguAna and NFCorpus; raw reports and limits.
+- [Morse](https://github.com/maskjelly/morse): Rust agent runtime with remote execution that survives client disconnects, streamed tool output, session replay and crash recovery.
+- [rushort](https://github.com/maskjelly/rushort): Raw HTTP/1.1 URL shortener in Rust with SQLite WAL durability. 1.34M redirects/s on a four-vCPU VPS (loopback, pipeline depth 512). [Live telemetry](https://whiteye.in/telemetry) includes synthetic traffic.
+- [TiVM](https://github.com/maskjelly/TiVM): Computer-use testing in a Linux desktop with accessibility, screenshots, video and reports.
+- [FireScope](https://github.com/maskjelly/firescope): Typed Firebase SDK and CLI.
+- [Rove](https://github.com/maskjelly/rove): Terminal AI assistant with streamed output and a live observer feed.
+- [Plain Corners](https://whiteye.in/plain-corners): Native macOS utility for subtler window corners.
+- [comuse](https://github.com/maskjelly/comuse): Computer-use tooling connected to agent harnesses through MCP.
+
+## Open source
+47 merged PRs across 13 external repositories, including Atuin, Podman Desktop, WebTUI, Nimbus, iamb, dial9 and 27 in termlens. Search: https://github.com/search?q=author%3Amaskjelly+is%3Apr+is%3Amerged+-user%3Amaskjelly&type=pullrequests
+
+## Optional
+- [Full text for language models](https://whiteye.in/llms-full.txt): Profile, projects, contributions, now page and essay summaries in one file.
+- [Crawler guide](https://whiteye.in/crawler-guide)
+- [Windows XP desktop](https://whiteye.in/xp): An interactive easter egg, not the primary site.

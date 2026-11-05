@@ -1,13 +1,14 @@
-import { xpSocialImage } from "@/components/xp-social-image"
+import { socialImage } from "@/components/social-image"
 
-export const alt = "Aaryan’s Windows XP desktop — software, systems, and notes"
+export const alt = "Aaryan Singh. Software engineer: AI agents, Rust systems, open source."
 export const size = { width: 1200, height: 630 }
 export const contentType = "image/png"
 
 export default function OG() {
-  return xpSocialImage({
-    title: "Hi, I’m Aaryan.",
-    subtitle: "I make software and write about the parts that break.",
-    windowTitle: "Welcome — Aaryan’s computer",
+  return socialImage({
+    title: "Aaryan Singh",
+    subtitle: "Founding engineer. Rust agent memory and runtimes. 47 merged PRs in 13 open-source repositories.",
+    path: "whiteye.in",
+    meta: "SOFTWARE ENGINEER",
   })
 }

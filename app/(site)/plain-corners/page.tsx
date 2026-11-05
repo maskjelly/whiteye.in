@@ -26,10 +26,10 @@ export const metadata: Metadata = {
   },
 }
 
-const ACCENT = "#244b80"
-const DIM = "#817867"
-const LINE = "#cfc5b2"
-const FILL = "#e9e2d3"
+const ACCENT = "var(--accent)"
+const DIM = "var(--fg-3)"
+const LINE = "var(--line-strong)"
+const FILL = "var(--surface)"
 
 function CornerComparison() {
   const bars = [0.58, 0.86, 0.7]
@@ -45,10 +45,10 @@ function CornerComparison() {
       <rect x={40} y={48} width={290} height={160} rx={46} fill={FILL} stroke={LINE} strokeWidth={1.2} />
       <line x1={40} y1={86} x2={330} y2={86} stroke={LINE} strokeWidth={1} />
       {[0, 1, 2].map((i) => (
-        <circle key={i} cx={62 + i * 16} cy={67} r={4} fill="#fff" stroke={DIM} strokeWidth={1} />
+        <circle key={i} cx={62 + i * 16} cy={67} r={4} fill="var(--bg)" stroke={DIM} strokeWidth={1} />
       ))}
       {bars.map((w, i) => (
-        <rect key={i} x={64} y={106 + i * 28} width={242 * w} height={10} rx={5} fill="rgba(36,33,25,0.10)" />
+        <rect key={i} x={64} y={106 + i * 28} width={242 * w} height={10} rx={5} fill="var(--line)" />
       ))}
 
       <text x={400} y={30} fill={ACCENT} fontSize={12} fontFamily="var(--font-mono)">
@@ -57,10 +57,10 @@ function CornerComparison() {
       <rect x={400} y={48} width={290} height={160} rx={4} fill={FILL} stroke={ACCENT} strokeWidth={1.2} />
       <line x1={400} y1={86} x2={690} y2={86} stroke={ACCENT} strokeWidth={1} opacity={0.45} />
       {[0, 1, 2].map((i) => (
-        <circle key={i} cx={422 + i * 16} cy={67} r={4} fill="#fff" stroke={DIM} strokeWidth={1} />
+        <circle key={i} cx={422 + i * 16} cy={67} r={4} fill="var(--bg)" stroke={DIM} strokeWidth={1} />
       ))}
       {bars.map((w, i) => (
-        <rect key={i} x={424} y={106 + i * 28} width={242 * w} height={10} rx={2} fill="rgba(36,33,25,0.10)" />
+        <rect key={i} x={424} y={106 + i * 28} width={242 * w} height={10} rx={2} fill="var(--line)" />
       ))}
     </svg>
   )

@@ -48,7 +48,7 @@ export default function BlogIndex() {
       </div>
 
       <div className="back-row">
-        <Link href="/" className="back-link">
+        <Link href="/xp" className="back-link">
           ← back home
         </Link>
       </div>

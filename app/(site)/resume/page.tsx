@@ -3,8 +3,10 @@ import Link from "next/link"
 import profile from "@/lib/resume-data.json"
 import contributions from "@/lib/contributions.json"
 import "./resume.css"
+import { JsonLd, person, PERSON_ID, SITE } from "@/lib/structured-data"
 
 export const dynamic = "force-static"
+
 
 const description = "Aaryan Singh: Waterloo dropout, founding engineer, early engineer at Extraordinary, Rice security disclosure at 17, a 1.34M req/s Rust benchmark and 47 merged PRs."
 
@@ -25,24 +27,18 @@ export default function ResumePage() {
   const structured = {
     "@context": "https://schema.org",
     "@graph": [
-      {
-        "@type": "Person", "@id": "https://whiteye.in/resume#person",
-        name: profile.name, url: "https://whiteye.in/resume", email: profile.email,
-        jobTitle: "Software Engineer", description: profile.summary,
-        sameAs: ["https://github.com/maskjelly", "https://x.com/aaryantwt"],
-        knowsAbout: profile.skills.flatMap(s => s.value.split(", ")),
-      },
+      person(),
       {
         "@type": "ProfilePage", "@id": "https://whiteye.in/resume#page",
         url: "https://whiteye.in/resume", name: "Aaryan Singh | Software Engineer",
-        dateModified: profile.updated, mainEntity: { "@id": "https://whiteye.in/resume#person" },
+        dateModified: profile.updated, mainEntity: { "@id": PERSON_ID }, isPartOf: { "@id": `${SITE}/#website` },
         inLanguage: "en", description,
       },
       {
         "@type": "ItemList", name: "Selected software projects by Aaryan Singh",
         itemListElement: profile.projects.map((p, i) => ({
           "@type": "ListItem", position: i + 1,
-          item: { "@type": "SoftwareSourceCode", name: p.name, codeRepository: p.url, description: p.description, author: { "@id": "https://whiteye.in/resume#person" } },
+          item: { "@type": "SoftwareSourceCode", name: p.name, codeRepository: p.url, description: p.description, author: { "@id": PERSON_ID } },
         })),
       },
     ],
@@ -50,14 +46,9 @@ export default function ResumePage() {
 
   return (
     <div className="resume-page">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structured).replace(/</g, "\\u003c") }} />
-      <a href="#resume-main" className="resume-skip">Skip to résumé</a>
+      <JsonLd data={structured} />
       <div className="resume-shell">
-        <nav className="resume-nav" aria-label="Résumé navigation">
-          <Link href="/">whiteye.in</Link>
-          <div><a href="/resume.txt">Plain text</a><a href="/Aaryan-Singh-Resume.pdf" download>Download PDF ↗</a></div>
-        </nav>
-        <main id="resume-main" tabIndex={-1}>
+        <div id="resume-main">
           <header className="resume-header">
             <h1>{profile.name}</h1>
             <p className="resume-title">Software engineer · Product, AI agents &amp; systems</p>
@@ -66,8 +57,12 @@ export default function ResumePage() {
             <div className="resume-contact">
               <span>{profile.location}</span>
               <a href={`mailto:${profile.email}`}>{profile.email}</a>
-              <a href="https://github.com/maskjelly">GitHub ↗</a>
-              <a href="https://x.com/aaryantwt">X ↗</a>
+              <a href="https://github.com/maskjelly" rel="noopener">GitHub ↗</a>
+              <a href="https://x.com/aaryantwt" rel="noopener">X ↗</a>
+            </div>
+            <div className="resume-actions link-row">
+              <a className="pill pill-primary" href="/Aaryan-Singh-Resume.pdf" download>Download PDF</a>
+              <a className="pill" href="/resume.txt">Plain text</a>
             </div>
           </header>
 
@@ -124,7 +119,7 @@ export default function ResumePage() {
                 </div>}
               </article>
             ))}
-            <p className="resume-note">Also built <a href="/plain-corners">Plain Corners</a>, a native macOS utility, and this <Link href="/">Windows XP portfolio</Link> in React, Next.js and TypeScript.</p>
+            <p className="resume-note">Also built <a href="/plain-corners">Plain Corners</a>, a native macOS utility, and this site, plus a <Link href="/xp">Windows XP desktop</Link> easter egg, in React, Next.js and TypeScript.</p>
           </section>
 
           <section className="resume-section" aria-labelledby="measurements">
@@ -171,8 +166,8 @@ export default function ResumePage() {
             <p>{profile.education}</p>
             <p>{profile.honors}</p>
           </section>
-        </main>
-        <footer className="resume-footer"><p>Updated <time dateTime={profile.updated}>October 5, 2026</time></p><a href={`mailto:${profile.email}`}>Let’s talk ↗</a></footer>
+        </div>
+        <div className="resume-footer"><p>Updated <time dateTime={profile.updated}>October 8, 2026</time></p><a href={`mailto:${profile.email}`}>Let’s talk ↗</a></div>
       </div>
     </div>
   )

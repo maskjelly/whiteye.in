@@ -1,6 +1,6 @@
-import Link from "next/link"
-import { KeyboardHelp } from "@/components/keyboard-help"
 import { Navbar } from "@/components/navbar"
+import { SiteChrome } from "@/components/site-chrome"
+import { posts } from "@/lib/posts"
 
 export default function SiteLayout({
   children,
@@ -9,23 +9,23 @@ export default function SiteLayout({
 }) {
   return (
     <div className="site-shell">
+      <a href="#main" className="skip-link">
+        Skip to content
+      </a>
       <Navbar />
-      {children}
+      <main id="main" className="site-main" tabIndex={-1}>
+        {children}
+      </main>
       <footer className="site-footer">
-        <Link href="/">aaryan</Link>
-        <span className="flex items-center gap-4">
-          <Link href="/blog">writing</Link>
-          <Link href="/feed.xml">rss</Link>
-          <a
-            href="https://github.com/maskjelly"
-            target="_blank"
-            rel="noreferrer"
-          >
-            github
-          </a>
-        </span>
+        <span>© {new Date().getFullYear()} Aaryan Singh</span>
+        <nav className="site-footer-links" aria-label="Footer">
+          <a href="/feed.xml">RSS</a>
+          <a href="/llms.txt">llms.txt</a>
+          <a href="https://github.com/maskjelly/whiteye.in" rel="noopener">Source</a>
+          <a href="/xp">XP desktop</a>
+        </nav>
       </footer>
-      <KeyboardHelp />
+      <SiteChrome posts={posts.map((p) => ({ slug: p.slug, title: p.title }))} />
     </div>
   )
 }

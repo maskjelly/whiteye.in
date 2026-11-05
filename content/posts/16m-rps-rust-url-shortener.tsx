@@ -18,20 +18,20 @@ function ThroughputBars() {
   ]
   return (
     <svg viewBox="0 0 720 240" role="img" aria-label="throughput by workload, logarithmic scale from 1,000 RPS">
-      <text x={0} y={18} fill="#244b80" fontSize={12} fontFamily="var(--font-mono)" letterSpacing="0.04em">
+      <text x={0} y={18} fill="var(--accent)" fontSize={12} fontFamily="var(--font-mono)" letterSpacing="0.04em">
         fig. 1 — M4 Pro loopback (log scale, baseline 1k RPS)
       </text>
-      <line x1={0} y1={26} x2={720} y2={26} stroke="#cfc5b2" strokeWidth={1} />
+      <line x1={0} y1={26} x2={720} y2={26} stroke="var(--line-strong)" strokeWidth={1} />
       {rows.map((r, i) => {
         const y = 56 + i * 46
         const w = 480 * Math.log10(r.rps / 1_000) / Math.log10(16_847_534 / 1_000)
         return (
           <g key={r.label} fontFamily="var(--font-mono)">
-            <text x={0} y={y + 15} fill="#514b40" fontSize={12}>
+            <text x={0} y={y + 15} fill="var(--fg-2)" fontSize={12}>
               {r.label}
             </text>
-            <rect x={160} y={y} width={w} height={22} rx={3} fill={i >= 2 ? "#244b80" : "#cfc5b2"} opacity={i < 2 ? 1 : 0.85} />
-            <text x={170 + w} y={y + 16} fill={i >= 2 ? "#244b80" : "#817867"} fontSize={12}>
+            <rect x={160} y={y} width={w} height={22} rx={3} fill={i >= 2 ? "var(--accent)" : "var(--line-strong)"} opacity={i < 2 ? 1 : 0.85} />
+            <text x={170 + w} y={y + 16} fill={i >= 2 ? "var(--accent)" : "var(--fg-3)"} fontSize={12}>
               {r.value}
             </text>
           </g>
@@ -48,22 +48,22 @@ function VpsBars() {
   ]
   return (
     <svg viewBox="0 0 720 190" role="img" aria-label="four vCPU Linux VPS throughput, linear scale">
-      <text x={0} y={18} fill="#244b80" fontSize={12} fontFamily="var(--font-mono)" letterSpacing="0.04em">
+      <text x={0} y={18} fill="var(--accent)" fontSize={12} fontFamily="var(--font-mono)" letterSpacing="0.04em">
         fig. 2 — September 14 VPS baseline (linear scale, loopback)
       </text>
-      <line x1={0} y1={26} x2={720} y2={26} stroke="#cfc5b2" strokeWidth={1} />
+      <line x1={0} y1={26} x2={720} y2={26} stroke="var(--line-strong)" strokeWidth={1} />
       {rows.map((r, i) => {
         const y = 56 + i * 52
         return (
           <g key={r.label} fontFamily="var(--font-mono)">
-            <text x={0} y={y + 15} fill="#514b40" fontSize={12}>
+            <text x={0} y={y + 15} fill="var(--fg-2)" fontSize={12}>
               {r.label}
             </text>
-            <rect x={160} y={y} width={r.w} height={24} rx={3} fill={i === 0 ? "#244b80" : "#cfc5b2"} opacity={i === 0 ? 0.85 : 1} />
-            <text x={170 + r.w} y={y + 17} fill={i === 0 ? "#244b80" : "#817867"} fontSize={12}>
+            <rect x={160} y={y} width={r.w} height={24} rx={3} fill={i === 0 ? "var(--accent)" : "var(--line-strong)"} opacity={i === 0 ? 0.85 : 1} />
+            <text x={170 + r.w} y={y + 17} fill={i === 0 ? "var(--accent)" : "var(--fg-3)"} fontSize={12}>
               {r.value}
             </text>
-            <text x={160} y={y + 44} fill="#817867" fontSize={11}>
+            <text x={160} y={y + 44} fill="var(--fg-3)" fontSize={11}>
               {i === 0 ? "median of 3 × 8s runs, p99 batch latency 48.2–48.6 ms" : "median of 3 × 8s runs, p99 1.5–3.1 ms"}
             </text>
           </g>

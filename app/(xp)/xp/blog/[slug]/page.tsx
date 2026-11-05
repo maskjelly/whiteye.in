@@ -119,7 +119,7 @@ export default async function PostPage({
               <Link href="/xp/blog" className="back-link">
                 ← back to writing
               </Link>
-              <Link href="/" className="back-link">
+              <Link href="/xp" className="back-link">
                 home
               </Link>
             </div>

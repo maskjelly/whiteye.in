@@ -1,4 +1,4 @@
-import type { Item } from "@/components/section-list"
+import type { Item } from "@/lib/items"
 
 export const projectItems: Item[] = [
   {

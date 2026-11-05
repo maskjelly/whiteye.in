@@ -2,17 +2,19 @@ import Link from "next/link"
 
 export default function NotFound() {
   return (
-    <div className="page-header">
-      <div>
-        <p className="page-kicker">404</p>
-        <h1 className="page-title">nothing here.</h1>
-        <Link
-          href="/"
-          className="back-link inline-block mt-8"
-        >
-          return home
-        </Link>
-      </div>
+    <div className="site-shell">
+      <main className="site-main" style={{ display: "flex", alignItems: "center" }}>
+        <div className="page-header" style={{ marginBlock: "4rem" }}>
+          <p className="page-kicker">404</p>
+          <h1 className="page-title">Nothing here.</h1>
+          <p className="page-intro">The page may have moved. The command menu (⌘K) can find what you were after.</p>
+          <div className="link-row" style={{ marginTop: "1.5rem" }}>
+            <Link href="/" className="pill pill-primary">Home</Link>
+            <Link href="/blog" className="pill">Writing</Link>
+            <Link href="/resume" className="pill">Résumé</Link>
+          </div>
+        </div>
+      </main>
     </div>
   )
 }
