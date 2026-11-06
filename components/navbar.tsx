@@ -26,10 +26,13 @@ export function Navbar() {
 
   return (
     <nav className="site-nav" aria-label="Main">
-      <Link href="/" className="site-wordmark" aria-label="Aaryan Singh, home">
-        <span className="site-wordmark-dot" aria-hidden="true" />
-        aaryan
-      </Link>
+      {pathname === "/" ? (
+        <span aria-hidden="true" />
+      ) : (
+        <Link href="/" className="site-wordmark" aria-label="Aaryan Singh, home">
+          Aaryan Singh
+        </Link>
+      )}
       <div className="site-nav-links">
         {links.map((l) => (
           <Link
@@ -41,15 +44,6 @@ export function Navbar() {
             {l.label}
           </Link>
         ))}
-        <button
-          type="button"
-          className="kbd-hint-button"
-          onClick={() => window.dispatchEvent(new CustomEvent("cmd:open"))}
-          aria-label="Open command menu"
-        >
-          <kbd>⌘</kbd>
-          <kbd>K</kbd>
-        </button>
         <button
           type="button"
           className="icon-button"

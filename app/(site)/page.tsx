@@ -28,19 +28,11 @@ export const metadata: Metadata = {
   twitter: { title: "Aaryan Singh · Software engineer", description, card: "summary_large_image" },
 }
 
-function Arrow() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M7 17 17 7M8 7h9v9" />
-    </svg>
-  )
-}
-
 const stats = [
-  { value: "1.34M", label: "redirects/s, rushort on a 4-vCPU VPS", href: "https://github.com/maskjelly/rushort/blob/main/docs/performance-2026-09-30.md" },
-  { value: "95.13%", label: "Recall@10, instantKV on LongMemEval-S", href: "https://instantkv.com/benchmarks/" },
-  { value: `${contributions.totalMerged}`, label: `merged PRs across ${contributions.repositoryCount} external repos`, href: "https://github.com/search?q=author%3Amaskjelly+is%3Apr+is%3Amerged+-user%3Amaskjelly&type=pullrequests" },
-  { value: "$1M+", label: "processed by ReferRush, 2,300 merchants", href: "https://referrush.com" },
+  { value: "1.34M redirects/s", label: "rushort on a 4-vCPU VPS, loopback", href: "https://github.com/maskjelly/rushort/blob/main/docs/performance-2026-09-30.md" },
+  { value: "95.13% Recall@10", label: "instantKV on LongMemEval-S", href: "https://instantkv.com/benchmarks/" },
+  { value: `${contributions.totalMerged} merged PRs`, label: `across ${contributions.repositoryCount} external open-source repositories`, href: "https://github.com/search?q=author%3Amaskjelly+is%3Apr+is%3Amerged+-user%3Amaskjelly&type=pullrequests" },
+  { value: "$1M+ processed", label: "ReferRush, 2,300 merchants", href: "https://referrush.com" },
 ]
 
 export default function HomePage() {
@@ -91,221 +83,160 @@ export default function HomePage() {
     <>
       <JsonLd data={structured} />
 
-      <header className="home-hero stagger">
+      <header className="home-hero">
         <h1 className="home-title">Aaryan Singh</h1>
-        <p className="home-tagline">Software engineer · AI agents, Rust systems, open source</p>
+        <p className="home-tagline">Software engineer. AI agents, Rust systems, open source.</p>
         <p className="home-lede">
           I was the founding engineer at <a href="https://referrush.com" rel="noopener">ReferRush</a>, built early
           infrastructure at <a href="https://extraordinary.com" rel="noopener">Extraordinary</a>, and now build
-          local-first agent memory and runtimes in Rust. Waterloo dropout. Contributor to Atuin, Podman Desktop and
-          eleven other repositories.
+          local-first agent memory and runtimes in Rust. Waterloo dropout. Based in Assam, India.
         </p>
-        <div className="home-actions link-row">
-          <a className="pill pill-primary" href={`mailto:${profile.email}`}>
-            Email me
-          </a>
-          <a className="pill" href="https://github.com/maskjelly" rel="noopener">
-            GitHub <Arrow />
-          </a>
-          <a className="pill" href="https://x.com/aaryantwt" rel="noopener">
-            X <Arrow />
-          </a>
-          <Link className="pill" href="/resume">
-            Résumé
-          </Link>
-        </div>
+        <p className="home-lede">
+          Right now: <a href="https://instantkv.com" rel="noopener">instantKV</a>, memory for agents, and{" "}
+          <a href="https://github.com/maskjelly/morse" rel="noopener">Morse</a>, an agent runtime that survives client
+          disconnects. Open to founding-engineer and systems roles. <Link href="/now">More on now</Link>.
+        </p>
+        <p className="inline-links">
+          <a href={`mailto:${profile.email}`}>Email</a>
+          <a href="https://github.com/maskjelly" rel="noopener">GitHub</a>
+          <a href="https://x.com/aaryantwt" rel="noopener">X</a>
+          <Link href="/resume">Résumé</Link>
+        </p>
       </header>
 
       <section className="section-block" aria-labelledby="numbers">
-        <h2 id="numbers" className="sr-only">Measured results</h2>
-        <div className="stat-grid stagger">
+        <h2 id="numbers" className="section-title">Numbers</h2>
+        <ul className="plain-list">
           {stats.map((s) => (
-            <a key={s.label} className="stat" href={s.href} rel="noopener">
-              <span className="stat-value">{s.value}</span>
-              <span className="stat-label">{s.label}</span>
-            </a>
+            <li key={s.label}>
+              <a href={s.href} rel="noopener" className="row">
+                <span className="row-title">{s.value}</span>
+                <span className="row-desc">{s.label}</span>
+              </a>
+            </li>
           ))}
-        </div>
-        <p className="stat-note">
-          Every number links to its measurement conditions. Throughput figures are controlled local runs, not public
-          HTTPS capacity.
-        </p>
-      </section>
-
-      <section className="section-block" aria-labelledby="now">
-        <div className="section-heading">
-          <h2 id="now" className="section-title">Now</h2>
-          <Link href="/now" className="section-link">
-            More <Arrow />
-          </Link>
-        </div>
-        <div className="now-card">
-          <p>
-            <span className="pulse" aria-hidden="true" />
-            Building <a href="https://instantkv.com" rel="noopener">instantKV</a>, local-first memory for agents in
-            Rust, and <a href="https://github.com/maskjelly/morse" rel="noopener">Morse</a>, an agent runtime that
-            keeps running when the client disconnects.
-          </p>
-          <p>Open to founding-engineer and systems roles. Based in Assam, India, working remotely.</p>
-        </div>
+        </ul>
       </section>
 
       <section className="section-block" aria-labelledby="short-version">
-        <div className="section-heading">
-          <h2 id="short-version" className="section-title">The short version</h2>
-        </div>
-        <ul className="highlight-list">
+        <h2 id="short-version" className="section-title">Background</h2>
+        <ul className="plain-list">
           {profile.highlights.map((h) => (
-            <li key={h.title}>
-              <p className="highlight-title">
+            <li key={h.title} className="row">
+              <span className="row-title">
                 {"url" in h && h.url ? <a href={h.url} rel="noopener">{h.title}</a> : h.title}
-              </p>
-              <p className="highlight-detail">{h.detail}</p>
+              </span>
+              <span className="row-desc">{h.detail}</span>
             </li>
           ))}
         </ul>
       </section>
 
       <section className="section-block" id="projects" aria-labelledby="projects-title">
-        <div className="section-heading">
-          <h2 id="projects-title" className="section-title">Projects</h2>
-          <Link href="/resume#projects" className="section-link">
-            Details and benchmarks <Arrow />
-          </Link>
-        </div>
-        <div className="project-grid">
+        <h2 id="projects-title" className="section-title">Projects</h2>
+        <ul className="plain-list">
           {projectItems.map((p) => {
-            const stack = profile.projects.find((x) => x.name === p.title)?.stack
-            const internal = p.href?.startsWith("/")
-            const Card = (
+            const inner = (
               <>
-                <div className="project-card-head">
-                  <span className="project-card-title">{p.title}</span>
-                  <span className="entry-arrow" aria-hidden="true">
-                    <Arrow />
-                  </span>
-                </div>
-                {stack && <span className="project-card-stack">{stack}</span>}
-                <span className="project-card-desc">{p.description}</span>
+                <span className="row-title">{p.title}</span>
+                <span className="row-desc">{p.description}</span>
               </>
             )
-            return internal ? (
-              <Link key={p.title} href={p.href!} className="project-card group">
-                {Card}
-              </Link>
-            ) : (
-              <a key={p.title} href={p.href} className="project-card group" rel="noopener">
-                {Card}
-              </a>
+            return (
+              <li key={p.title}>
+                {p.href?.startsWith("/") ? (
+                  <Link href={p.href} className="row">{inner}</Link>
+                ) : (
+                  <a href={p.href} className="row" rel="noopener">{inner}</a>
+                )}
+              </li>
             )
           })}
-        </div>
+        </ul>
       </section>
 
       <section className="section-block" id="work" aria-labelledby="work-title">
-        <div className="section-heading">
-          <h2 id="work-title" className="section-title">Work</h2>
-          <Link href="/resume" className="section-link">
-            Full résumé <Arrow />
-          </Link>
-        </div>
-        <div className="entry-list">
+        <h2 id="work-title" className="section-title">Work</h2>
+        <ul className="plain-list">
           {workItems.map((w) => {
-            const body = (
+            const inner = (
               <>
-                <div className="min-w-0">
-                  <p className="entry-title">
-                    {w.title} <span style={{ color: "var(--fg-3)", fontWeight: 400 }}>· {w.role}</span>
-                  </p>
-                  <p className="entry-description">{w.description}</p>
-                </div>
-                {w.period && <span className="entry-meta">{w.period}</span>}
+                <span className="row-head">
+                  <span className="row-title">
+                    {w.title} <span className="row-muted">· {w.role}</span>
+                  </span>
+                  {w.period && <span className="row-meta">{w.period}</span>}
+                </span>
+                <span className="row-desc">{w.description}</span>
               </>
             )
-            if (w.href?.startsWith("/")) {
-              return (
-                <Link key={w.title} href={w.href} className="entry-row">
-                  {body}
-                </Link>
-              )
-            }
-            if (w.href) {
-              return (
-                <a key={w.title} href={w.href} className="entry-row" rel="noopener">
-                  {body}
-                </a>
-              )
-            }
             return (
-              <div key={w.title} className="entry-row">
-                {body}
-              </div>
+              <li key={w.title}>
+                {w.href?.startsWith("/") ? (
+                  <Link href={w.href} className="row">{inner}</Link>
+                ) : w.href ? (
+                  <a href={w.href} className="row" rel="noopener">{inner}</a>
+                ) : (
+                  <div className="row">{inner}</div>
+                )}
+              </li>
             )
           })}
-        </div>
+        </ul>
       </section>
 
       <section className="section-block" id="open-source" aria-labelledby="oss-title">
-        <div className="section-heading">
-          <h2 id="oss-title" className="section-title">Open source</h2>
+        <h2 id="oss-title" className="section-title">Open source</h2>
+        <p className="section-note">
+          {contributions.totalMerged} merged pull requests across {contributions.repositoryCount} external repositories.{" "}
           <a
             href="https://github.com/search?q=author%3Amaskjelly+is%3Apr+is%3Amerged+-user%3Amaskjelly&type=pullrequests"
-            className="section-link"
             rel="noopener"
           >
-            All merged PRs <Arrow />
+            See all
           </a>
-        </div>
-        <ul className="oss-list">
+          .
+        </p>
+        <ul className="plain-list compact">
           {contributions.repositories.map((c) => (
             <li key={c.repository}>
-              <a href={c.mergedUrl} className="oss-row" rel="noopener">
-                <span className="oss-name">
-                  {c.displayName}
-                  <span className="oss-detail">{c.detail}</span>
-                </span>
-                <span className="oss-stat">
-                  {c.merged} merged · ★ {c.stars.toLocaleString("en-US")}
+              <a href={c.mergedUrl} className="row">
+                <span className="row-head">
+                  <span className="row-title">{c.displayName}</span>
+                  <span className="row-meta">{c.merged} merged</span>
                 </span>
               </a>
             </li>
           ))}
         </ul>
-        <p className="stat-note">
-          {contributions.totalMerged} merged pull requests across {contributions.repositoryCount} repositories, including{" "}
-          27 in termlens. Stars checked {contributions.checked}.
-        </p>
       </section>
 
       <section className="section-block" id="writing" aria-labelledby="writing-title">
-        <div className="section-heading">
-          <h2 id="writing-title" className="section-title">Writing</h2>
-          <Link href="/blog" className="section-link">
-            All essays <Arrow />
-          </Link>
-        </div>
-        <div className="entry-list">
+        <h2 id="writing-title" className="section-title">Writing</h2>
+        <ul className="plain-list compact">
           {posts.map((p) => (
-            <Link key={p.slug} href={`/blog/${p.slug}`} className="entry-row">
-              <span className="entry-name">{p.title}</span>
-              <span className="entry-meta">{p.date}</span>
-            </Link>
+            <li key={p.slug}>
+              <Link href={`/blog/${p.slug}`} className="row">
+                <span className="row-head">
+                  <span className="row-title">{p.title}</span>
+                  <span className="row-meta">{p.date}</span>
+                </span>
+              </Link>
+            </li>
           ))}
-        </div>
+        </ul>
       </section>
 
       <section className="section-block" aria-labelledby="elsewhere">
-        <div className="section-heading">
-          <h2 id="elsewhere" className="section-title">Elsewhere</h2>
-        </div>
-        <div className="link-row">
-          <a className="pill" href={`mailto:${profile.email}`}>{profile.email}</a>
-          <a className="pill" href="https://github.com/maskjelly" rel="noopener">github.com/maskjelly</a>
-          <a className="pill" href="https://x.com/aaryantwt" rel="noopener">@aaryantwt</a>
-          <Link className="pill" href="/uses">Uses</Link>
-          <a className="pill" href="/Aaryan-Singh-Resume.pdf">Résumé PDF</a>
-          <a className="pill" href="/feed.xml">RSS</a>
-        </div>
+        <h2 id="elsewhere" className="section-title">Elsewhere</h2>
+        <p className="inline-links">
+          <a href={`mailto:${profile.email}`}>{profile.email}</a>
+          <a href="https://github.com/maskjelly" rel="noopener">GitHub</a>
+          <a href="https://x.com/aaryantwt" rel="noopener">X</a>
+          <Link href="/uses">Uses</Link>
+          <a href="/Aaryan-Singh-Resume.pdf">PDF résumé</a>
+          <a href="/feed.xml">RSS</a>
+        </p>
       </section>
     </>
   )
