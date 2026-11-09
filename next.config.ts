@@ -32,6 +32,8 @@ const nextConfig: NextConfig = {
   async rewrites() {
     return [
       { source: "/crawler-guide", destination: "/crawler-guide/index.html" },
+      { source: "/youtube", destination: "https://clipdesk.whiteye.in/youtube" },
+      { source: "/youtube/:path*", destination: "https://clipdesk.whiteye.in/youtube/:path*" },
     ];
   },
 };
