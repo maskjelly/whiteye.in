@@ -1,6 +1,6 @@
 # whiteye.in
 
-Aaryan's personal website: a static, minimal profile with measured results, projects, work history, open-source credits and engineering essays. Built with Next.js, React and TypeScript, deployed on Vercel.
+Aaryan's personal website: a playful, brutalist-meets-minimal profile with live GitHub stats, measured results, projects, work history, open-source credits and engineering essays. Built with Next.js, React and TypeScript, deployed on Vercel.
 
 ## Design goals
 
@@ -21,7 +21,7 @@ Aaryan's personal website: a static, minimal profile with measured results, proj
 
 | Route | What |
 | --- | --- |
-| `/` | Home: hero, measured results, now, highlights, projects, work, open source, writing, links |
+| `/` | Home: hero with draggable stickers, live board (GitHub contributions, profile, latest push, languages, rushort pulse, IST clock, hot takes), receipts, projects, work, lore, open source, writing |
 | `/blog`, `/blog/[slug]` | Essays, with reading progress, table of contents and prev/next |
 | `/now`, `/uses` | Current work; hardware and stack |
 | `/resume` | Full profile with benchmarks, contributions and a downloadable PDF |
@@ -70,6 +70,7 @@ Configuration:
 | `NEXT_PUBLIC_RUSHORT_BASE` | Browser-accessible backend base for metrics and host data; requires CORS. |
 | `RUSHORT_BASE` | Server-side backend base for shortening and resolving links. |
 | `RUSHORT_API_KEY` | Server-only write credential; never use a `NEXT_PUBLIC_` prefix. |
+| `GITHUB_TOKEN` | Optional, server-only. Raises the GitHub API limit for the home page's live stats (`lib/live.ts`, revalidated every 30 minutes). |
 
 The default backend base is `https://45.196.196.251/rushort`. The playground returns an explicit unavailable response when its server-side key is missing.
 
