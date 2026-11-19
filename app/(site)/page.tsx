@@ -1,3 +1,4 @@
+import { Fragment } from "react"
 import Link from "next/link"
 import type { Metadata } from "next"
 import profile from "@/lib/resume-data.json"
@@ -7,6 +8,7 @@ import { posts } from "@/lib/posts"
 import { JsonLd, person, PERSON_ID, SITE } from "@/lib/structured-data"
 import { getLiveStats, GITHUB_USER, type ContributionDay } from "@/lib/live"
 import { LocalClock, RelativeTime, RushortPulse } from "@/components/live-widgets"
+import "./home.css"
 
 export const revalidate = 1800
 
@@ -69,10 +71,10 @@ const ROMAN = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI"
 
 function Head({ n, id, title, children }: { n: number; id: string; title: string; children?: React.ReactNode }) {
   return (
-    <div className="head">
-      <span className="head-num" aria-hidden="true">{ROMAN[n - 1]}</span>
-      <h2 id={id} className="head-title">{title}</h2>
-      {children && <p className="head-meta">{children}</p>}
+    <div className="mo-head">
+      <span className="mo-head-num" aria-hidden="true">{ROMAN[n - 1]}</span>
+      <h2 id={id}>{title}</h2>
+      {children && <p className="mo-head-meta">{children}</p>}
     </div>
   )
 }
@@ -141,223 +143,255 @@ export default async function HomePage() {
     <div className="home">
       <JsonLd data={structured} />
 
-      <header className="hero">
-        <p className="hero-kicker">Software engineer <i>·</i> Rust <i>·</i> Agent memory &amp; runtimes</p>
-        <h1 className="hero-name">
-          <span>Aaryan</span> <span>Singh</span>
-        </h1>
-        <p className="hero-lede">
-          I build memory and runtimes for machines, in Rust, from a quiet corner of Assam.
-        </p>
-        <p className="hero-now">
-          Presently: <a href="https://instantkv.com" rel="noopener">instantKV</a>, memory for agents, and{" "}
-          <a href="https://github.com/maskjelly/morse" rel="noopener">Morse</a>, a runtime that survives disconnects.{" "}
-          <Link href="/now">More →</Link>
-        </p>
-        <div className="hero-cta">
-          <a className="btn btn-primary" href={`mailto:${profile.email}`}>Correspond</a>
-          <a className="btn" href="https://github.com/maskjelly" rel="noopener">GitHub</a>
-          <a className="btn" href="https://x.com/aaryantwt" rel="noopener">X</a>
-          <Link className="btn" href="/blog">Writings</Link>
+      <header className="mo-hero">
+        <div className="mo-hero-copy">
+          <p className="mo-kicker">Rust <i>·</i> Agent memory <i>·</i> Runtimes</p>
+          <h1 className="mo-name">
+            <span>Aaryan</span>
+            <span>Singh</span>
+          </h1>
+          <p className="mo-lede">I build memory and runtimes for machines, in Rust, from Assam.</p>
+          <p className="mo-now">
+            Presently: <a href="https://instantkv.com" rel="noopener">instantKV</a>, memory for agents, and{" "}
+            <a href="https://github.com/maskjelly/morse" rel="noopener">Morse</a>, a runtime that survives disconnects.{" "}
+            <Link href="/now">More →</Link>
+          </p>
+          <div className="mo-cta">
+            <a className="mo-btn mo-btn-solid" href={`mailto:${profile.email}`}>Correspond</a>
+            <a className="mo-btn" href="https://github.com/maskjelly" rel="noopener">GitHub</a>
+            <Link className="mo-btn" href="/blog">Writings</Link>
+          </div>
+        </div>
+        <div className="mo-hero-figure" aria-hidden="true">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/classical/head.webp" alt="" width={1074} height={1568} fetchPriority="high" />
+        </div>
+        <div className="mo-frieze" aria-hidden="true">
+          <span className="mo-meander" />
+          <span className="mo-frieze-text">MMXXVI</span>
+          <span className="mo-meander" />
         </div>
       </header>
 
-      <section className="colonnade-wrap" aria-labelledby="pillars-title">
-        <Head n={1} id="pillars-title" title="Four pillars" />
-        <div className="colonnade">
-          {stats.map((s) => (
-            <a key={s.label} href={s.href} rel="noopener" className="pillar">
-              <span className="pillar-cap" aria-hidden="true" />
-              <span className="pillar-shaft">
-                <span className="pillar-value">{s.value}</span>
-                <span className="pillar-unit">{s.unit}</span>
-                <span className="pillar-label">{s.label}</span>
-              </span>
-              <span className="pillar-base" aria-hidden="true" />
-            </a>
+      <section className="mo-temple" aria-labelledby="pillars-title">
+        <div className="mo-pediment" aria-hidden="true"><span /></div>
+        <div className="mo-entablature">
+          <h2 id="pillars-title">Four pillars</h2>
+        </div>
+        <div className="mo-colonnade">
+          <span className="mo-column" aria-hidden="true" />
+          {stats.map((s, i) => (
+            <Fragment key={s.label}>
+              <a href={s.href} rel="noopener" className="mo-bay">
+                <span className="mo-bay-num">{ROMAN[i]}</span>
+                <span className="mo-bay-value">{s.value}</span>
+                <span className="mo-bay-unit">{s.unit}</span>
+                <span className="mo-bay-label">{s.label}</span>
+              </a>
+              <span className="mo-column" aria-hidden="true" />
+            </Fragment>
           ))}
         </div>
-        <div className="stylobate" aria-hidden="true"><span /><span /><span /></div>
+        <div className="mo-steps" aria-hidden="true"><span /><span /><span /></div>
       </section>
 
-      <section className="slab" aria-labelledby="live-title">
-        <div className="slab-inner">
-          <Head n={2} id="live-title" title="The living ledger">
-            <span className="dot dot-live" aria-hidden="true" /> GitHub synced <RelativeTime iso={live.fetchedAt} />
-          </Head>
+      <section className="mo-section mo-ledger" aria-labelledby="live-title">
+        <Head n={2} id="live-title" title="The living ledger">
+          <span className="dot dot-live" aria-hidden="true" /> GitHub synced <RelativeTime iso={live.fetchedAt} />
+        </Head>
 
-          <div className="ledger-top">
-            <div className="ledger-contrib">
-              <div className="label">Contributions, past year</div>
-              {live.contributions ? (
-                <>
-                  <div className="figure">{fmt(live.contributions.total)}</div>
-                  <dl className="pairs">
-                    <div><dt>Current streak</dt><dd>{live.contributions.streak} days</dd></div>
-                    {live.contributions.best && (
-                      <div><dt>Finest day</dt><dd>{live.contributions.best.count}</dd></div>
-                    )}
-                  </dl>
-                  <Heatmap days={live.contributions.days} />
-                </>
-              ) : (
-                <p className="note">The graph is resting. <a href="https://github.com/maskjelly">See it on GitHub</a>.</p>
-              )}
-            </div>
-            <div className="arch">
-              <div className="label">Assam, India · IST</div>
+        <div className="mo-ledger-grid">
+          <div className="mo-panel mo-panel-contrib">
+            <div className="mo-label">Contributions, past year</div>
+            {live.contributions ? (
+              <>
+                <div className="mo-figure">{fmt(live.contributions.total)}</div>
+                <dl className="mo-pairs">
+                  <div><dt>Current streak</dt><dd>{live.contributions.streak} days</dd></div>
+                  {live.contributions.best && (
+                    <div><dt>Finest day</dt><dd>{live.contributions.best.count}</dd></div>
+                  )}
+                </dl>
+                <Heatmap days={live.contributions.days} />
+              </>
+            ) : (
+              <p className="mo-note">The graph is resting. <a href="https://github.com/maskjelly">See it on GitHub</a>.</p>
+            )}
+          </div>
+
+          <div className="mo-panel mo-panel-clock">
+            <div className="mo-arch">
+              <div className="mo-label">Assam · IST</div>
               <LocalClock />
             </div>
           </div>
 
-          <div className="ledger-row">
-            <div className="cell">
-              <div className="label">rushort telemetry</div>
-              <RushortPulse />
-              <Link href="/telemetry" className="text-link">Open dashboard</Link>
-            </div>
+          <div className="mo-panel">
+            <div className="mo-label">rushort telemetry</div>
+            <RushortPulse />
+            <Link href="/telemetry" className="mo-link">Open dashboard</Link>
+          </div>
 
-            <div className="cell">
-              <div className="label">GitHub</div>
-              <dl className="pairs pairs-col">
-                {(
-                  [
-                    ["Stars", live.stars],
-                    ["Repositories", live.publicRepos],
-                    ["Followers", live.followers],
-                  ] as const
-                )
-                  .filter(([, v]) => v != null)
-                  .map(([k, v]) => (
-                    <div key={k}>
-                      <dt>{k}</dt>
-                      <dd>{fmt(v)}</dd>
-                    </div>
-                  ))}
-              </dl>
-              <a href={`https://github.com/${GITHUB_USER}`} className="text-link" rel="noopener">@{GITHUB_USER}</a>
-            </div>
-
-            <div className="cell">
-              <div className="label">Contributing upstream</div>
-              <ul className="rows">
-                {upstream.map((r) => (
-                  <li key={r.repo}>
-                    <a href={r.href} rel="noopener">
-                      <span>{r.name}</span>
-                      <small>{r.at ? <RelativeTime iso={r.at} /> : r.note}</small>
-                    </a>
-                  </li>
-                ))}
-              </ul>
-              <a
-                href="https://github.com/search?q=author%3Amaskjelly+is%3Apr+is%3Amerged+-user%3Amaskjelly&type=pullrequests"
-                className="text-link"
-                rel="noopener"
-              >
-                All {contributions.totalMerged} merged
-              </a>
-            </div>
-
-            <div className="cell">
-              <div className="label">Languages</div>
-              {live.languages.length ? (
-                <>
-                  <div className="lang-bar">
-                    {live.languages.map((l, i) => (
-                      <span key={l.name} style={{ flexGrow: l.count, opacity: 1 - i * 0.15 }} title={`${l.name}: ${l.count}`} />
-                    ))}
+          <div className="mo-panel">
+            <div className="mo-label">GitHub</div>
+            <dl className="mo-pairs mo-pairs-col">
+              {(
+                [
+                  ["Stars", live.stars],
+                  ["Repositories", live.publicRepos],
+                  ["Followers", live.followers],
+                ] as const
+              )
+                .filter(([, v]) => v != null)
+                .map(([k, v]) => (
+                  <div key={k}>
+                    <dt>{k}</dt>
+                    <dd>{fmt(v)}</dd>
                   </div>
-                  <ul className="rows rows-plain">
-                    {live.languages.map((l) => (
-                      <li key={l.name}>
+                ))}
+            </dl>
+            <a href={`https://github.com/${GITHUB_USER}`} className="mo-link" rel="noopener">@{GITHUB_USER}</a>
+          </div>
+
+          <div className="mo-panel">
+            <div className="mo-label">Contributing upstream</div>
+            <ul className="mo-rows">
+              {upstream.map((r) => (
+                <li key={r.repo}>
+                  <a href={r.href} rel="noopener">
+                    <span>{r.name}</span>
+                    <small>{r.at ? <RelativeTime iso={r.at} /> : r.note}</small>
+                  </a>
+                </li>
+              ))}
+            </ul>
+            <a
+              href="https://github.com/search?q=author%3Amaskjelly+is%3Apr+is%3Amerged+-user%3Amaskjelly&type=pullrequests"
+              className="mo-link"
+              rel="noopener"
+            >
+              All {contributions.totalMerged} merged
+            </a>
+          </div>
+
+          <div className="mo-panel">
+            <div className="mo-label">Languages</div>
+            {live.languages.length ? (
+              <>
+                <div className="mo-langbar">
+                  {live.languages.map((l, i) => (
+                    <span key={l.name} style={{ flexGrow: l.count, opacity: 1 - i * 0.15 }} title={`${l.name}: ${l.count}`} />
+                  ))}
+                </div>
+                <ul className="mo-rows">
+                  {live.languages.map((l) => (
+                    <li key={l.name}>
+                      <span>
                         <span>{l.name}</span>
                         <small>{Math.round((l.count / langTotal) * 100)}%</small>
-                      </li>
-                    ))}
-                  </ul>
-                </>
-              ) : (
-                <p className="note">Rust, mostly. TypeScript when required.</p>
-              )}
-            </div>
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            ) : (
+              <p className="mo-note">Rust, mostly. TypeScript when required.</p>
+            )}
           </div>
         </div>
       </section>
 
-      <section className="block" id="projects" aria-labelledby="projects-title">
-        <Head n={3} id="projects-title" title="The gallery" />
-        <ul className="gallery">
+      <section className="mo-band" aria-label="A maxim">
+        <blockquote>
+          <p>If it isn&rsquo;t benchmarked, it&rsquo;s a vibe.</p>
+        </blockquote>
+      </section>
+
+      <section className="mo-section mo-gallery" id="projects" aria-labelledby="projects-title">
+        <div className="mo-gallery-aside">
+          <Head n={3} id="projects-title" title="The gallery" />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/classical/column.webp" alt="" width={845} height={1593} loading="lazy" />
+        </div>
+        <ol className="mo-works">
           {projectItems.map((p, i) => {
             const inner = (
               <>
-                <span className="niche-num">{ROMAN[i]}</span>
-                <span className="niche-title">{p.title}</span>
-                <span className="niche-desc">{p.description}</span>
+                <span className="mo-work-num">{ROMAN[i]}</span>
+                <span className="mo-work-title">{p.title}</span>
+                <span className="mo-work-desc">{p.description}</span>
+                <span className="mo-work-arrow" aria-hidden="true">→</span>
               </>
             )
             return (
               <li key={p.title}>
                 {p.href?.startsWith("/") ? (
-                  <Link href={p.href} className="niche">{inner}</Link>
+                  <Link href={p.href} className="mo-work">{inner}</Link>
                 ) : (
-                  <a href={p.href} className="niche" rel="noopener">{inner}</a>
+                  <a href={p.href} className="mo-work" rel="noopener">{inner}</a>
                 )}
               </li>
             )
           })}
+        </ol>
+      </section>
+
+      <section className="mo-section mo-creed" aria-labelledby="creed-title">
+        <div className="mo-creed-bust" aria-hidden="true">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/classical/herodotos.webp" alt="" width={900} height={1626} loading="lazy" />
+        </div>
+        <div className="mo-creed-body">
+          <Head n={4} id="creed-title" title="The creed" />
+          <ol className="mo-maxims">
+            {takes.map((t, i) => (
+              <li key={t}>
+                <span>{ROMAN[i]}</span>
+                <p>{t}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      <section className="mo-section mo-folklore" aria-labelledby="folklore-title">
+        <Head n={5} id="folklore-title" title="Folklore" />
+        <ul className="mo-tales">
+          {profile.highlights.slice(0, 3).map((h, i) => (
+            <li key={h.title}>
+              <span className="mo-tale-num">{ROMAN[i]}</span>
+              <span className="mo-tale-title">
+                {"url" in h && h.url ? <a href={h.url} rel="noopener">{h.title.trim()}</a> : h.title.trim()}
+              </span>
+              <span className="mo-tale-desc">{h.detail}</span>
+            </li>
+          ))}
         </ul>
       </section>
 
-      <section className="block" aria-labelledby="creed-title">
-        <Head n={4} id="creed-title" title="The creed" />
-        <ol className="creed">
-          {takes.map((t, i) => (
-            <li key={t}>
-              <span className="creed-num">{ROMAN[i]}</span>
-              <span>{t}</span>
+      <section className="mo-section mo-writings" id="writing" aria-labelledby="writing-title">
+        <Head n={6} id="writing-title" title="Writings">
+          <Link href="/blog">All essays</Link>
+        </Head>
+        <ol className="mo-works mo-works-wide">
+          {posts.map((p, i) => (
+            <li key={p.slug}>
+              <Link href={`/blog/${p.slug}`} className="mo-work">
+                <span className="mo-work-num">{ROMAN[i]}</span>
+                <span className="mo-work-title">{p.title}</span>
+                <span className="mo-work-desc">{p.readingTime} · {p.date}</span>
+                <span className="mo-work-arrow" aria-hidden="true">→</span>
+              </Link>
             </li>
           ))}
         </ol>
       </section>
 
-      <section className="block" aria-labelledby="folklore-title">
-        <Head n={5} id="folklore-title" title="Folklore" />
-        <ul className="folklore">
-          {profile.highlights.slice(0, 3).map((h) => (
-            <li key={h.title}>
-              <span className="folk-title">
-                {"url" in h && h.url ? <a href={h.url} rel="noopener">{h.title.trim()}</a> : h.title.trim()}
-              </span>
-              <span className="folk-desc">{h.detail}</span>
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      <section className="block" id="writing" aria-labelledby="writing-title">
-        <Head n={6} id="writing-title" title="Writings">
-          <Link href="/blog">All essays</Link>
-        </Head>
-        <ul className="works works-essays">
-          {posts.map((p, i) => (
-            <li key={p.slug}>
-              <Link href={`/blog/${p.slug}`} className="work">
-                <span className="work-num">{ROMAN[i]}</span>
-                <span className="work-title">{p.title}</span>
-                <span className="work-desc">{p.readingTime} · {p.date}</span>
-                <span className="work-arrow" aria-hidden="true">→</span>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      <section className="outro" aria-labelledby="elsewhere">
-        <span className="head-num" aria-hidden="true">VII</span>
-        <h2 id="elsewhere" className="outro-title">Correspondence</h2>
-        <a className="outro-mail" href={`mailto:${profile.email}`}>{profile.email}</a>
-        <p className="outro-links">
+      <section className="mo-outro" aria-labelledby="elsewhere">
+        <span className="mo-head-num" aria-hidden="true">VII</span>
+        <h2 id="elsewhere">Correspondence</h2>
+        <a className="mo-mail" href={`mailto:${profile.email}`}>{profile.email}</a>
+        <p className="mo-outro-links">
           <a href="https://github.com/maskjelly" rel="noopener">GitHub</a>
           <a href="https://x.com/aaryantwt" rel="noopener">X</a>
           <Link href="/uses">Uses</Link>
