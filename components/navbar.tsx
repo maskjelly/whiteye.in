@@ -27,8 +27,7 @@ export function Navbar() {
   return (
     <nav className="site-nav" aria-label="Main">
       <Link href="/" className="site-wordmark" aria-label="Aaryan Singh, home">
-        <span className="wordmark-box" aria-hidden="true">as</span>
-        <span className="wordmark-text">whiteye.in</span>
+        <span className="wordmark-text">Aaryan Singh</span>
       </Link>
       <div className="site-nav-links">
         {links.map((l) => (

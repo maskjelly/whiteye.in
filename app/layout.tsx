@@ -1,10 +1,10 @@
 import type { Metadata, Viewport } from "next"
-import { Bricolage_Grotesque, Instrument_Serif, JetBrains_Mono } from "next/font/google"
+import { Cinzel, Cormorant_Garamond, JetBrains_Mono } from "next/font/google"
 import "./globals.css"
 import { Arrival } from "@/components/arrival"
 
-const bricolage = Bricolage_Grotesque({ subsets: ["latin"], variable: "--font-bricolage", display: "swap" })
-const instrument = Instrument_Serif({ subsets: ["latin"], weight: "400", style: "italic", variable: "--font-instrument", display: "swap" })
+const cinzel = Cinzel({ subsets: ["latin"], variable: "--font-cinzel", display: "swap" })
+const cormorant = Cormorant_Garamond({ subsets: ["latin"], weight: ["400", "500", "600", "700"], style: ["normal", "italic"], variable: "--font-cormorant", display: "swap" })
 const jetbrains = JetBrains_Mono({ subsets: ["latin"], variable: "--font-jetbrains", display: "swap" })
 
 const description =
@@ -67,12 +67,12 @@ export const viewport: Viewport = {
   initialScale: 1,
   viewportFit: "cover",
   colorScheme: "light",
-  themeColor: "#f8f9ff",
+  themeColor: "#f3f3f0",
 }
 
 // Applies the stored theme and colour palette before first paint so there is no flash.
 const themeScript =
-  "try{var d=document.documentElement,t=localStorage.getItem('theme');if(t==='dark'||t==='light'){d.setAttribute('data-theme',t)}var p=localStorage.getItem('palette');if(p&&/^[0-3]$/.test(p)){d.setAttribute('data-palette',p)}}catch(e){}"
+  "try{var d=document.documentElement,t=localStorage.getItem('theme');if(t==='dark'||t==='light'){d.setAttribute('data-theme',t)}}catch(e){}"
 
 export default function RootLayout({
   children,
@@ -80,7 +80,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${bricolage.variable} ${instrument.variable} ${jetbrains.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${cinzel.variable} ${cormorant.variable} ${jetbrains.variable}`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         <link rel="alternate" type="application/rss+xml" title="Aaryan Singh · Writing" href="/feed.xml" />

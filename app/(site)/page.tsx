@@ -7,7 +7,7 @@ import { workItems } from "@/lib/work-items"
 import { posts } from "@/lib/posts"
 import { JsonLd, person, PERSON_ID, SITE } from "@/lib/structured-data"
 import { getLiveStats, GITHUB_USER, type ContributionDay } from "@/lib/live"
-import { HotTakes, LocalClock, PaletteShuffle, RelativeTime, RushortPulse, Stickers } from "@/components/live-widgets"
+import { HotTakes, LocalClock, RelativeTime, RushortPulse } from "@/components/live-widgets"
 
 export const revalidate = 1800
 
@@ -35,28 +35,6 @@ const stats = [
   { value: "95.13%", unit: "Recall@10", label: "instantKV on LongMemEval-S", href: "https://instantkv.com/benchmarks/" },
   { value: String(contributions.totalMerged), unit: "merged PRs", label: `across ${contributions.repositoryCount} external open-source repositories`, href: "https://github.com/search?q=author%3Amaskjelly+is%3Apr+is%3Amerged+-user%3Amaskjelly&type=pullrequests" },
   { value: "$1M+", unit: "processed", label: "ReferRush, 2,300 merchants", href: "https://referrush.com" },
-]
-
-const COLORS = ["--c1", "--c2", "--c3", "--c4", "--c5", "--c6"]
-const color = (i: number) => `var(${COLORS[i % COLORS.length]})`
-const tint = (i: number) => ({ ["--c" as string]: color(i) })
-
-const stickers = [
-  { label: "rust ♥", color: "--c1", x: 79, y: 36, r: -8 },
-  { label: "waterloo dropout", color: "--c4", x: 58, y: 57, r: 5 },
-  { label: "hacked rice.edu @ 17", color: "--c3", x: 61, y: 72, r: -4 },
-  { label: "assam → everywhere", color: "--c6", x: 56, y: 86, r: 6 },
-]
-
-const ticker = [
-  "1.34M redirects/s",
-  "95.13% Recall@10",
-  `${contributions.totalMerged} merged PRs`,
-  "$1M+ processed",
-  "2,300 merchants",
-  "30M+ customers reached",
-  "8 essays on systems",
-  "0 errors at p50",
 ]
 
 const takes = [
@@ -88,39 +66,15 @@ function Heatmap({ days }: { days: ContributionDay[] }) {
   )
 }
 
-function Smile({ text }: { text: string }) {
-  const id = `ring-${text.replace(/[^a-z]+/gi, "-")}`
-  return (
-    <svg className="smile" viewBox="0 0 160 160" aria-hidden="true">
-      <defs>
-        <path id={id} d="M80,80 m-64,0 a64,64 0 1,1 128,0 a64,64 0 1,1 -128,0" />
-      </defs>
-      <g className="smile-ring">
-        <text>
-          <textPath href={`#${id}`} textLength="400">{text}</textPath>
-        </text>
-      </g>
-      <g className="smile-face">
-        <circle cx="80" cy="80" r="46" fill="var(--c2)" stroke="currentColor" strokeWidth="3" />
-        <ellipse className="smile-eye" cx="65" cy="71" rx="5" ry="7.5" fill="currentColor" />
-        <ellipse className="smile-eye" cx="95" cy="71" rx="5" ry="7.5" fill="currentColor" />
-        <circle cx="57" cy="88" r="6" fill="var(--c6)" opacity="0.8" />
-        <circle cx="103" cy="88" r="6" fill="var(--c6)" opacity="0.8" />
-        <path d="M60 90 Q80 112 100 90" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
-      </g>
-    </svg>
-  )
-}
+const ROMAN = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII", "XIII", "XIV", "XV", "XVI"]
 
-function Mega({ text }: { text: string }) {
+function Head({ n, id, title, children }: { n: number; id: string; title: string; children?: React.ReactNode }) {
   return (
-    <span className="mega-word" aria-label={text}>
-      {[...text].map((ch, i) => (
-        <span key={i} aria-hidden="true" style={{ ["--i" as string]: i }}>
-          {ch}
-        </span>
-      ))}
-    </span>
+    <div className="head">
+      <span className="head-num" aria-hidden="true">{ROMAN[n - 1]}</span>
+      <h2 id={id} className="head-title">{title}</h2>
+      {children && <p className="head-meta">{children}</p>}
+    </div>
   )
 }
 
@@ -189,214 +143,166 @@ export default async function HomePage() {
       <JsonLd data={structured} />
 
       <header className="hero">
-        <div className="hero-top">
-          <span className="status-pill">
-            <span className="dot dot-live" aria-hidden="true" /> open to founding-engineer &amp; systems roles
-          </span>
-          <PaletteShuffle />
-        </div>
-        <h1 className="mega">
-          <Mega text="Aaryan" />
-          <span className="mega-accent">Singh.</span>
+        <p className="hero-kicker">Software engineer <i>·</i> Rust <i>·</i> Agent memory &amp; runtimes</p>
+        <h1 className="hero-name">
+          <span>Aaryan</span> <span>Singh</span>
         </h1>
-        <div className="hero-grid">
-          <div>
-            <p className="hero-sub">
-              Software engineer building <mark className="hl hl-1">agent memory</mark> and{" "}
-              <mark className="hl hl-2">runtimes</mark> in Rust. Founding engineer at{" "}
-              <a href="https://referrush.com" rel="noopener">ReferRush</a>, early at{" "}
-              <a href="https://extraordinary.com" rel="noopener">Extraordinary</a>, Waterloo dropout, based in Assam, India.
-            </p>
-            <p className="hero-sub hero-now">
-              Right now: <a href="https://instantkv.com" rel="noopener">instantKV</a> (memory for agents) and{" "}
-              <a href="https://github.com/maskjelly/morse" rel="noopener">Morse</a> (a runtime that survives disconnects).{" "}
-              <Link href="/now">More on now →</Link>
-            </p>
-            <div className="hero-cta">
-              <a className="btn btn-primary" href={`mailto:${profile.email}`}>Say hi ↗</a>
-              <a className="btn" href="https://github.com/maskjelly" rel="noopener">GitHub</a>
-              <a className="btn" href="https://x.com/aaryantwt" rel="noopener">X</a>
-              <Link className="btn" href="/resume">Résumé</Link>
-            </div>
-          </div>
-          <div className="hero-art">
-            <Smile text="ship happy things ✺ rust ✺ systems ✺ agents ✺ " />
-          </div>
+        <p className="hero-lede">
+          Founding engineer at <a href="https://referrush.com" rel="noopener">ReferRush</a>, early at{" "}
+          <a href="https://extraordinary.com" rel="noopener">Extraordinary</a>, Waterloo dropout. Building in Assam, India.
+        </p>
+        <p className="hero-now">
+          Presently: <a href="https://instantkv.com" rel="noopener">instantKV</a>, memory for agents, and{" "}
+          <a href="https://github.com/maskjelly/morse" rel="noopener">Morse</a>, a runtime that survives disconnects.{" "}
+          <Link href="/now">More →</Link>
+        </p>
+        <div className="hero-cta">
+          <a className="btn btn-primary" href={`mailto:${profile.email}`}>Correspond</a>
+          <a className="btn" href="https://github.com/maskjelly" rel="noopener">GitHub</a>
+          <a className="btn" href="https://x.com/aaryantwt" rel="noopener">X</a>
+          <Link className="btn" href="/resume">Résumé</Link>
         </div>
-        <Stickers items={stickers} />
+        <p className="hero-status">
+          <span className="dot dot-live" aria-hidden="true" /> Open to founding-engineer &amp; systems roles
+        </p>
       </header>
 
-      <div className="ticker" aria-hidden="true">
-        <div className="ticker-track">
-          {[...ticker, ...ticker].map((t, i) => (
-            <span key={i}>
-              {t} <b>✦</b>
-            </span>
+      <section className="colonnade-wrap" aria-labelledby="pillars-title">
+        <Head n={1} id="pillars-title" title="Four pillars" />
+        <div className="colonnade">
+          {stats.map((s) => (
+            <a key={s.label} href={s.href} rel="noopener" className="pillar">
+              <span className="pillar-cap" aria-hidden="true" />
+              <span className="pillar-shaft">
+                <span className="pillar-value">{s.value}</span>
+                <span className="pillar-unit">{s.unit}</span>
+                <span className="pillar-label">{s.label}</span>
+              </span>
+              <span className="pillar-base" aria-hidden="true" />
+            </a>
           ))}
         </div>
-      </div>
-
-      <section className="block" aria-labelledby="live-title">
-        <div className="block-head">
-          <h2 id="live-title" className="block-title">
-            <span className="block-num" style={tint(0)}>01</span> Live board
-          </h2>
-          <p className="block-meta">
-            <span className="dot dot-live" aria-hidden="true" /> GitHub synced <RelativeTime iso={live.fetchedAt} />
-          </p>
-        </div>
-
-        <div className="bento">
-          <article className="card card-wide tinted" style={tint(2)}>
-            <div className="card-kicker">github / contributions</div>
-            {live.contributions ? (
-              <>
-                <div className="card-row">
-                  <div>
-                    <div className="big-num">{fmt(live.contributions.total)}</div>
-                    <div className="card-label">contributions in the last year</div>
-                  </div>
-                  <div className="mini-stats">
-                    <div><b>{live.contributions.streak}</b> day streak</div>
-                    {live.contributions.best && (
-                      <div><b>{live.contributions.best.count}</b> best day</div>
-                    )}
-                  </div>
-                </div>
-                <Heatmap days={live.contributions.days} />
-              </>
-            ) : (
-              <p className="card-label">Contribution graph is taking a nap. <a href="https://github.com/maskjelly">See it on GitHub</a>.</p>
-            )}
-          </article>
-
-          <article className="card tinted" style={tint(0)}>
-            <div className="card-kicker">rushort / telemetry</div>
-            <RushortPulse />
-            <Link href="/telemetry" className="card-link">open dashboard →</Link>
-          </article>
-
-          <article className="card tinted" style={tint(1)}>
-            <div className="card-kicker">assam, india / IST</div>
-            <LocalClock />
-          </article>
-
-          <article className="card tinted" style={tint(3)}>
-            <div className="card-kicker">github / profile</div>
-            <dl className="trio">
-              {(
-                [
-                  ["stars", live.stars],
-                  ["repos", live.publicRepos],
-                  ["followers", live.followers],
-                ] as const
-              )
-                .filter(([, v]) => v != null)
-                .map(([k, v]) => (
-                  <div key={k}>
-                    <dt>{k}</dt>
-                    <dd>{fmt(v)}</dd>
-                  </div>
-                ))}
-            </dl>
-            <a href={`https://github.com/${GITHUB_USER}`} className="card-link" rel="noopener">@{GITHUB_USER} →</a>
-          </article>
-
-          <article className="card card-half tinted" style={tint(4)}>
-            <div className="card-kicker">contributing to / upstream</div>
-            <ul className="contrib-list">
-              {upstream.map((r) => (
-                <li key={r.repo}>
-                  <a href={r.href} rel="noopener">
-                    {r.name}
-                    <small>{r.at ? <RelativeTime iso={r.at} /> : r.note}</small>
-                  </a>
-                </li>
-              ))}
-            </ul>
-            <a
-              href="https://github.com/search?q=author%3Amaskjelly+is%3Apr+is%3Amerged+-user%3Amaskjelly&type=pullrequests"
-              className="card-link"
-              rel="noopener"
-            >
-              all {contributions.totalMerged} merged PRs →
-            </a>
-          </article>
-
-          <article className="card card-half tinted" style={tint(5)}>
-            <div className="card-kicker">languages / own repos</div>
-            {live.languages.length ? (
-              <>
-                <div className="lang-bar">
-                  {live.languages.map((l, i) => (
-                    <span key={l.name} style={{ flexGrow: l.count, background: color(i) }} title={`${l.name}: ${l.count}`} />
-                  ))}
-                </div>
-                <ul className="lang-list">
-                  {live.languages.map((l) => (
-                    <li key={l.name}>
-                      <span>{l.name}</span>
-                      <span>{Math.round((l.count / langTotal) * 100)}%</span>
-                    </li>
-                  ))}
-                </ul>
-              </>
-            ) : (
-              <>
-                <p className="big-num">Rust</p>
-                <p className="card-label">…mostly. Some TypeScript when nobody is looking.</p>
-              </>
-            )}
-          </article>
-
-          <article className="card card-half tinted" style={tint(1)}>
-            <div className="card-kicker">hot takes / served fresh</div>
-            <HotTakes takes={takes} />
-          </article>
-        </div>
+        <div className="stylobate" aria-hidden="true"><span /><span /><span /></div>
       </section>
 
-      <section className="block" aria-labelledby="receipts-title">
-        <div className="block-head">
-          <h2 id="receipts-title" className="block-title">
-            <span className="block-num" style={tint(1)}>02</span> Receipts
-          </h2>
-        </div>
-        <div className="receipts">
-          {stats.map((s, i) => (
-            <a key={s.label} href={s.href} rel="noopener" className="receipt tinted" style={tint(i)}>
-              <span className="receipt-value">{s.value}</span>
-              <span className="receipt-unit">{s.unit}</span>
-              <span className="receipt-label">{s.label}</span>
-            </a>
-          ))}
+      <section className="slab" aria-labelledby="live-title">
+        <div className="slab-inner">
+          <Head n={2} id="live-title" title="The living ledger">
+            <span className="dot dot-live" aria-hidden="true" /> GitHub synced <RelativeTime iso={live.fetchedAt} />
+          </Head>
+
+          <div className="ledger-top">
+            <div className="ledger-contrib">
+              <div className="label">Contributions, past year</div>
+              {live.contributions ? (
+                <>
+                  <div className="figure">{fmt(live.contributions.total)}</div>
+                  <dl className="pairs">
+                    <div><dt>Current streak</dt><dd>{live.contributions.streak} days</dd></div>
+                    {live.contributions.best && (
+                      <div><dt>Finest day</dt><dd>{live.contributions.best.count}</dd></div>
+                    )}
+                  </dl>
+                  <Heatmap days={live.contributions.days} />
+                </>
+              ) : (
+                <p className="note">The graph is resting. <a href="https://github.com/maskjelly">See it on GitHub</a>.</p>
+              )}
+            </div>
+            <div className="arch">
+              <div className="label">Assam, India · IST</div>
+              <LocalClock />
+            </div>
+          </div>
+
+          <div className="ledger-row">
+            <div className="cell">
+              <div className="label">rushort telemetry</div>
+              <RushortPulse />
+              <Link href="/telemetry" className="text-link">Open dashboard</Link>
+            </div>
+
+            <div className="cell">
+              <div className="label">GitHub</div>
+              <dl className="pairs pairs-col">
+                {(
+                  [
+                    ["Stars", live.stars],
+                    ["Repositories", live.publicRepos],
+                    ["Followers", live.followers],
+                  ] as const
+                )
+                  .filter(([, v]) => v != null)
+                  .map(([k, v]) => (
+                    <div key={k}>
+                      <dt>{k}</dt>
+                      <dd>{fmt(v)}</dd>
+                    </div>
+                  ))}
+              </dl>
+              <a href={`https://github.com/${GITHUB_USER}`} className="text-link" rel="noopener">@{GITHUB_USER}</a>
+            </div>
+
+            <div className="cell">
+              <div className="label">Contributing upstream</div>
+              <ul className="rows">
+                {upstream.map((r) => (
+                  <li key={r.repo}>
+                    <a href={r.href} rel="noopener">
+                      <span>{r.name}</span>
+                      <small>{r.at ? <RelativeTime iso={r.at} /> : r.note}</small>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="cell">
+              <div className="label">Languages</div>
+              {live.languages.length ? (
+                <>
+                  <div className="lang-bar">
+                    {live.languages.map((l, i) => (
+                      <span key={l.name} style={{ flexGrow: l.count, opacity: 1 - i * 0.15 }} title={`${l.name}: ${l.count}`} />
+                    ))}
+                  </div>
+                  <ul className="rows rows-plain">
+                    {live.languages.map((l) => (
+                      <li key={l.name}>
+                        <span>{l.name}</span>
+                        <small>{Math.round((l.count / langTotal) * 100)}%</small>
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              ) : (
+                <p className="note">Rust, mostly. TypeScript when required.</p>
+              )}
+            </div>
+          </div>
+
+          <HotTakes takes={takes} />
         </div>
       </section>
 
       <section className="block" id="projects" aria-labelledby="projects-title">
-        <div className="block-head">
-          <h2 id="projects-title" className="block-title">
-            <span className="block-num" style={tint(2)}>03</span> Things I build
-          </h2>
-        </div>
-        <ul className="projects">
+        <Head n={3} id="projects-title" title="Works" />
+        <ul className="works">
           {projectItems.map((p, i) => {
             const inner = (
               <>
-                <span className="project-top">
-                  <span className="project-idx">{String(i + 1).padStart(2, "0")}</span>
-                  <span className="project-arrow" aria-hidden="true">↗</span>
-                </span>
-                <span className="project-title">{p.title}</span>
-                <span className="project-desc">{p.description}</span>
+                <span className="work-num">{ROMAN[i]}</span>
+                <span className="work-title">{p.title}</span>
+                <span className="work-desc">{p.description}</span>
+                <span className="work-arrow" aria-hidden="true">→</span>
               </>
             )
             return (
-              <li key={p.title} style={tint(i)}>
+              <li key={p.title}>
                 {p.href?.startsWith("/") ? (
-                  <Link href={p.href} className="project">{inner}</Link>
+                  <Link href={p.href} className="work">{inner}</Link>
                 ) : (
-                  <a href={p.href} className="project" rel="noopener">{inner}</a>
+                  <a href={p.href} className="work" rel="noopener">{inner}</a>
                 )}
               </li>
             )
@@ -406,30 +312,25 @@ export default async function HomePage() {
 
       <div className="split">
         <section className="block" id="work" aria-labelledby="work-title">
-          <div className="block-head">
-            <h2 id="work-title" className="block-title">
-              <span className="block-num" style={tint(3)}>04</span> Work
-            </h2>
-          </div>
-          <ol className="timeline">
-            {workItems.map((w, i) => {
+          <Head n={4} id="work-title" title="Service" />
+          <ol className="tenure">
+            {workItems.map((w) => {
               const inner = (
                 <>
-                  <span className="tl-period">{w.period}</span>
-                  <span className="tl-title">
-                    {w.title} <span className="tl-role">/ {w.role}</span>
-                  </span>
-                  <span className="tl-desc">{w.description}</span>
+                  <span className="tenure-period">{w.period}</span>
+                  <span className="tenure-title">{w.title}</span>
+                  <span className="tenure-role">{w.role}</span>
+                  <span className="tenure-desc">{w.description}</span>
                 </>
               )
               return (
-                <li key={w.title} style={tint(i)}>
+                <li key={w.title}>
                   {w.href?.startsWith("/") ? (
-                    <Link href={w.href} className="tl-item">{inner}</Link>
+                    <Link href={w.href} className="tenure-item">{inner}</Link>
                   ) : w.href ? (
-                    <a href={w.href} className="tl-item" rel="noopener">{inner}</a>
+                    <a href={w.href} className="tenure-item" rel="noopener">{inner}</a>
                   ) : (
-                    <div className="tl-item">{inner}</div>
+                    <div className="tenure-item">{inner}</div>
                   )}
                 </li>
               )
@@ -438,18 +339,16 @@ export default async function HomePage() {
         </section>
 
         <section className="block" aria-labelledby="short-version">
-          <div className="block-head">
-            <h2 id="short-version" className="block-title">
-              <span className="block-num" style={tint(4)}>05</span> Lore
-            </h2>
-          </div>
-          <ul className="lore">
-            {profile.highlights.map((h, i) => (
-              <li key={h.title} style={tint(i + 1)}>
-                <span className="lore-title">
-                  {"url" in h && h.url ? <a href={h.url} rel="noopener">{h.title}</a> : h.title}
-                </span>
-                <span className="lore-desc">{h.detail}</span>
+          <Head n={5} id="short-version" title="Provenance" />
+          <ul className="tenure">
+            {profile.highlights.map((h) => (
+              <li key={h.title}>
+                <div className="tenure-item">
+                  <span className="tenure-title">
+                    {"url" in h && h.url ? <a href={h.url} rel="noopener">{h.title}</a> : h.title}
+                  </span>
+                  <span className="tenure-desc">{h.detail}</span>
+                </div>
               </li>
             ))}
           </ul>
@@ -457,24 +356,20 @@ export default async function HomePage() {
       </div>
 
       <section className="block" id="open-source" aria-labelledby="oss-title">
-        <div className="block-head">
-          <h2 id="oss-title" className="block-title">
-            <span className="block-num" style={tint(5)}>06</span> Open source
-          </h2>
-          <p className="block-meta">
-            {contributions.totalMerged} merged PRs · {contributions.repositoryCount} repos ·{" "}
-            <a href="https://github.com/search?q=author%3Amaskjelly+is%3Apr+is%3Amerged+-user%3Amaskjelly&type=pullrequests" rel="noopener">
-              see all
-            </a>
-          </p>
-        </div>
-        <ul className="chips">
-          {contributions.repositories.map((c, i) => (
+        <Head n={6} id="oss-title" title="Open source">
+          {contributions.totalMerged} merged pull requests across {contributions.repositoryCount} repositories ·{" "}
+          <a href="https://github.com/search?q=author%3Amaskjelly+is%3Apr+is%3Amerged+-user%3Amaskjelly&type=pullrequests" rel="noopener">
+            view all
+          </a>
+        </Head>
+        <ul className="patrons">
+          {contributions.repositories.map((c) => (
             <li key={c.repository}>
-              <a href={c.mergedUrl} className="chip" rel="noopener" style={tint(i)}>
-                <span className="chip-name">{c.displayName}</span>
-                <span className="chip-meta">
-                  {c.merged} merged{c.stars ? ` · ★ ${Intl.NumberFormat("en", { notation: "compact" }).format(c.stars)}` : ""}
+              <a href={c.mergedUrl} rel="noopener">
+                <span className="patron-name">{c.displayName}</span>
+                <span className="patron-detail">{c.detail}</span>
+                <span className="patron-meta">
+                  {c.merged} merged{c.stars ? ` · ${Intl.NumberFormat("en", { notation: "compact" }).format(c.stars)} stars` : ""}
                 </span>
               </a>
             </li>
@@ -483,22 +378,17 @@ export default async function HomePage() {
       </section>
 
       <section className="block" id="writing" aria-labelledby="writing-title">
-        <div className="block-head">
-          <h2 id="writing-title" className="block-title">
-            <span className="block-num" style={tint(6)}>07</span> Writing
-          </h2>
-          <p className="block-meta">
-            <Link href="/blog">all essays →</Link>
-          </p>
-        </div>
-        <ul className="essays">
+        <Head n={7} id="writing-title" title="Writings">
+          <Link href="/blog">All essays</Link>
+        </Head>
+        <ul className="works works-essays">
           {posts.map((p, i) => (
-            <li key={p.slug} style={tint(i)}>
-              <Link href={`/blog/${p.slug}`} className="essay">
-                <span className="essay-title">{p.title}</span>
-                <span className="essay-meta">
-                  {p.readingTime} · {p.date}
-                </span>
+            <li key={p.slug}>
+              <Link href={`/blog/${p.slug}`} className="work">
+                <span className="work-num">{ROMAN[i]}</span>
+                <span className="work-title">{p.title}</span>
+                <span className="work-desc">{p.readingTime} · {p.date}</span>
+                <span className="work-arrow" aria-hidden="true">→</span>
               </Link>
             </li>
           ))}
@@ -506,23 +396,17 @@ export default async function HomePage() {
       </section>
 
       <section className="outro" aria-labelledby="elsewhere">
-        <div>
-          <h2 id="elsewhere" className="outro-title">
-            Let’s build <em>something</em> weird &amp; fast.
-          </h2>
-          <a className="outro-mail" href={`mailto:${profile.email}`}>{profile.email} ↗</a>
-          <p className="outro-links">
-            <a href="https://github.com/maskjelly" rel="noopener">GitHub</a>
-            <a href="https://x.com/aaryantwt" rel="noopener">X</a>
-            <Link href="/uses">Uses</Link>
-            <a href="/Aaryan-Singh-Resume.pdf">PDF résumé</a>
-            <a href="/feed.xml">RSS</a>
-            <Link href="/xp">Secret XP desktop</Link>
-          </p>
-        </div>
-        <div className="outro-art">
-          <Smile text="say hi ✺ say hi ✺ say hi ✺ say hi ✺ " />
-        </div>
+        <span className="head-num" aria-hidden="true">VIII</span>
+        <h2 id="elsewhere" className="outro-title">Correspondence</h2>
+        <a className="outro-mail" href={`mailto:${profile.email}`}>{profile.email}</a>
+        <p className="outro-links">
+          <a href="https://github.com/maskjelly" rel="noopener">GitHub</a>
+          <a href="https://x.com/aaryantwt" rel="noopener">X</a>
+          <Link href="/uses">Uses</Link>
+          <a href="/Aaryan-Singh-Resume.pdf">Résumé, PDF</a>
+          <a href="/feed.xml">RSS</a>
+          <Link href="/xp">XP desktop</Link>
+        </p>
       </section>
     </div>
   )
