@@ -39,12 +39,13 @@ const stats = [
 
 const COLORS = ["--c1", "--c2", "--c3", "--c4", "--c5", "--c6"]
 const color = (i: number) => `var(${COLORS[i % COLORS.length]})`
+const tint = (i: number) => ({ ["--c" as string]: color(i) })
 
 const stickers = [
-  { label: "rust ♥", color: "--c1", x: 84, y: 40, r: -8 },
-  { label: "waterloo dropout", color: "--c2", x: 64, y: 52, r: 5 },
-  { label: "hacked rice.edu @ 17", color: "--c3", x: 76, y: 68, r: -4 },
-  { label: "assam → everywhere", color: "--c5", x: 60, y: 82, r: 7 },
+  { label: "rust ♥", color: "--c1", x: 79, y: 36, r: -8 },
+  { label: "waterloo dropout", color: "--c4", x: 58, y: 57, r: 5 },
+  { label: "hacked rice.edu @ 17", color: "--c3", x: 61, y: 72, r: -4 },
+  { label: "assam → everywhere", color: "--c6", x: 56, y: 86, r: 6 },
 ]
 
 const ticker = [
@@ -84,6 +85,30 @@ function Heatmap({ days }: { days: ContributionDay[] }) {
         ))}
       </div>
     </div>
+  )
+}
+
+function Smile({ text }: { text: string }) {
+  const id = `ring-${text.replace(/[^a-z]+/gi, "-")}`
+  return (
+    <svg className="smile" viewBox="0 0 160 160" aria-hidden="true">
+      <defs>
+        <path id={id} d="M80,80 m-64,0 a64,64 0 1,1 128,0 a64,64 0 1,1 -128,0" />
+      </defs>
+      <g className="smile-ring">
+        <text>
+          <textPath href={`#${id}`} textLength="400">{text}</textPath>
+        </text>
+      </g>
+      <g className="smile-face">
+        <circle cx="80" cy="80" r="46" fill="var(--c2)" stroke="currentColor" strokeWidth="3" />
+        <ellipse className="smile-eye" cx="65" cy="71" rx="5" ry="7.5" fill="currentColor" />
+        <ellipse className="smile-eye" cx="95" cy="71" rx="5" ry="7.5" fill="currentColor" />
+        <circle cx="57" cy="88" r="6" fill="var(--c6)" opacity="0.8" />
+        <circle cx="103" cy="88" r="6" fill="var(--c6)" opacity="0.8" />
+        <path d="M60 90 Q80 112 100 90" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
+      </g>
+    </svg>
   )
 }
 
@@ -161,22 +186,29 @@ export default async function HomePage() {
           <Mega text="Aaryan" />
           <span className="mega-accent">Singh.</span>
         </h1>
-        <p className="hero-sub">
-          Software engineer building <mark className="hl hl-1">agent memory</mark> and{" "}
-          <mark className="hl hl-2">runtimes</mark> in Rust. Founding engineer at{" "}
-          <a href="https://referrush.com" rel="noopener">ReferRush</a>, early at{" "}
-          <a href="https://extraordinary.com" rel="noopener">Extraordinary</a>, Waterloo dropout, based in Assam, India.
-        </p>
-        <p className="hero-sub hero-now">
-          Right now: <a href="https://instantkv.com" rel="noopener">instantKV</a> (memory for agents) and{" "}
-          <a href="https://github.com/maskjelly/morse" rel="noopener">Morse</a> (a runtime that survives disconnects).{" "}
-          <Link href="/now">More on now →</Link>
-        </p>
-        <div className="hero-cta">
-          <a className="btn btn-primary" href={`mailto:${profile.email}`}>Say hi ↗</a>
-          <a className="btn" href="https://github.com/maskjelly" rel="noopener">GitHub</a>
-          <a className="btn" href="https://x.com/aaryantwt" rel="noopener">X</a>
-          <Link className="btn" href="/resume">Résumé</Link>
+        <div className="hero-grid">
+          <div>
+            <p className="hero-sub">
+              Software engineer building <mark className="hl hl-1">agent memory</mark> and{" "}
+              <mark className="hl hl-2">runtimes</mark> in Rust. Founding engineer at{" "}
+              <a href="https://referrush.com" rel="noopener">ReferRush</a>, early at{" "}
+              <a href="https://extraordinary.com" rel="noopener">Extraordinary</a>, Waterloo dropout, based in Assam, India.
+            </p>
+            <p className="hero-sub hero-now">
+              Right now: <a href="https://instantkv.com" rel="noopener">instantKV</a> (memory for agents) and{" "}
+              <a href="https://github.com/maskjelly/morse" rel="noopener">Morse</a> (a runtime that survives disconnects).{" "}
+              <Link href="/now">More on now →</Link>
+            </p>
+            <div className="hero-cta">
+              <a className="btn btn-primary" href={`mailto:${profile.email}`}>Say hi ↗</a>
+              <a className="btn" href="https://github.com/maskjelly" rel="noopener">GitHub</a>
+              <a className="btn" href="https://x.com/aaryantwt" rel="noopener">X</a>
+              <Link className="btn" href="/resume">Résumé</Link>
+            </div>
+          </div>
+          <div className="hero-art">
+            <Smile text="ship happy things ✺ rust ✺ systems ✺ agents ✺ " />
+          </div>
         </div>
         <Stickers items={stickers} />
       </header>
@@ -194,7 +226,7 @@ export default async function HomePage() {
       <section className="block" aria-labelledby="live-title">
         <div className="block-head">
           <h2 id="live-title" className="block-title">
-            <span className="block-num">01</span> Live board
+            <span className="block-num" style={tint(0)}>01</span> Live board
           </h2>
           <p className="block-meta">
             <span className="dot dot-live" aria-hidden="true" /> GitHub synced <RelativeTime iso={live.fetchedAt} />
@@ -202,7 +234,7 @@ export default async function HomePage() {
         </div>
 
         <div className="bento">
-          <article className="card card-wide" style={{ background: color(2) }}>
+          <article className="card card-wide tinted" style={tint(2)}>
             <div className="card-kicker">github / contributions</div>
             {live.contributions ? (
               <>
@@ -225,18 +257,18 @@ export default async function HomePage() {
             )}
           </article>
 
-          <article className="card" style={{ background: color(0) }}>
+          <article className="card tinted" style={tint(0)}>
             <div className="card-kicker">rushort / telemetry</div>
             <RushortPulse />
             <Link href="/telemetry" className="card-link">open dashboard →</Link>
           </article>
 
-          <article className="card" style={{ background: color(1) }}>
+          <article className="card tinted" style={tint(1)}>
             <div className="card-kicker">assam, india / IST</div>
             <LocalClock />
           </article>
 
-          <article className="card" style={{ background: color(3) }}>
+          <article className="card tinted" style={tint(3)}>
             <div className="card-kicker">github / profile</div>
             <dl className="trio">
               {(
@@ -257,7 +289,7 @@ export default async function HomePage() {
             <a href={`https://github.com/${GITHUB_USER}`} className="card-link" rel="noopener">@{GITHUB_USER} →</a>
           </article>
 
-          <article className="card" style={{ background: color(4) }}>
+          <article className="card card-half tinted" style={tint(4)}>
             <div className="card-kicker">latest push</div>
             {live.latestPush ? (
               <>
@@ -274,7 +306,7 @@ export default async function HomePage() {
             )}
           </article>
 
-          <article className="card" style={{ background: color(5) }}>
+          <article className="card card-half tinted" style={tint(5)}>
             <div className="card-kicker">languages / own repos</div>
             {live.languages.length ? (
               <>
@@ -300,7 +332,7 @@ export default async function HomePage() {
             )}
           </article>
 
-          <article className="card card-wide" style={{ background: "var(--bg-elev)", color: "var(--fg)" }}>
+          <article className="card card-half tinted" style={tint(1)}>
             <div className="card-kicker">hot takes / served fresh</div>
             <HotTakes takes={takes} />
           </article>
@@ -310,12 +342,12 @@ export default async function HomePage() {
       <section className="block" aria-labelledby="receipts-title">
         <div className="block-head">
           <h2 id="receipts-title" className="block-title">
-            <span className="block-num">02</span> Receipts
+            <span className="block-num" style={tint(1)}>02</span> Receipts
           </h2>
         </div>
         <div className="receipts">
-          {stats.map((s) => (
-            <a key={s.label} href={s.href} rel="noopener" className="receipt">
+          {stats.map((s, i) => (
+            <a key={s.label} href={s.href} rel="noopener" className="receipt tinted" style={tint(i)}>
               <span className="receipt-value">{s.value}</span>
               <span className="receipt-unit">{s.unit}</span>
               <span className="receipt-label">{s.label}</span>
@@ -327,7 +359,7 @@ export default async function HomePage() {
       <section className="block" id="projects" aria-labelledby="projects-title">
         <div className="block-head">
           <h2 id="projects-title" className="block-title">
-            <span className="block-num">03</span> Things I build
+            <span className="block-num" style={tint(2)}>03</span> Things I build
           </h2>
         </div>
         <ul className="projects">
@@ -343,7 +375,7 @@ export default async function HomePage() {
               </>
             )
             return (
-              <li key={p.title} style={{ ["--hover" as string]: color(i) }}>
+              <li key={p.title} style={tint(i)}>
                 {p.href?.startsWith("/") ? (
                   <Link href={p.href} className="project">{inner}</Link>
                 ) : (
@@ -359,11 +391,11 @@ export default async function HomePage() {
         <section className="block" id="work" aria-labelledby="work-title">
           <div className="block-head">
             <h2 id="work-title" className="block-title">
-              <span className="block-num">04</span> Work
+              <span className="block-num" style={tint(3)}>04</span> Work
             </h2>
           </div>
           <ol className="timeline">
-            {workItems.map((w) => {
+            {workItems.map((w, i) => {
               const inner = (
                 <>
                   <span className="tl-period">{w.period}</span>
@@ -374,7 +406,7 @@ export default async function HomePage() {
                 </>
               )
               return (
-                <li key={w.title}>
+                <li key={w.title} style={tint(i)}>
                   {w.href?.startsWith("/") ? (
                     <Link href={w.href} className="tl-item">{inner}</Link>
                   ) : w.href ? (
@@ -391,12 +423,12 @@ export default async function HomePage() {
         <section className="block" aria-labelledby="short-version">
           <div className="block-head">
             <h2 id="short-version" className="block-title">
-              <span className="block-num">05</span> Lore
+              <span className="block-num" style={tint(4)}>05</span> Lore
             </h2>
           </div>
           <ul className="lore">
             {profile.highlights.map((h, i) => (
-              <li key={h.title} style={{ ["--mark" as string]: color(i + 1) }}>
+              <li key={h.title} style={tint(i + 1)}>
                 <span className="lore-title">
                   {"url" in h && h.url ? <a href={h.url} rel="noopener">{h.title}</a> : h.title}
                 </span>
@@ -410,7 +442,7 @@ export default async function HomePage() {
       <section className="block" id="open-source" aria-labelledby="oss-title">
         <div className="block-head">
           <h2 id="oss-title" className="block-title">
-            <span className="block-num">06</span> Open source
+            <span className="block-num" style={tint(5)}>06</span> Open source
           </h2>
           <p className="block-meta">
             {contributions.totalMerged} merged PRs · {contributions.repositoryCount} repos ·{" "}
@@ -422,7 +454,7 @@ export default async function HomePage() {
         <ul className="chips">
           {contributions.repositories.map((c, i) => (
             <li key={c.repository}>
-              <a href={c.mergedUrl} className="chip" rel="noopener" style={{ ["--hover" as string]: color(i) }}>
+              <a href={c.mergedUrl} className="chip" rel="noopener" style={tint(i)}>
                 <span className="chip-name">{c.displayName}</span>
                 <span className="chip-meta">
                   {c.merged} merged{c.stars ? ` · ★ ${Intl.NumberFormat("en", { notation: "compact" }).format(c.stars)}` : ""}
@@ -436,15 +468,15 @@ export default async function HomePage() {
       <section className="block" id="writing" aria-labelledby="writing-title">
         <div className="block-head">
           <h2 id="writing-title" className="block-title">
-            <span className="block-num">07</span> Writing
+            <span className="block-num" style={tint(6)}>07</span> Writing
           </h2>
           <p className="block-meta">
             <Link href="/blog">all essays →</Link>
           </p>
         </div>
         <ul className="essays">
-          {posts.map((p) => (
-            <li key={p.slug}>
+          {posts.map((p, i) => (
+            <li key={p.slug} style={tint(i)}>
               <Link href={`/blog/${p.slug}`} className="essay">
                 <span className="essay-title">{p.title}</span>
                 <span className="essay-meta">
@@ -457,18 +489,23 @@ export default async function HomePage() {
       </section>
 
       <section className="outro" aria-labelledby="elsewhere">
-        <h2 id="elsewhere" className="outro-title">
-          Let’s build <em>something</em> weird &amp; fast.
-        </h2>
-        <a className="outro-mail" href={`mailto:${profile.email}`}>{profile.email} ↗</a>
-        <p className="outro-links">
-          <a href="https://github.com/maskjelly" rel="noopener">GitHub</a>
-          <a href="https://x.com/aaryantwt" rel="noopener">X</a>
-          <Link href="/uses">Uses</Link>
-          <a href="/Aaryan-Singh-Resume.pdf">PDF résumé</a>
-          <a href="/feed.xml">RSS</a>
-          <Link href="/xp">Secret XP desktop</Link>
-        </p>
+        <div>
+          <h2 id="elsewhere" className="outro-title">
+            Let’s build <em>something</em> weird &amp; fast.
+          </h2>
+          <a className="outro-mail" href={`mailto:${profile.email}`}>{profile.email} ↗</a>
+          <p className="outro-links">
+            <a href="https://github.com/maskjelly" rel="noopener">GitHub</a>
+            <a href="https://x.com/aaryantwt" rel="noopener">X</a>
+            <Link href="/uses">Uses</Link>
+            <a href="/Aaryan-Singh-Resume.pdf">PDF résumé</a>
+            <a href="/feed.xml">RSS</a>
+            <Link href="/xp">Secret XP desktop</Link>
+          </p>
+        </div>
+        <div className="outro-art">
+          <Smile text="say hi ✺ say hi ✺ say hi ✺ say hi ✺ " />
+        </div>
       </section>
     </div>
   )

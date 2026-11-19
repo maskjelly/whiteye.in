@@ -68,7 +68,7 @@ function Icon({ name }: { name: "page" | "doc" | "bolt" | "link" | "search" }) {
 function getTheme(): "light" | "dark" {
   const attr = document.documentElement.getAttribute("data-theme")
   if (attr === "dark" || attr === "light") return attr
-  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
+  return "light"
 }
 
 function setTheme(theme: "light" | "dark") {

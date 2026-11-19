@@ -1,9 +1,9 @@
 import type { Metadata, Viewport } from "next"
-import { Instrument_Serif, JetBrains_Mono, Space_Grotesk } from "next/font/google"
+import { Bricolage_Grotesque, Instrument_Serif, JetBrains_Mono } from "next/font/google"
 import "./globals.css"
 import { Arrival } from "@/components/arrival"
 
-const grotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-grotesk", display: "swap" })
+const bricolage = Bricolage_Grotesque({ subsets: ["latin"], variable: "--font-bricolage", display: "swap" })
 const instrument = Instrument_Serif({ subsets: ["latin"], weight: "400", style: "italic", variable: "--font-instrument", display: "swap" })
 const jetbrains = JetBrains_Mono({ subsets: ["latin"], variable: "--font-jetbrains", display: "swap" })
 
@@ -66,11 +66,8 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  colorScheme: "light dark",
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f6f1e7" },
-    { media: "(prefers-color-scheme: dark)", color: "#131211" },
-  ],
+  colorScheme: "light",
+  themeColor: "#fffaf1",
 }
 
 // Applies the stored theme and colour palette before first paint so there is no flash.
@@ -83,7 +80,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${grotesk.variable} ${instrument.variable} ${jetbrains.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${bricolage.variable} ${instrument.variable} ${jetbrains.variable}`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         <link rel="alternate" type="application/rss+xml" title="Aaryan Singh · Writing" href="/feed.xml" />

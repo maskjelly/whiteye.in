@@ -140,7 +140,26 @@ export function RushortPulse() {
 }
 
 export function PaletteShuffle() {
-  function shuffle() {
+  function burst(el: HTMLElement) {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return
+    const r = el.getBoundingClientRect()
+    for (let i = 0; i < 26; i++) {
+      const c = document.createElement("span")
+      const angle = Math.random() * Math.PI * 2
+      const dist = 60 + Math.random() * 110
+      c.className = "confetti"
+      c.style.left = `${r.left + r.width / 2}px`
+      c.style.top = `${r.top + r.height / 2}px`
+      c.style.background = `var(--c${(i % 6) + 1})`
+      c.style.setProperty("--dx", `${Math.cos(angle) * dist}px`)
+      c.style.setProperty("--dy", `${Math.sin(angle) * dist - 40}px`)
+      c.style.setProperty("--rot", `${Math.random() * 720 - 360}deg`)
+      document.body.appendChild(c)
+      setTimeout(() => c.remove(), 950)
+    }
+  }
+  function shuffle(e: React.MouseEvent<HTMLButtonElement>) {
+    burst(e.currentTarget)
     const root = document.documentElement
     const next = (Number(root.dataset.palette ?? 0) + 1) % PALETTES
     root.dataset.palette = String(next)
