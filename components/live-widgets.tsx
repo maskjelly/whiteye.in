@@ -137,17 +137,3 @@ export function RushortPulse() {
     </div>
   )
 }
-
-export function HotTakes({ takes }: { takes: string[] }) {
-  const [i, setI] = useState(0)
-  return (
-    <figure className="maxim">
-      <blockquote className="maxim-text" key={i}>
-        {takes[i]}
-      </blockquote>
-      <button type="button" className="text-link" onClick={() => setI((v) => (v + 1) % takes.length)}>
-        Another maxim
-      </button>
-    </figure>
-  )
-}

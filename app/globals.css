@@ -2238,33 +2238,6 @@ video {
     font-style: italic;
   }
 
-  .maxim {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin: clamp(3.5rem, 7vw, 6rem) 0 0;
-    text-align: center;
-  }
-
-  .maxim::before {
-    content: "“";
-    height: 0.5em;
-    color: var(--gold);
-    font-size: 5rem;
-    line-height: 1;
-  }
-
-  .maxim-text {
-    max-width: 24ch;
-    min-height: 2.3em;
-    margin: 0 0 2.25rem;
-    font-size: clamp(1.9rem, 4.4vw, 3.5rem);
-    font-style: italic;
-    line-height: 1.15;
-    text-wrap: balance;
-    animation: rise 700ms var(--ease) both;
-  }
-
   /* Works and writings: a catalogue */
   .works {
     border-top: 1px solid var(--ink);
@@ -2349,118 +2322,157 @@ video {
     text-transform: uppercase;
   }
 
-  /* Service and provenance */
-  .split {
+  /* The gallery: arched niches */
+  .gallery {
     display: grid;
-    gap: 0 clamp(3rem, 7vw, 7rem);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2.5rem 1.25rem;
   }
 
-  @media (min-width: 960px) {
-    .split {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+  @media (min-width: 900px) {
+    .gallery {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: clamp(3rem, 5vw, 4.5rem) clamp(1.5rem, 3vw, 3rem);
     }
   }
 
-  .tenure {
-    border-top: 1px solid var(--ink);
+  .niche {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    min-height: clamp(17rem, 30vw, 25rem);
+    padding: clamp(3rem, 6vw, 5rem) 1rem 2rem;
+    border: 1px solid var(--ink);
+    border-radius: 999px 999px 0 0;
+    outline: 1px solid var(--line-strong);
+    outline-offset: 6px;
+    text-align: center;
+    transition: background-color 500ms var(--ease), color 500ms var(--ease);
   }
 
-  .tenure-item {
-    display: grid;
-    gap: 0.2rem;
-    padding: 1.5rem 0;
-    border-bottom: 1px solid var(--line-strong);
-  }
-
-  .tenure-period,
-  .tenure-role {
-    color: var(--fg-3);
+  .niche-num {
+    color: var(--gold);
     font-family: var(--font-caps);
-    font-size: 0.6rem;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.24em;
   }
 
-  .tenure-role {
+  .niche-num::after {
+    content: "";
+    display: block;
+    width: 1px;
+    height: 1.75rem;
+    margin: 0.8rem auto 1rem;
+    background: var(--gold);
+  }
+
+  .niche-title {
+    font-size: clamp(1.6rem, 3vw, 2.4rem);
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+  }
+
+  .niche-desc {
+    max-width: 22ch;
+    margin-top: auto;
+    padding-top: 1.5rem;
+    color: var(--fg-2);
+    font-size: 1.02rem;
+    font-style: italic;
+    line-height: 1.35;
+    transition: color 500ms var(--ease);
+  }
+
+  .niche:hover {
+    background: var(--ink);
+    color: var(--bg) !important;
+  }
+
+  .niche:hover .niche-desc {
+    color: var(--line-strong);
+  }
+
+  /* The creed: an inscribed tablet */
+  .creed {
+    display: grid;
+    border-top: 1px solid var(--ink);
+    counter-reset: none;
+  }
+
+  @media (min-width: 860px) {
+    .creed {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: clamp(3rem, 7vw, 7rem);
+    }
+  }
+
+  .creed li {
+    display: grid;
+    grid-template-columns: 3rem minmax(0, 1fr);
+    align-items: baseline;
+    padding: 1.75rem 0;
+    border-bottom: 1px solid var(--line-strong);
+    font-size: clamp(1.45rem, 2.4vw, 2rem);
+    font-style: italic;
+    line-height: 1.2;
+    text-wrap: balance;
+  }
+
+  .creed-num {
     color: var(--accent);
+    font-family: var(--font-caps);
+    font-size: 0.7rem;
+    font-style: normal;
+    letter-spacing: 0.18em;
   }
 
-  .tenure-title {
-    margin-top: 0.25rem;
-    font-size: 1.8rem;
-    line-height: 1.15;
+  /* Folklore */
+  .folklore {
+    display: grid;
+    gap: 3rem;
   }
 
-  .tenure-title a {
+  @media (min-width: 860px) {
+    .folklore {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0;
+    }
+
+    .folklore li {
+      padding: 0.5rem clamp(1.5rem, 3vw, 3rem);
+      border-left: 1px solid var(--line-strong);
+    }
+
+    .folklore li:first-child {
+      border-left: 0;
+    }
+  }
+
+  .folklore li {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .folk-title {
+    font-size: clamp(1.7rem, 2.8vw, 2.4rem);
+    line-height: 1.12;
+    text-wrap: balance;
+  }
+
+  .folk-title a {
     border-bottom: 1px solid var(--gold);
   }
 
-  .tenure-desc {
-    margin-top: 0.4rem;
-    color: var(--fg-2);
-    font-size: 1.1rem;
-    line-height: 1.4;
-  }
-
-  a.tenure-item:hover .tenure-title {
-    color: var(--accent);
-  }
-
-  /* Open source */
-  .patrons {
-    display: grid;
-    border-top: 1px solid var(--ink);
-  }
-
-  @media (min-width: 700px) {
-    .patrons {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-  }
-
-  @media (min-width: 1000px) {
-    .patrons {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-  }
-
-  .patrons li {
-    border-bottom: 1px solid var(--line-strong);
-  }
-
-  .patrons a {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    padding: 2rem 1.5rem 2rem 0;
-    transition: padding 400ms var(--ease), background-color 400ms var(--ease);
-  }
-
-  .patrons a:hover {
-    padding-inline: 1rem 0.5rem;
-    background: var(--bg-elev);
-  }
-
-  .patron-name {
-    font-size: 1.9rem;
-    line-height: 1.1;
-  }
-
-  .patron-detail {
-    margin: 0.5rem 0 1.5rem;
+  .folk-desc {
+    max-width: 30ch;
+    margin-top: 1.25rem;
     color: var(--fg-2);
     font-size: 1.1rem;
     font-style: italic;
-    line-height: 1.35;
-  }
-
-  .patron-meta {
-    margin-top: auto;
-    color: var(--accent);
-    font-family: var(--font-caps);
-    font-size: 0.6rem;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
+    line-height: 1.4;
   }
 
   /* Correspondence */

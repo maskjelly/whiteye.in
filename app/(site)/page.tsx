@@ -3,11 +3,10 @@ import type { Metadata } from "next"
 import profile from "@/lib/resume-data.json"
 import contributions from "@/lib/contributions.json"
 import { projectItems } from "@/lib/project-items"
-import { workItems } from "@/lib/work-items"
 import { posts } from "@/lib/posts"
 import { JsonLd, person, PERSON_ID, SITE } from "@/lib/structured-data"
 import { getLiveStats, GITHUB_USER, type ContributionDay } from "@/lib/live"
-import { HotTakes, LocalClock, RelativeTime, RushortPulse } from "@/components/live-widgets"
+import { LocalClock, RelativeTime, RushortPulse } from "@/components/live-widgets"
 
 export const revalidate = 1800
 
@@ -34,7 +33,7 @@ const stats = [
   { value: "1.34M", unit: "redirects/s", label: "rushort on a 4-vCPU VPS, loopback", href: "https://github.com/maskjelly/rushort/blob/main/docs/performance-2026-09-30.md" },
   { value: "95.13%", unit: "Recall@10", label: "instantKV on LongMemEval-S", href: "https://instantkv.com/benchmarks/" },
   { value: String(contributions.totalMerged), unit: "merged PRs", label: `across ${contributions.repositoryCount} external open-source repositories`, href: "https://github.com/search?q=author%3Amaskjelly+is%3Apr+is%3Amerged+-user%3Amaskjelly&type=pullrequests" },
-  { value: "$1M+", unit: "processed", label: "ReferRush, 2,300 merchants", href: "https://referrush.com" },
+  { value: String(posts.length), unit: "essays", label: "on storage, consensus and things that lie", href: "/blog" },
 ]
 
 const takes = [
@@ -148,8 +147,7 @@ export default async function HomePage() {
           <span>Aaryan</span> <span>Singh</span>
         </h1>
         <p className="hero-lede">
-          Founding engineer at <a href="https://referrush.com" rel="noopener">ReferRush</a>, early at{" "}
-          <a href="https://extraordinary.com" rel="noopener">Extraordinary</a>, Waterloo dropout. Building in Assam, India.
+          I build memory and runtimes for machines, in Rust, from a quiet corner of Assam.
         </p>
         <p className="hero-now">
           Presently: <a href="https://instantkv.com" rel="noopener">instantKV</a>, memory for agents, and{" "}
@@ -160,11 +158,8 @@ export default async function HomePage() {
           <a className="btn btn-primary" href={`mailto:${profile.email}`}>Correspond</a>
           <a className="btn" href="https://github.com/maskjelly" rel="noopener">GitHub</a>
           <a className="btn" href="https://x.com/aaryantwt" rel="noopener">X</a>
-          <Link className="btn" href="/resume">Résumé</Link>
+          <Link className="btn" href="/blog">Writings</Link>
         </div>
-        <p className="hero-status">
-          <span className="dot dot-live" aria-hidden="true" /> Open to founding-engineer &amp; systems roles
-        </p>
       </header>
 
       <section className="colonnade-wrap" aria-labelledby="pillars-title">
@@ -255,6 +250,13 @@ export default async function HomePage() {
                   </li>
                 ))}
               </ul>
+              <a
+                href="https://github.com/search?q=author%3Amaskjelly+is%3Apr+is%3Amerged+-user%3Amaskjelly&type=pullrequests"
+                className="text-link"
+                rel="noopener"
+              >
+                All {contributions.totalMerged} merged
+              </a>
             </div>
 
             <div className="cell">
@@ -280,29 +282,26 @@ export default async function HomePage() {
               )}
             </div>
           </div>
-
-          <HotTakes takes={takes} />
         </div>
       </section>
 
       <section className="block" id="projects" aria-labelledby="projects-title">
-        <Head n={3} id="projects-title" title="Works" />
-        <ul className="works">
+        <Head n={3} id="projects-title" title="The gallery" />
+        <ul className="gallery">
           {projectItems.map((p, i) => {
             const inner = (
               <>
-                <span className="work-num">{ROMAN[i]}</span>
-                <span className="work-title">{p.title}</span>
-                <span className="work-desc">{p.description}</span>
-                <span className="work-arrow" aria-hidden="true">→</span>
+                <span className="niche-num">{ROMAN[i]}</span>
+                <span className="niche-title">{p.title}</span>
+                <span className="niche-desc">{p.description}</span>
               </>
             )
             return (
               <li key={p.title}>
                 {p.href?.startsWith("/") ? (
-                  <Link href={p.href} className="work">{inner}</Link>
+                  <Link href={p.href} className="niche">{inner}</Link>
                 ) : (
-                  <a href={p.href} className="work" rel="noopener">{inner}</a>
+                  <a href={p.href} className="niche" rel="noopener">{inner}</a>
                 )}
               </li>
             )
@@ -310,75 +309,34 @@ export default async function HomePage() {
         </ul>
       </section>
 
-      <div className="split">
-        <section className="block" id="work" aria-labelledby="work-title">
-          <Head n={4} id="work-title" title="Service" />
-          <ol className="tenure">
-            {workItems.map((w) => {
-              const inner = (
-                <>
-                  <span className="tenure-period">{w.period}</span>
-                  <span className="tenure-title">{w.title}</span>
-                  <span className="tenure-role">{w.role}</span>
-                  <span className="tenure-desc">{w.description}</span>
-                </>
-              )
-              return (
-                <li key={w.title}>
-                  {w.href?.startsWith("/") ? (
-                    <Link href={w.href} className="tenure-item">{inner}</Link>
-                  ) : w.href ? (
-                    <a href={w.href} className="tenure-item" rel="noopener">{inner}</a>
-                  ) : (
-                    <div className="tenure-item">{inner}</div>
-                  )}
-                </li>
-              )
-            })}
-          </ol>
-        </section>
+      <section className="block" aria-labelledby="creed-title">
+        <Head n={4} id="creed-title" title="The creed" />
+        <ol className="creed">
+          {takes.map((t, i) => (
+            <li key={t}>
+              <span className="creed-num">{ROMAN[i]}</span>
+              <span>{t}</span>
+            </li>
+          ))}
+        </ol>
+      </section>
 
-        <section className="block" aria-labelledby="short-version">
-          <Head n={5} id="short-version" title="Provenance" />
-          <ul className="tenure">
-            {profile.highlights.map((h) => (
-              <li key={h.title}>
-                <div className="tenure-item">
-                  <span className="tenure-title">
-                    {"url" in h && h.url ? <a href={h.url} rel="noopener">{h.title}</a> : h.title}
-                  </span>
-                  <span className="tenure-desc">{h.detail}</span>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </section>
-      </div>
-
-      <section className="block" id="open-source" aria-labelledby="oss-title">
-        <Head n={6} id="oss-title" title="Open source">
-          {contributions.totalMerged} merged pull requests across {contributions.repositoryCount} repositories ·{" "}
-          <a href="https://github.com/search?q=author%3Amaskjelly+is%3Apr+is%3Amerged+-user%3Amaskjelly&type=pullrequests" rel="noopener">
-            view all
-          </a>
-        </Head>
-        <ul className="patrons">
-          {contributions.repositories.map((c) => (
-            <li key={c.repository}>
-              <a href={c.mergedUrl} rel="noopener">
-                <span className="patron-name">{c.displayName}</span>
-                <span className="patron-detail">{c.detail}</span>
-                <span className="patron-meta">
-                  {c.merged} merged{c.stars ? ` · ${Intl.NumberFormat("en", { notation: "compact" }).format(c.stars)} stars` : ""}
-                </span>
-              </a>
+      <section className="block" aria-labelledby="folklore-title">
+        <Head n={5} id="folklore-title" title="Folklore" />
+        <ul className="folklore">
+          {profile.highlights.slice(0, 3).map((h) => (
+            <li key={h.title}>
+              <span className="folk-title">
+                {"url" in h && h.url ? <a href={h.url} rel="noopener">{h.title.trim()}</a> : h.title.trim()}
+              </span>
+              <span className="folk-desc">{h.detail}</span>
             </li>
           ))}
         </ul>
       </section>
 
       <section className="block" id="writing" aria-labelledby="writing-title">
-        <Head n={7} id="writing-title" title="Writings">
+        <Head n={6} id="writing-title" title="Writings">
           <Link href="/blog">All essays</Link>
         </Head>
         <ul className="works works-essays">
@@ -396,14 +354,14 @@ export default async function HomePage() {
       </section>
 
       <section className="outro" aria-labelledby="elsewhere">
-        <span className="head-num" aria-hidden="true">VIII</span>
+        <span className="head-num" aria-hidden="true">VII</span>
         <h2 id="elsewhere" className="outro-title">Correspondence</h2>
         <a className="outro-mail" href={`mailto:${profile.email}`}>{profile.email}</a>
         <p className="outro-links">
           <a href="https://github.com/maskjelly" rel="noopener">GitHub</a>
           <a href="https://x.com/aaryantwt" rel="noopener">X</a>
           <Link href="/uses">Uses</Link>
-          <a href="/Aaryan-Singh-Resume.pdf">Résumé, PDF</a>
+          <Link href="/resume">Résumé</Link>
           <a href="/feed.xml">RSS</a>
           <Link href="/xp">XP desktop</Link>
         </p>

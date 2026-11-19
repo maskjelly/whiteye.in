@@ -21,7 +21,7 @@ Aaryan's personal website: a classical, monumental profile (marble, inscription 
 
 | Route | What |
 | --- | --- |
-| `/` | Home: inscription hero, four pillars (measured results), the living ledger (GitHub contributions, profile, upstream repositories, languages, rushort pulse, IST clock, maxims), works, service, provenance, open source, writings |
+| `/` | Home: inscription hero, four pillars (measured results), the living ledger (GitHub contributions, profile, upstream repositories, languages, rushort pulse, IST clock), the gallery (projects), the creed, folklore, writings |
 | `/blog`, `/blog/[slug]` | Essays, with reading progress, table of contents and prev/next |
 | `/now`, `/uses` | Current work; hardware and stack |
 | `/resume` | Full profile with benchmarks, contributions and a downloadable PDF |
