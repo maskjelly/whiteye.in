@@ -6,7 +6,8 @@ import { projectItems } from "@/lib/project-items"
 import { posts } from "@/lib/posts"
 import { JsonLd, person, PERSON_ID, SITE } from "@/lib/structured-data"
 import { getLiveStats, GITHUB_USER, type ContributionDay } from "@/lib/live"
-import { LocalClock, RelativeTime, RushortPulse } from "@/components/live-widgets"
+import { getUsage, compact } from "@/lib/usage"
+import { LocalClock, RelativeTime } from "@/components/live-widgets"
 import "./home.css"
 
 export const revalidate = 1800
@@ -81,7 +82,12 @@ function Section({ n, id, title, wide, children }: { n: number; id?: string; tit
 }
 
 export default async function HomePage() {
-  const live = await getLiveStats()
+  const [live, usage] = await Promise.all([getLiveStats(), getUsage()])
+  const usagePeak = usage ? Math.max(1, ...usage.days.map((d) => d.tokens)) : 1
+
+  const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((name) => ({ name, count: 0 }))
+  for (const d of live.contributions?.days ?? []) weekdays[new Date(`${d.date}T00:00:00Z`).getUTCDay()].count += d.count
+  const weekdayPeak = Math.max(1, ...weekdays.map((w) => w.count))
   const langTotal = live.languages.reduce((s, l) => s + l.count, 0)
 
   // Recent upstream activity first, then the merged-PR credits, without duplicates.
@@ -260,13 +266,45 @@ export default async function HomePage() {
         </div>
 
         <div className="cg-pair">
-          <div className="cg-card">
-            <div className="cg-card-head">
-              <span>rushort telemetry</span>
-              <Link href="/telemetry">Open dashboard</Link>
+          {usage ? (
+            <div className="cg-card">
+              <div className="cg-card-head">
+                <span>Token spend</span>
+                <span>updated <RelativeTime iso={usage.updatedAt} /></span>
+              </div>
+              <dl className="cg-figures cg-figures-3">
+                <div><dt>Today</dt><dd>{compact(usage.today.tokens)}</dd></div>
+                <div><dt>Last 30 days</dt><dd>{compact(usage.last30.tokens)}</dd></div>
+                <div><dt>API price, 30 days</dt><dd>${fmt(Math.round(usage.last30.cost))}</dd></div>
+              </dl>
+              <div className="cg-cols" role="img" aria-label="Tokens per day over the last 30 days">
+                {usage.days.map((d) => (
+                  <i key={d.date} style={{ height: `${Math.max(2, (d.tokens / usagePeak) * 100)}%` }} title={`${compact(d.tokens)} tokens on ${d.date}`} />
+                ))}
+              </div>
+              <p className="cg-foot">
+                {usage.agents.length
+                  ? usage.agents.map((a) => `${a.name} ${Math.round((a.tokens / Math.max(1, usage.last30.tokens)) * 100)}%`).join(" · ")
+                  : "Claude Code and Codex"}
+                {usage.topModel ? ` · mostly ${usage.topModel}` : ""}
+              </p>
             </div>
-            <RushortPulse />
-          </div>
+          ) : (
+            <div className="cg-card">
+              <div className="cg-card-head">
+                <span>When I ship</span>
+                <span>contributions by weekday</span>
+              </div>
+              <div className="cg-cols cg-cols-week" role="img" aria-label="Contributions by day of the week over the last year">
+                {weekdays.map((w) => (
+                  <span key={w.name}>
+                    <i style={{ height: `${Math.max(2, (w.count / weekdayPeak) * 100)}%` }} title={`${fmt(w.count)} on ${w.name}`} />
+                    <small>{w.name}</small>
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
           <div className="cg-card">
             <div className="cg-card-head">
               <span>Local time</span>

@@ -21,7 +21,7 @@ Aaryan's personal website: a quiet, numbered-section profile (left navigation ra
 
 | Route | What |
 | --- | --- |
-| `/` | Home: numbered sections: intro, measured results, live GitHub (contributions, profile figures, upstream repositories, languages, rushort pulse, IST clock), projects, beliefs, stories, writing, contact |
+| `/` | Home: numbered sections: intro, measured results, live GitHub (contributions, profile figures, upstream repositories, languages, token spend, IST clock), projects, beliefs, stories, writing, contact |
 | `/blog`, `/blog/[slug]` | Essays, with reading progress, table of contents and prev/next |
 | `/now`, `/uses` | Current work; hardware and stack |
 | `/resume` | Full profile with benchmarks, contributions and a downloadable PDF |
@@ -71,6 +71,7 @@ Configuration:
 | `RUSHORT_BASE` | Server-side backend base for shortening and resolving links. |
 | `RUSHORT_API_KEY` | Server-only write credential; never use a `NEXT_PUBLIC_` prefix. |
 | `GITHUB_TOKEN` | Optional, server-only. Raises the GitHub API limit for the home page's live stats (`lib/live.ts`, revalidated every 30 minutes). |
+| `USAGE_URL` | Optional, server-only. Raw URL of the gist written by `scripts/publish-usage.mjs`. When set, the home page shows live token spend across Claude Code and Codex (revalidated every 5 minutes); otherwise it shows contributions by weekday. |
 
 The default backend base is `https://45.196.196.251/rushort`. The playground returns an explicit unavailable response when its server-side key is missing.
 
