@@ -1,11 +1,11 @@
 import type { Metadata, Viewport } from "next"
-import { Cinzel, Cormorant_Garamond, JetBrains_Mono } from "next/font/google"
+import { Geist, Geist_Mono, Source_Serif_4 } from "next/font/google"
 import "./globals.css"
 import { Arrival } from "@/components/arrival"
 
-const cinzel = Cinzel({ subsets: ["latin"], variable: "--font-cinzel", display: "swap" })
-const cormorant = Cormorant_Garamond({ subsets: ["latin"], weight: ["400", "500", "600", "700"], style: ["normal", "italic"], variable: "--font-cormorant", display: "swap" })
-const jetbrains = JetBrains_Mono({ subsets: ["latin"], variable: "--font-jetbrains", display: "swap" })
+const sans = Geist({ subsets: ["latin"], variable: "--font-geist", display: "swap" })
+const serif = Source_Serif_4({ subsets: ["latin"], style: ["normal", "italic"], variable: "--font-source-serif", display: "swap" })
+const mono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono", display: "swap" })
 
 const description =
   "Aaryan Singh is a software engineer: founding engineer at ReferRush, early engineer at Extraordinary, now building Rust agent memory and runtimes. Projects, measured results, open-source contributions and essays on systems."
@@ -67,7 +67,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   viewportFit: "cover",
   colorScheme: "light",
-  themeColor: "#f3f3f0",
+  themeColor: "#f7f6f5",
 }
 
 // Applies the stored theme and colour palette before first paint so there is no flash.
@@ -80,7 +80,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${cinzel.variable} ${cormorant.variable} ${jetbrains.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${sans.variable} ${serif.variable} ${mono.variable}`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         <link rel="alternate" type="application/rss+xml" title="Aaryan Singh · Writing" href="/feed.xml" />

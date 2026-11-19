@@ -1,6 +1,6 @@
 # whiteye.in
 
-Aaryan's personal website: a classical, monumental profile (marble, inscription capitals, one obsidian slab) with live GitHub stats, measured results, projects, work history, open-source credits and engineering essays. Built with Next.js, React and TypeScript, deployed on Vercel.
+Aaryan's personal website: a quiet, numbered-section profile (left navigation rail, hairline grid, grotesque headings, serif body) with live GitHub stats, measured results, projects, work history, open-source credits and engineering essays. Built with Next.js, React and TypeScript, deployed on Vercel.
 
 ## Design goals
 
@@ -21,7 +21,7 @@ Aaryan's personal website: a classical, monumental profile (marble, inscription 
 
 | Route | What |
 | --- | --- |
-| `/` | Home: inscription hero, four pillars (measured results), the living ledger (GitHub contributions, profile, upstream repositories, languages, rushort pulse, IST clock), the gallery (projects), the creed, folklore, writings |
+| `/` | Home: numbered sections: intro, measured results, live GitHub (contributions, profile figures, upstream repositories, languages, rushort pulse, IST clock), projects, beliefs, stories, writing, contact |
 | `/blog`, `/blog/[slug]` | Essays, with reading progress, table of contents and prev/next |
 | `/now`, `/uses` | Current work; hardware and stack |
 | `/resume` | Full profile with benchmarks, contributions and a downloadable PDF |

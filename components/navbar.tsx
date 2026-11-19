@@ -4,15 +4,19 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 
 const links = [
+  { href: "/", label: "Home" },
   { href: "/blog", label: "Writing" },
   { href: "/now", label: "Now" },
   { href: "/resume", label: "Résumé" },
 ]
 
-function SunMoon() {
+function Glyph() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M12 3a9 9 0 1 0 9 9c0-.5 0-1-.1-1.4A5.5 5.5 0 0 1 13.4 3.1C13 3 12.5 3 12 3z" />
+    <svg className="wordmark-glyph" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+      <rect x="1" y="1" width="8" height="8" />
+      <rect x="11" y="11" width="8" height="8" />
+      <rect x="11" y="1" width="8" height="8" opacity="0.28" />
+      <rect x="1" y="11" width="8" height="8" opacity="0.28" />
     </svg>
   )
 }
@@ -21,12 +25,13 @@ export function Navbar() {
   const pathname = usePathname()
 
   function isCurrent(href: string) {
-    return pathname === href || pathname.startsWith(`${href}/`)
+    return href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`)
   }
 
   return (
     <nav className="site-nav" aria-label="Main">
       <Link href="/" className="site-wordmark" aria-label="Aaryan Singh, home">
+        <Glyph />
         <span className="wordmark-text">Aaryan Singh</span>
       </Link>
       <div className="site-nav-links">
@@ -40,14 +45,15 @@ export function Navbar() {
             {l.label}
           </Link>
         ))}
+        <a className="nav-button" href="https://github.com/maskjelly" rel="noopener">GitHub</a>
         <button
           type="button"
-          className="icon-button"
+          className="nav-theme"
           onClick={() => window.dispatchEvent(new CustomEvent("theme:toggle"))}
           aria-label="Toggle dark mode"
           title="Toggle theme (t)"
         >
-          <SunMoon />
+          Theme
         </button>
       </div>
     </nav>
