@@ -71,7 +71,7 @@ Configuration:
 | `RUSHORT_BASE` | Server-side backend base for shortening and resolving links. |
 | `RUSHORT_API_KEY` | Server-only write credential; never use a `NEXT_PUBLIC_` prefix. |
 | `GITHUB_TOKEN` | Optional, server-only. Raises the GitHub API limit for the home page's live stats (`lib/live.ts`, revalidated every 30 minutes). |
-| `USAGE_URL` | Optional, server-only. Raw URL of the gist written by `scripts/publish-usage.mjs`. When set, the home page shows live token spend across Claude Code and Codex (revalidated every 5 minutes); otherwise it shows contributions by weekday. |
+| `USAGE_URL` | Optional, server-only. Raw URL of the gist written by `scripts/publish-usage.mjs`. When set, the home page shows live token spend across Claude Code and Codex (revalidated every 5 minutes); otherwise it shows a live estimate modelled on the baseline in `lib/token-estimate.ts`. |
 
 The default backend base is `https://45.196.196.251/rushort`. The playground returns an explicit unavailable response when its server-side key is missing.
 

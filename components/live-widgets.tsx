@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
+import { estimate } from "@/lib/token-estimate"
 
 const RUSHORT = process.env.NEXT_PUBLIC_RUSHORT_BASE ?? "https://45.196.196.251/rushort"
 
@@ -134,6 +135,36 @@ export function RushortPulse() {
         {series.length > 1 && <polyline points={pts} fill="none" stroke="currentColor" strokeWidth="2" vectorEffect="non-scaling-stroke" />}
       </svg>
       {total !== null && <div className="card-foot">{fmt(total)} requests served since boot</div>}
+    </div>
+  )
+}
+
+const short = (n: number) => (n >= 1e9 ? `${(n / 1e9).toFixed(2)}B` : `${Math.round(n / 1e6)}M`)
+
+export function TokenEstimate() {
+  const [now, setNow] = useState<number | null>(null)
+  useEffect(() => {
+    setNow(Date.now())
+    const id = setInterval(() => setNow(Date.now()), 120)
+    return () => clearInterval(id)
+  }, [])
+  const e = now === null ? null : estimate(now)
+  const peak = e ? Math.max(...e.week) : 1
+  return (
+    <div className="tokens">
+      <div className="card-label">Tokens today, so far</div>
+      <div className="big-num" suppressHydrationWarning>{e ? Math.floor(e.today).toLocaleString("en-US") : "…"}</div>
+      <div className="card-label" suppressHydrationWarning>
+        {e ? `about ${Math.round(e.perSecond).toLocaleString("en-US")} tokens / sec right now · heading for ${short(e.total)}` : "\u00a0"}
+      </div>
+      <div className="cg-cols cg-cols-week" role="img" aria-label="Estimated tokens per day over the last week">
+        {(e?.week ?? Array.from({ length: 7 }, () => 0)).map((t, i) => (
+          <span key={i}>
+            <i className={i === 6 ? "is-today" : undefined} style={{ height: `${Math.max(2, (t / peak) * 100)}%` }} title={short(t)} />
+            <small>{i === 6 ? "today" : `-${6 - i}d`}</small>
+          </span>
+        ))}
+      </div>
     </div>
   )
 }

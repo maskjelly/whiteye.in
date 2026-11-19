@@ -779,3 +779,11 @@
   font-family: var(--font-sans);
   font-size: 0.78rem;
 }
+
+.cg-cols-week i.is-today {
+  background: var(--accent);
+}
+
+.home .tokens .big-num {
+  font-size: clamp(1.6rem, 3.4vw, 2.25rem);
+}

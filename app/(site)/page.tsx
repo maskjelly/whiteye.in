@@ -7,7 +7,8 @@ import { posts } from "@/lib/posts"
 import { JsonLd, person, PERSON_ID, SITE } from "@/lib/structured-data"
 import { getLiveStats, GITHUB_USER, type ContributionDay } from "@/lib/live"
 import { getUsage, compact } from "@/lib/usage"
-import { LocalClock, RelativeTime } from "@/components/live-widgets"
+import { BASELINE, CACHE_SHARE, DAILY_MEAN } from "@/lib/token-estimate"
+import { LocalClock, RelativeTime, TokenEstimate } from "@/components/live-widgets"
 import "./home.css"
 
 export const revalidate = 1800
@@ -85,9 +86,6 @@ export default async function HomePage() {
   const [live, usage] = await Promise.all([getLiveStats(), getUsage()])
   const usagePeak = usage ? Math.max(1, ...usage.days.map((d) => d.tokens)) : 1
 
-  const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((name) => ({ name, count: 0 }))
-  for (const d of live.contributions?.days ?? []) weekdays[new Date(`${d.date}T00:00:00Z`).getUTCDay()].count += d.count
-  const weekdayPeak = Math.max(1, ...weekdays.map((w) => w.count))
   const langTotal = live.languages.reduce((s, l) => s + l.count, 0)
 
   // Recent upstream activity first, then the merged-PR credits, without duplicates.
@@ -292,17 +290,15 @@ export default async function HomePage() {
           ) : (
             <div className="cg-card">
               <div className="cg-card-head">
-                <span>When I ship</span>
-                <span>contributions by weekday</span>
+                <span>Token spend</span>
+                <span>estimate</span>
               </div>
-              <div className="cg-cols cg-cols-week" role="img" aria-label="Contributions by day of the week over the last year">
-                {weekdays.map((w) => (
-                  <span key={w.name}>
-                    <i style={{ height: `${Math.max(2, (w.count / weekdayPeak) * 100)}%` }} title={`${fmt(w.count)} on ${w.name}`} />
-                    <small>{w.name}</small>
-                  </span>
-                ))}
-              </div>
+              <TokenEstimate />
+              <p className="cg-foot">
+                Modelled on my last {BASELINE.days} days in Claude Code and Codex: {compact(BASELINE.processed)} tokens,
+                about {compact(DAILY_MEAN)} a day, {Math.round(CACHE_SHARE * 100)}% of it cache reads,{" "}
+                {compact(BASELINE.output)} written out.
+              </p>
             </div>
           )}
           <div className="cg-card">
