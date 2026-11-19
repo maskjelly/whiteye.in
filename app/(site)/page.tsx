@@ -128,6 +128,19 @@ export default async function HomePage() {
   const live = await getLiveStats()
   const langTotal = live.languages.reduce((s, l) => s + l.count, 0)
 
+  // Recent upstream activity first, then the merged-PR credits, without duplicates.
+  const upstream: { repo: string; name: string; href: string; at?: string; note?: string }[] = live.recentUpstream.map((r) => ({
+    repo: r.repo.toLowerCase(),
+    name: r.repo.split("/")[1],
+    href: `https://github.com/${r.repo}/pulls?q=is%3Apr+author%3A${GITHUB_USER}`,
+    at: r.at,
+  }))
+  for (const c of contributions.repositories) {
+    if (upstream.length >= 6) break
+    if (upstream.some((u) => u.repo === c.repository.toLowerCase())) continue
+    upstream.push({ repo: c.repository.toLowerCase(), name: c.displayName, href: c.mergedUrl, note: `${c.merged} merged` })
+  }
+
   const structured = {
     "@context": "https://schema.org",
     "@graph": [
@@ -290,20 +303,24 @@ export default async function HomePage() {
           </article>
 
           <article className="card card-half tinted" style={tint(4)}>
-            <div className="card-kicker">latest push</div>
-            {live.latestPush ? (
-              <>
-                <a className="push-repo" href={`https://github.com/${live.latestPush.repo}`} rel="noopener">
-                  {live.latestPush.repo.replace(`${GITHUB_USER}/`, "")}
-                </a>
-                {live.latestPush.message && <p className="push-msg">“{live.latestPush.message}”</p>}
-                <div className="card-foot">
-                  <RelativeTime iso={live.latestPush.at} />
-                </div>
-              </>
-            ) : (
-              <p className="card-label">Probably pushing something right now.</p>
-            )}
+            <div className="card-kicker">contributing to / upstream</div>
+            <ul className="contrib-list">
+              {upstream.map((r) => (
+                <li key={r.repo}>
+                  <a href={r.href} rel="noopener">
+                    {r.name}
+                    <small>{r.at ? <RelativeTime iso={r.at} /> : r.note}</small>
+                  </a>
+                </li>
+              ))}
+            </ul>
+            <a
+              href="https://github.com/search?q=author%3Amaskjelly+is%3Apr+is%3Amerged+-user%3Amaskjelly&type=pullrequests"
+              className="card-link"
+              rel="noopener"
+            >
+              all {contributions.totalMerged} merged PRs →
+            </a>
           </article>
 
           <article className="card card-half tinted" style={tint(5)}>

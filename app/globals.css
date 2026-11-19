@@ -6,14 +6,14 @@
 
 :root {
   color-scheme: light;
-  --bg: #fffaf1;
+  --bg: #f8f9ff;
   --bg-elev: #ffffff;
   --fg: #1b1530;
   --fg-2: #474060;
   --fg-3: #7d7690;
-  --line: #ece4d6;
-  --line-strong: #d6ccbb;
-  --surface: #fbf3e4;
+  --line: #e4e6f5;
+  --line-strong: #c9cce6;
+  --surface: #eef0fc;
   --ink: #1b1530;
   --on-color: #1b1530;
   --accent: #5b5bf7;
@@ -37,13 +37,13 @@
   --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 
   /* sunshine: the default, happy palette */
-  --c1: #ff7a45;
-  --c2: #ffc93c;
-  --c3: #2fd29b;
-  --c4: #4d9fff;
-  --c5: #9a7bff;
-  --c6: #ff6fb1;
-  --tint: 30%;
+  --c1: #ff4d7e;
+  --c2: #ffd23f;
+  --c3: #1fd3a4;
+  --c4: #3f8cff;
+  --c5: #8f6bff;
+  --c6: #b4ef3b;
+  --tint: 38%;
 }
 
 /* sherbet */
@@ -53,7 +53,7 @@
   --c3: #9be564;
   --c4: #7ad7f0;
   --c5: #c39bff;
-  --c6: #ffa45c;
+  --c6: #ff7ac6;
 }
 
 /* pool party */
@@ -61,7 +61,7 @@
   --c1: #22c7d6;
   --c2: #c6f04f;
   --c3: #4f8bff;
-  --c4: #ffb547;
+  --c4: #ffe14d;
   --c5: #ff6f91;
   --c6: #8f7bff;
 }
@@ -72,7 +72,7 @@
   --c2: #ffe14d;
   --c3: #5be3c4;
   --c4: #b06bff;
-  --c5: #ff9b42;
+  --c5: #a4f04a;
   --c6: #6ec1ff;
 }
 
@@ -2793,7 +2793,7 @@ video {
     border: 2px solid #1b1530;
     border-radius: 999px;
     background: #1b1530;
-    color: #fffaf1 !important;
+    color: #ffffff !important;
     font-family: var(--font-mono);
     font-size: clamp(0.85rem, 2.5vw, 1.1rem);
     font-weight: 700;
@@ -2878,5 +2878,44 @@ video {
     .confetti {
       animation: none;
     }
+  }
+}
+
+@layer components {
+  .contrib-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 0.25rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .contrib-list a {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    padding: 0.45rem 0.85rem;
+    border: 1.5px solid var(--on-color);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.7);
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    text-decoration: none;
+    transition: transform 180ms var(--spring), background-color 150ms var(--ease);
+  }
+
+  .contrib-list a:hover {
+    transform: translateY(-2px) rotate(-1.5deg);
+    background: #fff;
+  }
+
+  .contrib-list small {
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    font-weight: 600;
+    opacity: 0.7;
   }
 }

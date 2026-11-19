@@ -67,7 +67,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   viewportFit: "cover",
   colorScheme: "light",
-  themeColor: "#fffaf1",
+  themeColor: "#f8f9ff",
 }
 
 // Applies the stored theme and colour palette before first paint so there is no flash.

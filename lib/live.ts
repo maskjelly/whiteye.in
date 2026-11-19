@@ -8,11 +8,15 @@ export type LiveStats = {
   publicRepos: number | null
   stars: number | null
   languages: { name: string; count: number }[]
-  latestPush: { repo: string; message: string | null; at: string } | null
+  /** External repositories with recent public activity, newest first. */
+  recentUpstream: { repo: string; at: string }[]
   contributions: { total: number; days: ContributionDay[]; streak: number; best: ContributionDay | null } | null
 }
 
 const REVALIDATE = 1800
+
+/** Repositories that should never appear on the site. */
+const HIDDEN = /mausbot/i
 
 function headers(): HeadersInit {
   const h: Record<string, string> = {
@@ -42,7 +46,6 @@ type Event = {
   type: string
   repo: { name: string }
   created_at: string
-  payload: { commits?: { message: string }[] }
 }
 
 export function parseContributions(html: string): ContributionDay[] {
@@ -117,11 +120,18 @@ export async function getLiveStats(): Promise<LiveStats> {
   ])
 
   const profile = user ?? (await profileFallback())
-  const own = repos?.filter((r) => !r.fork) ?? null
+  const own = repos?.filter((r) => !r.fork && !HIDDEN.test(r.name)) ?? null
   const langs = new Map<string, number>()
   for (const r of own ?? []) if (r.language) langs.set(r.language, (langs.get(r.language) ?? 0) + 1)
 
-  const push = events?.find((e) => e.type === "PushEvent")
+  const upstream = new Map<string, string>()
+  for (const e of events ?? []) {
+    const name = e.repo.name
+    if (name.toLowerCase().startsWith(`${GITHUB_USER}/`) || HIDDEN.test(name) || upstream.has(name)) continue
+    if (e.type === "WatchEvent" || e.type === "ForkEvent") continue
+    upstream.set(name, e.created_at)
+  }
+
   return {
     fetchedAt: new Date().toISOString(),
     followers: profile?.followers ?? null,
@@ -131,13 +141,7 @@ export async function getLiveStats(): Promise<LiveStats> {
       .map(([name, count]) => ({ name, count }))
       .sort((a, b) => b.count - a.count)
       .slice(0, 6),
-    latestPush: push
-      ? {
-          repo: push.repo.name,
-          message: push.payload.commits?.at(-1)?.message.split("\n")[0] ?? null,
-          at: push.created_at,
-        }
-      : null,
+    recentUpstream: [...upstream.entries()].map(([repo, at]) => ({ repo, at })).slice(0, 5),
     contributions: contrib,
   }
 }
