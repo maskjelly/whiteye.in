@@ -1,6 +1,11 @@
 import type { Metadata, Viewport } from "next"
+import { Instrument_Serif, JetBrains_Mono, Space_Grotesk } from "next/font/google"
 import "./globals.css"
 import { Arrival } from "@/components/arrival"
+
+const grotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-grotesk", display: "swap" })
+const instrument = Instrument_Serif({ subsets: ["latin"], weight: "400", style: "italic", variable: "--font-instrument", display: "swap" })
+const jetbrains = JetBrains_Mono({ subsets: ["latin"], variable: "--font-jetbrains", display: "swap" })
 
 const description =
   "Aaryan Singh is a software engineer: founding engineer at ReferRush, early engineer at Extraordinary, now building Rust agent memory and runtimes. Projects, measured results, open-source contributions and essays on systems."
@@ -63,14 +68,14 @@ export const viewport: Viewport = {
   viewportFit: "cover",
   colorScheme: "light dark",
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#0b0b0c" },
+    { media: "(prefers-color-scheme: light)", color: "#f6f1e7" },
+    { media: "(prefers-color-scheme: dark)", color: "#131211" },
   ],
 }
 
-// Applies the stored theme before first paint so there is no flash.
+// Applies the stored theme and colour palette before first paint so there is no flash.
 const themeScript =
-  "try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t)}}catch(e){}"
+  "try{var d=document.documentElement,t=localStorage.getItem('theme');if(t==='dark'||t==='light'){d.setAttribute('data-theme',t)}var p=localStorage.getItem('palette');if(p&&/^[0-3]$/.test(p)){d.setAttribute('data-palette',p)}}catch(e){}"
 
 export default function RootLayout({
   children,
@@ -78,7 +83,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className={`${grotesk.variable} ${instrument.variable} ${jetbrains.variable}`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         <link rel="alternate" type="application/rss+xml" title="Aaryan Singh · Writing" href="/feed.xml" />

@@ -26,13 +26,10 @@ export function Navbar() {
 
   return (
     <nav className="site-nav" aria-label="Main">
-      {pathname === "/" ? (
-        <span aria-hidden="true" />
-      ) : (
-        <Link href="/" className="site-wordmark" aria-label="Aaryan Singh, home">
-          Aaryan Singh
-        </Link>
-      )}
+      <Link href="/" className="site-wordmark" aria-label="Aaryan Singh, home">
+        <span className="wordmark-box" aria-hidden="true">as</span>
+        <span className="wordmark-text">whiteye.in</span>
+      </Link>
       <div className="site-nav-links">
         {links.map((l) => (
           <Link
