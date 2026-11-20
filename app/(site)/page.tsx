@@ -86,7 +86,7 @@ export default async function HomePage() {
   const [live, usage] = await Promise.all([getLiveStats(), getUsage()])
   const usagePeak = usage ? Math.max(1, ...usage.days.map((d) => d.tokens)) : 1
 
-  const langTotal = live.languages.reduce((s, l) => s + l.count, 0)
+  const langTotal = Math.max(1, live.languageTotal)
 
   // Recent upstream activity first, then the merged-PR credits, without duplicates.
   const upstream: { repo: string; name: string; href: string; at?: string; note?: string }[] = live.recentUpstream.map((r) => ({

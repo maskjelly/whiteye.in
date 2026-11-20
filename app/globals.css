@@ -1551,7 +1551,9 @@ video {
   }
 
   .nav-theme {
-    display: none;
+    color: var(--fg-3);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
   }
 
   .site-main {

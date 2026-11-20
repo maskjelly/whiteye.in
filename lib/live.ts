@@ -8,6 +8,8 @@ export type LiveStats = {
   publicRepos: number | null
   stars: number | null
   languages: { name: string; count: number }[]
+  /** Repositories with a detected language, including those outside the top six. */
+  languageTotal: number
   /** External repositories with recent public activity, newest first. */
   recentUpstream: { repo: string; at: string }[]
   contributions: { total: number; days: ContributionDay[]; streak: number; best: ContributionDay | null } | null
@@ -88,7 +90,7 @@ async function profileFallback() {
     if (!res.ok) return null
     const html = await res.text()
     const followers = /tab=followers"[\s\S]*?<span class="text-bold[^"]*">([\d,]+)<\/span>/.exec(html)?.[1]
-    const repos = /tab=repositories"[\s\S]{0,400}?<span title="([\d,]+)"/.exec(html)?.[1]
+    const repos = /tab=repositories"[\s\S]{0,4000}?<span title="([\d,]+)"/.exec(html)?.[1]
     const num = (v?: string) => (v ? Number(v.replace(/,/g, "")) : null)
     return { followers: num(followers), public_repos: num(repos) }
   } catch {
@@ -141,6 +143,7 @@ export async function getLiveStats(): Promise<LiveStats> {
       .map(([name, count]) => ({ name, count }))
       .sort((a, b) => b.count - a.count)
       .slice(0, 6),
+    languageTotal: [...langs.values()].reduce((s, c) => s + c, 0),
     recentUpstream: [...upstream.entries()].map(([repo, at]) => ({ repo, at })).slice(0, 5),
     contributions: contrib,
   }
