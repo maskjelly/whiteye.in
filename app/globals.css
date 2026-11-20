@@ -1488,8 +1488,8 @@ video {
   }
 
   .wordmark-glyph {
-    width: 2.25rem;
-    height: 2.25rem;
+    width: 2.75rem;
+    height: 2.75rem;
     flex: none;
   }
 
@@ -1711,8 +1711,8 @@ video {
 
 @media (max-width: 479px) {
   .wordmark-glyph {
-    width: 1.9rem;
-    height: 1.9rem;
+    width: 2.4rem;
+    height: 2.4rem;
   }
 
   .site-nav-links {
@@ -1730,8 +1730,8 @@ video {
 
 @media (max-width: 359px) {
   .wordmark-glyph {
-    width: 1.6rem;
-    height: 1.6rem;
+    width: 2rem;
+    height: 2rem;
   }
 
   .site-nav-links {
@@ -1747,5 +1747,16 @@ video {
   .nav-button {
     padding: 0 0.35rem;
     font-size: 0.8rem;
+  }
+}
+
+@media (min-width: 960px) {
+  .wordmark-glyph {
+    width: 4.75rem;
+    height: 4.75rem;
+  }
+
+  .site-nav {
+    padding-top: 6.5rem;
   }
 }
