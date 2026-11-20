@@ -21,7 +21,7 @@ export function person() {
       "@type": "Occupation",
       name: "Software Engineer",
       occupationLocation: { "@type": "Country", name: "India" },
-      skills: "Rust, systems programming, AI agent infrastructure, open source",
+      skills: "High-scale consumer products, Rust, systems programming, open source",
     },
     award: [
       "National Math Olympiad silver medal, three times (ages 15 to 17)",

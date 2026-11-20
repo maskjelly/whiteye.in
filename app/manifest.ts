@@ -6,7 +6,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "Aaryan Singh",
     short_name: "Aaryan Singh",
-    description: "Aaryan Singh, software engineer from Assam, India. Rust systems, agent memory and open source.",
+    description: "Aaryan Singh, software engineer from Assam, India. High-scale consumer products, Rust systems and open source.",
     start_url: "/",
     display: "standalone",
     background_color: "#f7f6f5",

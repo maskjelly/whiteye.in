@@ -4,9 +4,9 @@ import { JsonLd, PERSON_ID, SITE } from "@/lib/structured-data"
 
 export const dynamic = "force-static"
 
-const updated = "2026-11-05"
+const updated = "2026-11-20"
 const description =
-  "What Aaryan Singh is working on now: instantKV local-first agent memory in Rust, the Morse agent runtime, and open-source contributions."
+  "What Aaryan Singh is working on now: high-scale consumer products, a trial with LinkMe, and open-source contributions."
 
 export const metadata: Metadata = {
   title: "Now",
@@ -37,7 +37,7 @@ export default function NowPage() {
         <p className="page-kicker">Now</p>
         <h1 className="page-title">What I’m doing lately</h1>
         <p className="page-meta">
-          Updated <time dateTime={updated}>November 5, 2026</time> · the idea comes from{" "}
+          Updated <time dateTime={updated}>November 20, 2026</time> · the idea comes from{" "}
           <a href="https://nownownow.com/about" rel="noopener">nownownow</a>
         </p>
       </header>
@@ -47,7 +47,11 @@ export default function NowPage() {
           engineer from the first commit through 2,300 merchants and $1M+ processed.
         </p>
         <p>
-          Building <a href="https://instantkv.com" rel="noopener">instantKV</a>: local-first memory in Rust with BM25
+          Working on high-scale consumer products. I&rsquo;m currently trialing with LinkMe, the creator platform for
+          consumers and businesses.
+        </p>
+        <p>
+          Before this I built <a href="https://instantkv.com" rel="noopener">instantKV</a>: local-first memory in Rust with BM25
           search, topic/tag/time filters and a native OpenCode MCP. Agents keep useful facts and task state across
           restarts without a model or cloud call.
         </p>
@@ -58,7 +62,7 @@ export default function NowPage() {
           Phone integration is still planned.
         </p>
         <p>
-          Also working on <a href="https://github.com/maskjelly/morse" rel="noopener">Morse</a>, a Rust agent runtime
+          I also built <a href="https://github.com/maskjelly/morse" rel="noopener">Morse</a>, a Rust agent runtime
           that keeps running when the client disconnects, with streamed tool output, session replay and crash recovery.
         </p>
         <p>

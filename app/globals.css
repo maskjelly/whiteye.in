@@ -1488,8 +1488,8 @@ video {
   }
 
   .wordmark-glyph {
-    width: 1.15rem;
-    height: 1.15rem;
+    width: 2.25rem;
+    height: 2.25rem;
     flex: none;
   }
 
@@ -1697,5 +1697,55 @@ video {
 @media (max-width: 479px) {
   .site-nav .wordmark-text {
     display: none;
+  }
+}
+
+@media (max-width: 959px) {
+  .site-nav-link,
+  .nav-button,
+  .nav-theme {
+    white-space: nowrap;
+    flex: none;
+  }
+}
+
+@media (max-width: 479px) {
+  .wordmark-glyph {
+    width: 1.9rem;
+    height: 1.9rem;
+  }
+
+  .site-nav-links {
+    gap: 0.7rem;
+  }
+
+  .site-nav-link {
+    font-size: 0.875rem;
+  }
+
+  .nav-button {
+    padding: 0 0.45rem;
+  }
+}
+
+@media (max-width: 359px) {
+  .wordmark-glyph {
+    width: 1.6rem;
+    height: 1.6rem;
+  }
+
+  .site-nav-links {
+    gap: 0.45rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .site-nav-link {
+    font-size: 0.8rem;
+  }
+
+  .nav-button {
+    padding: 0 0.35rem;
+    font-size: 0.8rem;
   }
 }

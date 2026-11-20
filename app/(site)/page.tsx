@@ -14,7 +14,7 @@ import "./home.css"
 export const revalidate = 1800
 
 const description =
-  "Aaryan Singh is a software engineer from Assam, India, working remotely: founding engineer at ReferRush, early engineer at Extraordinary, University of Waterloo dropout, now building Rust agent memory and runtimes. 47 merged open-source pull requests, measured benchmarks and essays on systems."
+  "Aaryan Singh is a software engineer from Assam, India, working remotely: founding engineer at ReferRush, early engineer at Extraordinary, University of Waterloo dropout, now building high-scale consumer products and trialing with LinkMe. 47 merged open-source pull requests, measured benchmarks and essays on systems."
 
 export const metadata: Metadata = {
   title: { absolute: "Aaryan Singh · Remote software engineer from India, Rust and AI agents" },
@@ -151,16 +151,16 @@ export default async function HomePage() {
       <section className="cg-sec cg-hero">
         <span className="cg-num" aria-hidden="true">01</span>
         <div className="cg-body">
-          <h1>Aaryan Singh builds memory and runtimes for machines.</h1>
+          <h1>Aaryan Singh builds consumer products that have to hold up at scale.</h1>
           <p>
-            I write systems software in Rust, from Assam. Most of it is about state: where an agent keeps what it
-            learned, what survives a crash, and how fast you can get it back. I like numbers that can be re-run, so
-            nearly everything on this page links to the benchmark or the pull request behind it.
+            I&rsquo;m a software engineer in Assam, working remotely. I care about products a lot of people use at
+            once, and about the systems underneath that keep them fast. I like numbers that can be re-run, so nearly
+            everything on this page links to the benchmark or the pull request behind it.
           </p>
           <p>
-            Right now that means <a href="https://instantkv.com" rel="noopener">instantKV</a>, memory for agents, and{" "}
-            <a href="https://github.com/maskjelly/morse" rel="noopener">Morse</a>, a runtime that survives
-            disconnects. <Link href="/now">What I&rsquo;m doing now</Link>.
+            Right now that means high-scale consumer work: I&rsquo;m trialing with LinkMe, the creator platform for
+            consumers and businesses. Before that I built agent memory and runtimes in Rust, which are still in the
+            projects below. <Link href="/now">What I&rsquo;m doing now</Link>.
           </p>
           <div className="cg-cta">
             <a className="cg-btn cg-btn-solid" href={`mailto:${profile.email}`}>Get in touch</a>

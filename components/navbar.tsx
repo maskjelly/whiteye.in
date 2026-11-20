@@ -11,14 +11,8 @@ const links = [
 ]
 
 function Glyph() {
-  return (
-    <svg className="wordmark-glyph" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-      <rect x="1" y="1" width="8" height="8" />
-      <rect x="11" y="11" width="8" height="8" />
-      <rect x="11" y="1" width="8" height="8" opacity="0.28" />
-      <rect x="1" y="11" width="8" height="8" opacity="0.28" />
-    </svg>
-  )
+  // eslint-disable-next-line @next/next/no-img-element
+  return <img className="wordmark-glyph" src="/logo.png" width={40} height={40} alt="" />
 }
 
 export function Navbar() {

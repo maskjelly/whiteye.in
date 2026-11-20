@@ -1,6 +1,6 @@
 # Aaryan Singh — whiteye.in
 
-> Software engineer working across products, AI agents and systems. Founding engineer at ReferRush (Feb 2025 – Sep 2026), early engineer at Extraordinary, now building Rust agent memory (instantKV) and an agent runtime (Morse). 47 merged pull requests across 13 external open-source repositories. University of Waterloo dropout. Based in Assam, India.
+> Software engineer working across products, AI agents and systems. Founding engineer at ReferRush (Feb 2025 – Sep 2026), early engineer at Extraordinary, now working on high-scale consumer products and trialing with LinkMe; previously built Rust agent memory (instantKV) and an agent runtime (Morse). 47 merged pull requests across 13 external open-source repositories. University of Waterloo dropout. Based in Assam, India.
 
 Everything here is public and readable without an account or JavaScript. Benchmark numbers describe specific hardware, workloads and transports; each page links its measurement conditions.
 
