@@ -1760,3 +1760,7 @@ video {
     padding-top: 6.5rem;
   }
 }
+
+.site-nav .wordmark-text {
+  display: inline;
+}

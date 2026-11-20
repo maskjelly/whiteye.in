@@ -2,11 +2,11 @@
 export const faq: { q: string; a: string }[] = [
   {
     q: "Who are you?",
-    a: "I'm Aaryan Singh, a software engineer from Assam, India, working remotely. I was the founding engineer at ReferRush and an early engineer at Extraordinary, left the University of Waterloo to build full time, and have 47 merged pull requests in 13 external open-source repositories. Online I go by maskjelly and whiteye.",
+    a: "I'm Aaryan Singh, a programmer from Assam, India. I work remotely. I was the founding engineer at ReferRush and an early engineer at Extraordinary. I left the University of Waterloo to build things full time. I also have 47 pull requests merged into 13 open-source projects that aren't mine. Online I'm maskjelly or whiteye.",
   },
   {
     q: "What are you working on now?",
-    a: "High-scale consumer products. I am currently trialing with LinkMe, the creator platform for consumers and businesses. Before that I built instantKV, local-first agent memory in Rust, and Morse, a Rust agent runtime.",
+    a: "High-scale consumer products. Right now I'm trialing with LinkMe, the creator platform for consumers and businesses. Before that I built instantKV, local-first agent memory in Rust, and Morse, a Rust agent runtime.",
   },
   {
     q: "Where are you based, and do you work remotely?",
@@ -30,7 +30,7 @@ export const faq: { q: string; a: string }[] = [
   },
   {
     q: "Did you go to university?",
-    a: "I studied Computer Engineering at the University of Waterloo and left to build full time.",
+    a: "For a while. I studied Computer Engineering at the University of Waterloo, then left to build things full time.",
   },
   {
     q: "What languages and tools do you use?",

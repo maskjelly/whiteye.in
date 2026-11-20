@@ -153,16 +153,21 @@ export default async function HomePage() {
         <div className="cg-body">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img className="cg-mark" src="/logo.png" width={112} height={112} alt="Aaryan Singh's mark: a rearing winged horse with ibex horns" />
-          <h1>I&rsquo;m Aaryan Singh. I build consumer products that have to hold up at scale.</h1>
+          <h1>Aaryan Singh</h1>
           <p>
-            I&rsquo;m a software engineer in Assam, working remotely. I care about products a lot of people use at
-            once, and about the systems underneath that keep them fast. I like numbers that can be re-run, so nearly
-            everything on this page links to the benchmark or the pull request behind it.
+            I&rsquo;m a programmer. I live in Assam, in the northeast of India, and work remotely.
           </p>
           <p>
-            Right now that means high-scale consumer work: I&rsquo;m trialing with LinkMe, the creator platform for
-            consumers and businesses. Before that I built agent memory and runtimes in Rust, which are still in the
-            projects below. <Link href="/now">What I&rsquo;m doing now</Link>, or <Link href="/about">the short answers</Link>.
+            I like building things that a lot of people use at the same time, because those are the ones that break
+            in interesting ways. Right now I&rsquo;m trialing with LinkMe, the creator platform for consumers and
+            businesses. Before that I worked on memory and runtimes for AI agents, in Rust. Those projects are
+            further down.
+          </p>
+          <p>
+            I don&rsquo;t trust a number I can&rsquo;t re-run, so most of what&rsquo;s on this page links to the
+            benchmark or pull request it came from. There&rsquo;s more on{" "}
+            <Link href="/now">what I&rsquo;m doing now</Link>, and some <Link href="/about">short answers</Link> to
+            the questions I get asked.
           </p>
           <div className="cg-cta">
             <a className="cg-btn cg-btn-solid" href={`mailto:${profile.email}`}>Get in touch</a>
@@ -189,7 +194,7 @@ export default async function HomePage() {
 
       <Section n={3} id="live" title="Live from GitHub" wide>
         <p className="cg-lede">
-          Pulled from my public profile and refreshed every half hour. Synced <RelativeTime iso={live.fetchedAt} />.
+          This comes from my public GitHub profile and updates every half hour. Synced <RelativeTime iso={live.fetchedAt} />.
         </p>
 
         <div className="cg-card">
@@ -378,8 +383,8 @@ export default async function HomePage() {
 
       <Section n={8} id="contact" title="Say hello">
         <p>
-          The fastest way to reach me is email: <a href={`mailto:${profile.email}`}>{profile.email}</a>. I read
-          everything, and I like hearing about storage bugs.
+          Email is the best way to reach me: <a href={`mailto:${profile.email}`}>{profile.email}</a>. I read all
+          of it. I especially like hearing about storage bugs.
         </p>
         <p className="cg-links">
           <a href="https://github.com/maskjelly" rel="noopener">GitHub</a>

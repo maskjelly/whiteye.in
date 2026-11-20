@@ -10,11 +10,6 @@ const links = [
   { href: "/resume", label: "Résumé" },
 ]
 
-function Glyph() {
-  // eslint-disable-next-line @next/next/no-img-element
-  return <img className="wordmark-glyph" src="/logo.png" width={40} height={40} alt="" />
-}
-
 export function Navbar() {
   const pathname = usePathname()
 
@@ -25,7 +20,6 @@ export function Navbar() {
   return (
     <nav className="site-nav" aria-label="Main">
       <Link href="/" className="site-wordmark" aria-label="Aaryan Singh, home">
-        <Glyph />
         <span className="wordmark-text">Aaryan Singh</span>
       </Link>
       <div className="site-nav-links">
