@@ -6,7 +6,7 @@ export const dynamic = "force-static"
 
 const updated = "2026-11-20"
 const description =
-  "What Aaryan Singh is working on now: high-scale consumer products, a trial with LinkMe, and open-source contributions."
+  "What Aaryan Singh is working on at present: consumer products at scale, a trial with LinkMe, and open-source contributions."
 
 export const metadata: Metadata = {
   title: "Now",
@@ -35,7 +35,7 @@ export default function NowPage() {
       />
       <header className="page-header animate-fade-in-up">
         <p className="page-kicker">Now</p>
-        <h1 className="page-title">What I’m doing lately</h1>
+        <h1 className="page-title">What occupies me at present</h1>
         <p className="page-meta">
           Updated <time dateTime={updated}>November 20, 2026</time> · the idea comes from{" "}
           <a href="https://nownownow.com/about" rel="noopener">nownownow</a>
@@ -43,38 +43,41 @@ export default function NowPage() {
       </header>
       <article className="prose-mono">
         <p>
-          Recently left <a href="https://referrush.com" rel="noopener">ReferRush</a>, where I was the founding
-          engineer from the first commit through 2,300 merchants and $1M+ processed.
+          My attention is on consumer products built for very large audiences, where the difficult part is keeping
+          them quick and correct under load. I am at present on trial with LinkMe, the creator platform for consumers
+          and businesses.
         </p>
         <p>
-          Working on high-scale consumer products. I&rsquo;m currently trialing with LinkMe, the creator platform for
-          consumers and businesses.
+          I recently left <a href="https://referrush.com" rel="noopener">ReferRush</a>, where I was the founding
+          engineer from the first commit until the platform served 2,300 merchants and had processed more than $1M.
         </p>
         <p>
-          Before this I built <a href="https://instantkv.com" rel="noopener">instantKV</a>: local-first memory in Rust with BM25
-          search, topic/tag/time filters and a native OpenCode MCP. Agents keep useful facts and task state across
-          restarts without a model or cloud call.
+          Before this I built <a href="https://instantkv.com" rel="noopener">instantKV</a>, a local-first memory
+          store for AI agents, written in Rust. It offers BM25 search, filters by topic, tag and time, and a native
+          OpenCode MCP server, so that an agent retains facts and task state across restarts without calling a model
+          or the cloud.
         </p>
         <p>
-          Published <a href="https://instantkv.com/benchmarks/" rel="noopener">full retrieval results</a> for
-          LongMemEval-S, LoCoMo and three BEIR datasets. LongMemEval-S scored 95.13% Recall@10 with 14.34 MiB sampled
-          server RAM on an M4 Pro. Answer accuracy was 85.20% with GPT-6 Luna, which is a separate model-based test.
-          Phone integration is still planned.
+          The <a href="https://instantkv.com/benchmarks/" rel="noopener">full retrieval results</a> are published
+          for LongMemEval-S, LoCoMo and three BEIR datasets. On LongMemEval-S it reached 95.13% Recall@10 with
+          14.34 MiB of sampled server memory on an M4 Pro. Answer accuracy was 85.20% with GPT-6 Luna, which is a
+          separate, model-based test. Phone integration remains planned.
         </p>
         <p>
-          I also built <a href="https://github.com/maskjelly/morse" rel="noopener">Morse</a>, a Rust agent runtime
-          that keeps running when the client disconnects, with streamed tool output, session replay and crash recovery.
+          I also built <a href="https://github.com/maskjelly/morse" rel="noopener">Morse</a>, an agent runtime in
+          Rust that continues to run when the client disconnects, with streamed tool output, session replay and
+          crash recovery.
         </p>
         <p>
-          Contributing to open source: 47 merged PRs across 13 external repositories so far, including Podman Desktop,
-          Atuin and termlens.
+          I continue to contribute to open source: 47 pull requests merged across 13 external repositories to date,
+          among them Podman Desktop, Atuin and termlens.
         </p>
         <p>
-          Reading <em>Designing Data-Intensive Applications</em>. Again.
+          I am reading <em>Designing Data-Intensive Applications</em>, not for the first time.
         </p>
         <p>
-          Open to founding-engineer and systems roles. <a href="mailto:aaryan@whiteye.in">Email me</a> or read the{" "}
-          <Link href="/resume">résumé</Link>.
+          I remain open to founding-engineer and systems roles. Do <a href="mailto:aaryan@whiteye.in">write to me</a>,
+          or consult the <Link href="/resume">résumé</Link>.
         </p>
       </article>
       <div className="back-row">

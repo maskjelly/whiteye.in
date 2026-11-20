@@ -28,7 +28,7 @@ export function GET() {
     "",
     "## Now",
     "",
-    "Recently left ReferRush, where I was the founding engineer. Now working on high-scale consumer products and trialing with LinkMe, the creator platform for consumers and businesses. Previously built instantKV (local-first memory in Rust with BM25 search, topic/tag/time filters and a native OpenCode MCP) and Morse (a Rust agent runtime that keeps running when the client disconnects). Contributing to open source. Open to founding-engineer and systems roles.",
+    "I work on consumer products built for very large audiences, and am at present on trial with LinkMe, the creator platform for consumers and businesses. I recently left ReferRush, where I was the founding engineer. Before this I built instantKV (a local-first memory store for AI agents in Rust, with BM25 search, filters by topic, tag and time, and a native OpenCode MCP server) and Morse (an agent runtime in Rust that continues to run when the client disconnects). I continue to contribute to open source and remain open to founding-engineer and systems roles.",
     "",
     "## Questions and answers",
     "",

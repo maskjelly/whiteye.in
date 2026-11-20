@@ -1,6 +1,6 @@
 # Aaryan Singh — whiteye.in
 
-> Software engineer working across products, AI agents and systems. Founding engineer at ReferRush (Feb 2025 – Sep 2026), early engineer at Extraordinary, now working on high-scale consumer products and trialing with LinkMe; previously built Rust agent memory (instantKV) and an agent runtime (Morse). 47 merged pull requests across 13 external open-source repositories. University of Waterloo dropout. Based in Assam, India.
+> Software engineer based in Assam, India, working remotely. Founding engineer at ReferRush (Feb 2025 – Sep 2026) and an early engineer at Extraordinary. Now builds consumer products at scale and is on trial with LinkMe, the creator platform for consumers and businesses. Previously built instantKV, a memory store for AI agents in Rust, and Morse, an agent runtime. 47 pull requests merged across 13 external open-source repositories. Left the University of Waterloo to build full time.
 
 Everything here is public and readable without an account or JavaScript. Benchmark numbers describe specific hardware, workloads and transports; each page links its measurement conditions.
 
@@ -9,8 +9,8 @@ Everything here is public and readable without an account or JavaScript. Benchma
 - [Résumé](https://whiteye.in/resume): Work history, selected projects, open-source contributions with links to each merged PR, and benchmark conditions.
 - [Plain-text résumé](https://whiteye.in/resume.txt): The same profile as text with project and evidence URLs.
 - [PDF résumé](https://whiteye.in/Aaryan-Singh-Resume.pdf): One page.
-- [About](https://whiteye.in/about): Short question-and-answer profile: who he is, current work, projects, open source, awards and contact.
-- [Now](https://whiteye.in/now): What I am working on this month.
+- [About](https://whiteye.in/about): A brief profile in questions and answers: who he is, present work, projects, open source, distinctions and contact.
+- [Now](https://whiteye.in/now): What he is working on at present.
 - [Uses](https://whiteye.in/uses): Hardware, editor and stack.
 - [GitHub](https://github.com/maskjelly): Public repositories and contributions.
 - [X](https://x.com/aaryantwt)

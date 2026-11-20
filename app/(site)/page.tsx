@@ -14,7 +14,7 @@ import "./home.css"
 export const revalidate = 1800
 
 const description =
-  "Aaryan Singh is a software engineer from Assam, India, working remotely: founding engineer at ReferRush, early engineer at Extraordinary, University of Waterloo dropout, now building high-scale consumer products and trialing with LinkMe. 47 merged open-source pull requests, measured benchmarks and essays on systems."
+  "Aaryan Singh is a software engineer from Assam, India, working remotely. Formerly founding engineer at ReferRush and an early engineer at Extraordinary, he now builds consumer products at scale and is on trial with LinkMe. 47 merged open-source pull requests, reproducible benchmarks and essays on systems."
 
 export const metadata: Metadata = {
   title: { absolute: "Aaryan Singh · Remote software engineer from India, Rust and AI agents" },
@@ -36,18 +36,18 @@ const stats = [
   { value: "1.34M", unit: "redirects/s", label: "rushort on a 4-vCPU VPS, loopback", href: "https://github.com/maskjelly/rushort/blob/main/docs/performance-2026-09-30.md" },
   { value: "95.13%", unit: "Recall@10", label: "instantKV on LongMemEval-S", href: "https://instantkv.com/benchmarks/" },
   { value: String(contributions.totalMerged), unit: "merged PRs", label: `across ${contributions.repositoryCount} external open-source repositories`, href: "https://github.com/search?q=author%3Amaskjelly+is%3Apr+is%3Amerged+-user%3Amaskjelly&type=pullrequests" },
-  { value: String(posts.length), unit: "essays", label: "on storage, consensus and things that lie", href: "/blog" },
+  { value: String(posts.length), unit: "essays", label: "on storage, consensus and hardware that misreports", href: "/blog" },
 ]
 
 const takes = [
-  "SQLite is a perfectly good production database. Fight me.",
+  "SQLite is a perfectly sound production database.",
   "Every distributed system is a log with opinions.",
-  "If it isn't benchmarked, it's a vibe.",
-  "fsync() is a promise, and storage loves to break promises.",
-  "The best agent memory is the one you can grep.",
-  "Rewrite it in Rust, but only after you profile it.",
-  "Ship the boring version first. Make it weird later.",
-  "Retries without idempotency keys are just optimism.",
+  "A claim without a benchmark is an opinion.",
+  "fsync() is a promise, and storage does not always keep it.",
+  "The best memory for an agent is one you can read with grep.",
+  "Rewrite it in Rust, but profile it first.",
+  "Ship the plain version first; refine it afterwards.",
+  "A retry without an idempotency key is merely optimism.",
 ]
 
 const fmt = (n: number | null | undefined) => (n == null ? "—" : n.toLocaleString("en-US"))
@@ -155,19 +155,19 @@ export default async function HomePage() {
           <img className="cg-mark" src="/logo.png" width={112} height={112} alt="Aaryan Singh's mark: a rearing winged horse with ibex horns" />
           <h1>Aaryan Singh</h1>
           <p>
-            I&rsquo;m a programmer. I live in Assam, in the northeast of India, and work remotely.
+            I am a software engineer based in Assam, in the north-east of India, and I work remotely.
           </p>
           <p>
-            I like building things that a lot of people use at the same time, because those are the ones that break
-            in interesting ways. Right now I&rsquo;m trialing with LinkMe, the creator platform for consumers and
-            businesses. Before that I worked on memory and runtimes for AI agents, in Rust. Those projects are
-            further down.
+            My interest lies in products used by a great many people at once, and in the engineering beneath them:
+            storage, concurrency and latency under load. At present I am on trial with LinkMe, the creator platform
+            for consumers and businesses. Before this I built memory and runtime systems for AI agents in Rust; that
+            work is set out below.
           </p>
           <p>
-            I don&rsquo;t trust a number I can&rsquo;t re-run, so most of what&rsquo;s on this page links to the
-            benchmark or pull request it came from. There&rsquo;s more on{" "}
-            <Link href="/now">what I&rsquo;m doing now</Link>, and some <Link href="/about">short answers</Link> to
-            the questions I get asked.
+            I hold that a figure is worth quoting only if it can be reproduced, so nearly every number on this page
+            links to the benchmark or pull request behind it. For more, see{" "}
+            <Link href="/now">what I am doing now</Link>, or a few <Link href="/about">short answers</Link> to the
+            questions I am most often asked.
           </p>
           <div className="cg-cta">
             <a className="cg-btn cg-btn-solid" href={`mailto:${profile.email}`}>Get in touch</a>
@@ -194,7 +194,7 @@ export default async function HomePage() {
 
       <Section n={3} id="live" title="Live from GitHub" wide>
         <p className="cg-lede">
-          This comes from my public GitHub profile and updates every half hour. Synced <RelativeTime iso={live.fetchedAt} />.
+          Drawn from my public GitHub profile and refreshed every half hour. Synced <RelativeTime iso={live.fetchedAt} />.
         </p>
 
         <div className="cg-card">
@@ -265,7 +265,7 @@ export default async function HomePage() {
                 })}
               </ol>
             ) : (
-              <p className="cg-note">Rust, mostly. TypeScript when required.</p>
+              <p className="cg-note">Chiefly Rust, with TypeScript where the product calls for it.</p>
             )}
           </div>
         </div>
@@ -302,9 +302,9 @@ export default async function HomePage() {
               </div>
               <TokenEstimate />
               <p className="cg-foot">
-                Modelled on my last {BASELINE.days} days in Claude Code and Codex: {compact(BASELINE.processed)} tokens,
-                about {compact(DAILY_MEAN)} a day, {Math.round(CACHE_SHARE * 100)}% of it cache reads,{" "}
-                {compact(BASELINE.output)} written out.
+                Modelled on my last {BASELINE.days} days in Claude Code and Codex: {compact(BASELINE.processed)} tokens
+                in all, roughly {compact(DAILY_MEAN)} a day, of which {Math.round(CACHE_SHARE * 100)}% were cache reads
+                and {compact(BASELINE.output)} were output.
               </p>
             </div>
           )}
@@ -318,7 +318,7 @@ export default async function HomePage() {
         </div>
       </Section>
 
-      <Section n={4} id="projects" title="Things I&rsquo;ve built" wide>
+      <Section n={4} id="projects" title="Selected work" wide>
         <ul className="cg-list">
           {projectItems.map((p) => {
             const inner = (
@@ -341,7 +341,7 @@ export default async function HomePage() {
         </ul>
       </Section>
 
-      <Section n={5} id="beliefs" title="What I believe">
+      <Section n={5} id="beliefs" title="Convictions">
         <ul className="cg-beliefs">
           {takes.map((t) => (
             <li key={t}>{t}</li>
@@ -381,10 +381,10 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <Section n={8} id="contact" title="Say hello">
+      <Section n={8} id="contact" title="Correspondence">
         <p>
-          Email is the best way to reach me: <a href={`mailto:${profile.email}`}>{profile.email}</a>. I read all
-          of it. I especially like hearing about storage bugs.
+          Email is the surest way to reach me: <a href={`mailto:${profile.email}`}>{profile.email}</a>. I read
+          every message, and reports of storage faults are especially welcome.
         </p>
         <p className="cg-links">
           <a href="https://github.com/maskjelly" rel="noopener">GitHub</a>

@@ -4,7 +4,7 @@
   "location": "Assam, India",
   "email": "aaryan@whiteye.in",
   "updated": "2026-10-08",
-  "summary": "Built ReferRush from its first commit. Early engineer at extraordinary.com. Now working on high-scale consumer products and trialing with LinkMe, with merged contributions to Atuin, Podman Desktop and 11 other repositories.",
+  "summary": "I built ReferRush from its first commit and was an early engineer at extraordinary.com. I now work on consumer products at scale and am on trial with LinkMe. My contributions have been merged into Atuin, Podman Desktop and 11 other repositories.",
   "experience": [
     {
       "company": "ReferRush",
@@ -109,18 +109,18 @@
   ],
   "education": "University of Waterloo dropout | Computer Engineering studies | Left to build full time",
   "honors": "Hacked rice.edu at 17 and responsibly disclosed SQL injection. Hacked into Waterloo’s GPU cluster. 3x National Math Olympiad silver (ages 15–17); IITM NexHack 2nd (2023); IPSC Web Dev 4th in India.",
-  "intro": "Waterloo dropout. Founding engineer. Open-source contributor.",
+  "intro": "Founding engineer. Open-source contributor. Left the University of Waterloo to build.",
   "highlights": [
     {
       "title": "Hacked rice.edu at 17.",
-      "detail": "Found SQL injection on Rice University’s website and pwnd them , later responsibly disclosing it."
+      "detail": "Found a SQL injection flaw in Rice University’s website and disclosed it responsibly."
     },
     {
       "title": "Hacked into Waterloo’s GPU cluster.",
-      "detail": "Studied Computer Engineering at the University of Waterloo, then dropped out to build full time."
+      "detail": "Studied Computer Engineering at the University of Waterloo, then left to build full time."
     },
     {
-      "title": "Built 3 Trillion request per month (1M RPS) query and URL transactor ",
+      "title": "Built a URL service measured above one million requests per second.",
       "detail": "rushort, on four shared VPS CPUs. Loopback HTTP, 32 connections, pipeline depth 512; median of three runs, zero errors.",
       "url": "https://github.com/maskjelly/rushort/blob/main/docs/performance-2026-09-30.md"
     },
@@ -131,7 +131,7 @@
     },
     {
       "title": "Early engineer at extraordinary.com.",
-      "detail": "Built early stage directory and brand console connecting applicants to , lawyers and advisors through the USCIS application process.",
+      "detail": "Built the early directory and brand console that connect applicants with lawyers and advisors throughout the USCIS application process.",
       "url": "https://extraordinary.com"
     }
   ]

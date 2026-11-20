@@ -51,8 +51,8 @@ export default function BlogIndex() {
         <p className="page-kicker">Writing</p>
         <h1 className="page-title">Notes from the machine room</h1>
         <p className="page-intro">
-          Long-form essays on infrastructure, storage, consensus and the parts of systems that break. Each claim links
-          to a source or a reproducible check.
+          Long-form essays on infrastructure, storage, consensus and the places where systems fail. Every claim is
+          tied to a source or to a check the reader can reproduce.
         </p>
         <p className="page-meta">
           {posts.length} essays · <a href="/feed.xml">RSS</a>
