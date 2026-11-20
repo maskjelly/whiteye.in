@@ -153,7 +153,7 @@ export default async function HomePage() {
         <div className="cg-body">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img className="cg-mark" src="/logo.png" width={112} height={112} alt="Aaryan Singh's mark: a rearing winged horse with ibex horns" />
-          <h1>Aaryan Singh builds consumer products that have to hold up at scale.</h1>
+          <h1>I&rsquo;m Aaryan Singh. I build consumer products that have to hold up at scale.</h1>
           <p>
             I&rsquo;m a software engineer in Assam, working remotely. I care about products a lot of people use at
             once, and about the systems underneath that keep them fast. I like numbers that can be re-run, so nearly

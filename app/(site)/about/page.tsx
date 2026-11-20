@@ -6,7 +6,7 @@ import { faq } from "@/lib/faq"
 export const dynamic = "force-static"
 
 const description =
-  "Who Aaryan Singh is, in short answers: a remote software engineer from Assam, India. What he is working on, what he has built, his open-source work, awards and how to reach him."
+  "Aaryan Singh in short answers: I'm a remote software engineer from Assam, India. What I'm working on, what I've built, my open-source work, awards and how to reach me."
 
 export const metadata: Metadata = {
   title: "About",
@@ -49,9 +49,9 @@ export default function AboutPage() {
       />
       <header className="page-header animate-fade-in-up">
         <p className="page-kicker">About</p>
-        <h1 className="page-title">Aaryan Singh, in short answers</h1>
+        <h1 className="page-title">About me, in short answers</h1>
         <p className="page-intro">
-          The questions people ask most, answered plainly. The longer version is on the{" "}
+          The questions I get asked most, answered plainly. The longer version is on the{" "}
           <Link href="/resume">résumé</Link> and the <Link href="/now">now page</Link>.
         </p>
       </header>
