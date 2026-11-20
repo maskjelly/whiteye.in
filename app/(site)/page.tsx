@@ -14,7 +14,7 @@ import "./home.css"
 export const revalidate = 1800
 
 const description =
-  "Aaryan Singh is a software engineer from Assam, India, working remotely. Formerly founding engineer at ReferRush and an early engineer at Extraordinary, he now builds consumer products at scale and is on trial with LinkMe. 47 merged open-source pull requests, reproducible benchmarks and essays on systems."
+  "Aaryan Singh is a software engineer from Assam, India, working remotely. Formerly founding engineer at ReferRush and an early engineer at Extraordinary, he now builds consumer products at scale and is on trial with LinkMe. Part-time maintainer of Atuin, Podman Desktop and WebTUI. Reproducible benchmarks and essays on systems."
 
 export const metadata: Metadata = {
   title: { absolute: "Aaryan Singh · Remote software engineer from India, Rust and AI agents" },
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
 const stats = [
   { value: "1.34M", unit: "redirects/s", label: "rushort on a 4-vCPU VPS, loopback", href: "https://github.com/maskjelly/rushort/blob/main/docs/performance-2026-09-30.md" },
   { value: "95.13%", unit: "Recall@10", label: "instantKV on LongMemEval-S", href: "https://instantkv.com/benchmarks/" },
-  { value: String(contributions.totalMerged), unit: "merged PRs", label: `across ${contributions.repositoryCount} external open-source repositories`, href: "https://github.com/search?q=author%3Amaskjelly+is%3Apr+is%3Amerged+-user%3Amaskjelly&type=pullrequests" },
+  { value: "3", unit: "projects maintained", label: "Atuin, Podman Desktop and WebTUI, part-time", href: "https://github.com/search?q=author%3Amaskjelly+is%3Apr+is%3Amerged+-user%3Amaskjelly&type=pullrequests" },
   { value: String(posts.length), unit: "essays", label: "on storage, consensus and hardware that misreports", href: "/blog" },
 ]
 
@@ -88,18 +88,11 @@ export default async function HomePage() {
 
   const langTotal = Math.max(1, live.languageTotal)
 
-  // Recent upstream activity first, then the merged-PR credits, without duplicates.
-  const upstream: { repo: string; name: string; href: string; at?: string; note?: string }[] = live.recentUpstream.map((r) => ({
-    repo: r.repo.toLowerCase(),
-    name: r.repo.split("/")[1],
-    href: `https://github.com/${r.repo}/pulls?q=is%3Apr+author%3A${GITHUB_USER}`,
-    at: r.at,
-  }))
-  for (const c of contributions.repositories) {
-    if (upstream.length >= 6) break
-    if (upstream.some((u) => u.repo === c.repository.toLowerCase())) continue
-    upstream.push({ repo: c.repository.toLowerCase(), name: c.displayName, href: c.mergedUrl, note: `${c.merged} merged` })
-  }
+  // Upstream repositories, most-starred first.
+  const upstream = [...contributions.repositories]
+    .sort((x, y) => y.stars - x.stars)
+    .slice(0, 6)
+    .map((c) => ({ repo: c.repository.toLowerCase(), name: c.displayName, href: c.mergedUrl, stars: c.stars }))
 
   const structured = {
     "@context": "https://schema.org",
@@ -222,12 +215,12 @@ export default async function HomePage() {
         <div className="cg-pair">
           <div className="cg-card">
             <div className="cg-card-head">
-              <span>Contributing upstream</span>
+              <span>Open source, by stars</span>
               <a
                 href="https://github.com/search?q=author%3Amaskjelly+is%3Apr+is%3Amerged+-user%3Amaskjelly&type=pullrequests"
                 rel="noopener"
               >
-                All {contributions.totalMerged} merged
+                All merged work
               </a>
             </div>
             <ol className="cg-board">
@@ -236,7 +229,7 @@ export default async function HomePage() {
                   <a href={r.href} rel="noopener">
                     <span className="cg-board-n">{i + 1}</span>
                     <span className="cg-board-name">{r.name}</span>
-                    <span className="cg-board-meta">{r.at ? <RelativeTime iso={r.at} /> : r.note}</span>
+                    <span className="cg-board-meta">{compact(r.stars)} stars</span>
                   </a>
                 </li>
               ))}

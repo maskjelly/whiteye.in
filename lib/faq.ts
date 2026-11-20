@@ -2,7 +2,7 @@
 export const faq: { q: string; a: string }[] = [
   {
     q: "Who is Aaryan Singh?",
-    a: "I am Aaryan Singh, a software engineer from Assam, India, working remotely. I was the founding engineer at ReferRush and an early engineer at Extraordinary, and I left the University of Waterloo to build full time. I have 47 pull requests merged into 13 external open-source repositories. Online I am known as maskjelly and whiteye.",
+    a: "I am Aaryan Singh, a software engineer from Assam, India, working remotely. I was the founding engineer at ReferRush and an early engineer at Extraordinary, and I left the University of Waterloo to build full time. I am a part-time maintainer of Atuin, Podman Desktop and WebTUI. Online I am known as maskjelly and whiteye.",
   },
   {
     q: "What are you working on at present?",
@@ -21,8 +21,8 @@ export const faq: { q: string; a: string }[] = [
     a: "rushort, a URL shortener in Rust measured at 1.34M redirects per second on a four-vCPU VPS over loopback; instantKV, an agent memory store that scored 95.13% Recall@10 on LongMemEval-S; Morse, an agent runtime that survives client disconnects; and smaller tools such as TiVM, FireScope, Rove and Plain Corners.",
   },
   {
-    q: "Which open-source projects have you contributed to?",
-    a: "I have 47 pull requests merged across 13 external repositories, among them Podman Desktop, Atuin, WebTUI, Nimbus, iamb, dial9 and termlens.",
+    q: "Which open-source projects do you work on?",
+    a: "I am a part-time maintainer of Atuin, Podman Desktop and WebTUI, and have also contributed to Nimbus, iamb and dial9.",
   },
   {
     q: "What distinctions have you earned?",

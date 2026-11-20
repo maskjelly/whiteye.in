@@ -69,8 +69,8 @@ export default function NowPage() {
           crash recovery.
         </p>
         <p>
-          I continue to contribute to open source: 47 pull requests merged across 13 external repositories to date,
-          among them Podman Desktop, Atuin and termlens.
+          In open source I am a part-time maintainer of Atuin, Podman Desktop and WebTUI, and contribute to several
+          smaller projects besides.
         </p>
         <p>
           I am reading <em>Designing Data-Intensive Applications</em>, not for the first time.

@@ -4,7 +4,7 @@
   "location": "Assam, India",
   "email": "aaryan@whiteye.in",
   "updated": "2026-10-08",
-  "summary": "I built ReferRush from its first commit and was an early engineer at extraordinary.com. I now work on consumer products at scale and am on trial with LinkMe. My contributions have been merged into Atuin, Podman Desktop and 11 other repositories.",
+  "summary": "I built ReferRush from its first commit and was an early engineer at extraordinary.com. I now work on consumer products at scale and am on trial with LinkMe. I am a part-time maintainer of Atuin, Podman Desktop and WebTUI.",
   "experience": [
     {
       "company": "ReferRush",
@@ -44,7 +44,7 @@
       ]
     }
   ],
-  "oss": "Contributor to Atuin, Podman Desktop, WebTUI, Nimbus, iamb and eight other public repositories. 47 merged PRs, including 27 in termlens. Contributions span UI, runtime behavior, telemetry, performance and developer tooling.",
+  "oss": "Part-time maintainer of Atuin, Podman Desktop and WebTUI; contributor to Nimbus, iamb, dial9 and other public repositories. Contributions span UI, runtime behavior, telemetry, performance and developer tooling.",
   "projects": [
     {
       "name": "instantKV",

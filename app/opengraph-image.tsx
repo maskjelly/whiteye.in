@@ -7,7 +7,7 @@ export const contentType = "image/png"
 export default function OG() {
   return socialImage({
     title: "Aaryan Singh",
-    subtitle: "Consumer products at scale and systems in Rust. 47 pull requests merged across 13 open-source repositories.",
+    subtitle: "Consumer products at scale and systems in Rust. Part-time maintainer of Atuin, Podman Desktop and WebTUI.",
     path: "whiteye.in",
     meta: "SOFTWARE ENGINEER",
   })

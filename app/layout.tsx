@@ -8,7 +8,7 @@ const serif = Source_Serif_4({ subsets: ["latin"], style: ["normal", "italic"], 
 const mono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono", display: "swap" })
 
 const description =
-  "Aaryan Singh is a software engineer from Assam, India, working remotely. Formerly founding engineer at ReferRush and an early engineer at Extraordinary, he now builds consumer products at scale and is on trial with LinkMe. 47 merged open-source pull requests, reproducible benchmarks and essays on systems."
+  "Aaryan Singh is a software engineer from Assam, India, working remotely. Formerly founding engineer at ReferRush and an early engineer at Extraordinary, he now builds consumer products at scale and is on trial with LinkMe. Part-time maintainer of Atuin, Podman Desktop and WebTUI. Reproducible benchmarks and essays on systems."
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://whiteye.in"),

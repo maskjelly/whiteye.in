@@ -1,6 +1,6 @@
 # Aaryan Singh — whiteye.in
 
-> Software engineer based in Assam, India, working remotely. Founding engineer at ReferRush (Feb 2025 – Sep 2026) and an early engineer at Extraordinary. Now builds consumer products at scale and is on trial with LinkMe, the creator platform for consumers and businesses. Previously built instantKV, a memory store for AI agents in Rust, and Morse, an agent runtime. 47 pull requests merged across 13 external open-source repositories. Left the University of Waterloo to build full time.
+> Software engineer based in Assam, India, working remotely. Founding engineer at ReferRush (Feb 2025 – Sep 2026) and an early engineer at Extraordinary. Now builds consumer products at scale and is on trial with LinkMe, the creator platform for consumers and businesses. Previously built instantKV, a memory store for AI agents in Rust, and Morse, an agent runtime. Part-time maintainer of Atuin, Podman Desktop and WebTUI. Left the University of Waterloo to build full time.
 
 Everything here is public and readable without an account or JavaScript. Benchmark numbers describe specific hardware, workloads and transports; each page links its measurement conditions.
 
@@ -39,7 +39,7 @@ Everything here is public and readable without an account or JavaScript. Benchma
 - [comuse](https://github.com/maskjelly/comuse): Computer-use tooling connected to agent harnesses through MCP.
 
 ## Open source
-47 merged PRs across 13 external repositories, including Atuin, Podman Desktop, WebTUI, Nimbus, iamb, dial9 and 27 in termlens. Search: https://github.com/search?q=author%3Amaskjelly+is%3Apr+is%3Amerged+-user%3Amaskjelly&type=pullrequests
+Part-time maintainer of Atuin, Podman Desktop and WebTUI; also a contributor to Nimbus, iamb and dial9. Search: https://github.com/search?q=author%3Amaskjelly+is%3Apr+is%3Amerged+-user%3Amaskjelly&type=pullrequests
 
 ## Optional
 - [Full text for language models](https://whiteye.in/llms-full.txt): Profile, projects, contributions, now page and essay summaries in one file.

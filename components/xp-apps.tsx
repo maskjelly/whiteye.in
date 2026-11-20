@@ -86,7 +86,7 @@ export function WelcomeApp({ open }: { open: OpenApp }) {
         Hacked into Waterloo’s GPU cluster. Early engineer at <a href="https://extraordinary.com" target="_blank" rel="noreferrer">extraordinary.com</a>.{" "}
         Founding engineer at <a href="https://referrush.com" target="_blank" rel="noreferrer">ReferRush</a>.
         <br />
-        Contributor to Atuin and Podman Desktop; 47 merged PRs across 13 repos.
+        Part-time maintainer of Atuin, Podman Desktop and WebTUI.
         <br />
         <a href="/resume">Projects, contribution credits and benchmark conditions ↗</a>
       </p>

@@ -5,7 +5,7 @@ export const workItems: Item[] = [
     title: "Open source",
     role: "contributor",
     period: "now",
-    description: "47 merged PRs across 13 external repositories, including Podman Desktop, Atuin, IBM Granite CLI and termlens.",
+    description: "Part-time maintainer of Atuin, Podman Desktop and WebTUI.",
     href: "/resume#open-source",
   },
   {
