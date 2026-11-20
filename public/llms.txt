@@ -9,6 +9,7 @@ Everything here is public and readable without an account or JavaScript. Benchma
 - [Résumé](https://whiteye.in/resume): Work history, selected projects, open-source contributions with links to each merged PR, and benchmark conditions.
 - [Plain-text résumé](https://whiteye.in/resume.txt): The same profile as text with project and evidence URLs.
 - [PDF résumé](https://whiteye.in/Aaryan-Singh-Resume.pdf): One page.
+- [About](https://whiteye.in/about): Short question-and-answer profile: who he is, current work, projects, open source, awards and contact.
 - [Now](https://whiteye.in/now): What I am working on this month.
 - [Uses](https://whiteye.in/uses): Hardware, editor and stack.
 - [GitHub](https://github.com/maskjelly): Public repositories and contributions.

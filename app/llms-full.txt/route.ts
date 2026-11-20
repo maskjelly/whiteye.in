@@ -2,6 +2,7 @@ import profile from "@/lib/resume-data.json"
 import contributions from "@/lib/contributions.json"
 import { posts } from "@/lib/posts"
 import { projectItems } from "@/lib/project-items"
+import { faq } from "@/lib/faq"
 
 export const dynamic = "force-static"
 
@@ -29,6 +30,9 @@ export function GET() {
     "",
     "Recently left ReferRush, where I was the founding engineer. Now working on high-scale consumer products and trialing with LinkMe, the creator platform for consumers and businesses. Previously built instantKV (local-first memory in Rust with BM25 search, topic/tag/time filters and a native OpenCode MCP) and Morse (a Rust agent runtime that keeps running when the client disconnects). Contributing to open source. Open to founding-engineer and systems roles.",
     "",
+    "## Questions and answers",
+    "",
+    ...faq.flatMap((f) => [`Q: ${f.q}`, `A: ${f.a}`, ""]),
     "## Experience",
     "",
   ]

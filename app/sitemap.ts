@@ -20,6 +20,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: base, lastModified: siteDate, changeFrequency: "weekly", priority: 1 },
     { url: `${base}/resume`, lastModified: profileDate, changeFrequency: "monthly", priority: 0.9 },
+    { url: `${base}/about`, lastModified: new Date("2026-11-20"), changeFrequency: "monthly", priority: 0.9 },
     { url: `${base}/blog`, lastModified: blogDate, changeFrequency: "weekly", priority: 0.9 },
     { url: `${base}/now`, lastModified: new Date("2026-11-20"), changeFrequency: "monthly", priority: 0.7 },
     { url: `${base}/plain-corners`, lastModified: profileDate, changeFrequency: "monthly", priority: 0.6 },

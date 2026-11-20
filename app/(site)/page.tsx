@@ -162,7 +162,7 @@ export default async function HomePage() {
           <p>
             Right now that means high-scale consumer work: I&rsquo;m trialing with LinkMe, the creator platform for
             consumers and businesses. Before that I built agent memory and runtimes in Rust, which are still in the
-            projects below. <Link href="/now">What I&rsquo;m doing now</Link>.
+            projects below. <Link href="/now">What I&rsquo;m doing now</Link>, or <Link href="/about">the short answers</Link>.
           </p>
           <div className="cg-cta">
             <a className="cg-btn cg-btn-solid" href={`mailto:${profile.email}`}>Get in touch</a>
