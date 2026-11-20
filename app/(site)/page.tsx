@@ -14,14 +14,14 @@ import "./home.css"
 export const revalidate = 1800
 
 const description =
-  "Aaryan Singh is a software engineer: founding engineer at ReferRush, early engineer at Extraordinary, now building Rust agent memory and runtimes. Projects, measured results, open-source contributions and essays on systems."
+  "Aaryan Singh is a software engineer from Assam, India, working remotely: founding engineer at ReferRush, early engineer at Extraordinary, University of Waterloo dropout, now building Rust agent memory and runtimes. 47 merged open-source pull requests, measured benchmarks and essays on systems."
 
 export const metadata: Metadata = {
-  title: { absolute: "Aaryan Singh · Software engineer" },
+  title: { absolute: "Aaryan Singh · Remote software engineer from India, Rust and AI agents" },
   description,
   alternates: { canonical: "/" },
   openGraph: {
-    title: "Aaryan Singh · Software engineer",
+    title: "Aaryan Singh · Remote software engineer from India, Rust and AI agents",
     description,
     url: SITE,
     type: "profile",
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     lastName: "Singh",
     username: "maskjelly",
   },
-  twitter: { title: "Aaryan Singh · Software engineer", description, card: "summary_large_image" },
+  twitter: { title: "Aaryan Singh · Remote software engineer from India, Rust and AI agents", description, card: "summary_large_image" },
 }
 
 const stats = [
@@ -118,7 +118,7 @@ export default async function HomePage() {
         "@type": "ProfilePage",
         "@id": `${SITE}/#page`,
         url: SITE,
-        name: "Aaryan Singh · Software engineer",
+        name: "Aaryan Singh · Remote software engineer from India, Rust and AI agents",
         description,
         dateModified: profile.updated,
         isPartOf: { "@id": `${SITE}/#website` },

@@ -8,7 +8,7 @@ const serif = Source_Serif_4({ subsets: ["latin"], style: ["normal", "italic"], 
 const mono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono", display: "swap" })
 
 const description =
-  "Aaryan Singh is a software engineer: founding engineer at ReferRush, early engineer at Extraordinary, now building Rust agent memory and runtimes. Projects, measured results, open-source contributions and essays on systems."
+  "Aaryan Singh is a software engineer from Assam, India, working remotely: founding engineer at ReferRush, early engineer at Extraordinary, University of Waterloo dropout, now building Rust agent memory and runtimes. 47 merged open-source pull requests, measured benchmarks and essays on systems."
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://whiteye.in"),
@@ -33,7 +33,18 @@ export const metadata: Metadata = {
     "open source",
     "systems engineering",
     "whiteye",
+    "remote software engineer India",
+    "Rust engineer India",
+    "Indian software engineer",
+    "young founding engineer",
+    "early-career engineer",
+    "University of Waterloo dropout",
+    "self-taught systems engineer",
+    "AI agent infrastructure engineer",
+    "open-source contributor India",
+    "maskjelly",
   ],
+  category: "technology",
   alternates: {
     canonical: "/",
   },
