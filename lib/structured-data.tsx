@@ -3,6 +3,11 @@ import profile from "@/lib/resume-data.json"
 export const SITE = "https://whiteye.in"
 export const PERSON_ID = `${SITE}/#person`
 
+const socialAlt = "Aaryan Singh. Software engineer: consumer products at scale, systems in Rust, open source."
+export const SOCIAL_IMAGE = { url: "/opengraph-image", width: 1200, height: 630, type: "image/png", alt: socialAlt }
+// Built by scripts/build-og-animation.py; the first frame is a complete card for platforms that do not animate.
+export const ANIMATED_SOCIAL_IMAGE = { url: "/og.gif", width: 1200, height: 630, type: "image/gif", alt: "Aaryan Singh, engineer, 20" }
+
 export function person() {
   return {
     "@type": "Person",

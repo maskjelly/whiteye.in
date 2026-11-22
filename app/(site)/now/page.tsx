@@ -1,6 +1,6 @@
 import Link from "next/link"
 import type { Metadata } from "next"
-import { JsonLd, PERSON_ID, SITE } from "@/lib/structured-data"
+import { JsonLd, PERSON_ID, SITE, SOCIAL_IMAGE } from "@/lib/structured-data"
 
 export const dynamic = "force-static"
 
@@ -12,8 +12,8 @@ export const metadata: Metadata = {
   title: "Now",
   description,
   alternates: { canonical: "/now" },
-  openGraph: { title: "Now · Aaryan Singh", description, url: `${SITE}/now`, type: "website" },
-  twitter: { title: "Now · Aaryan Singh", description, card: "summary_large_image" },
+  openGraph: { title: "Now · Aaryan Singh", description, url: `${SITE}/now`, type: "website", images: [SOCIAL_IMAGE] },
+  twitter: { title: "Now · Aaryan Singh", description, card: "summary_large_image", images: [SOCIAL_IMAGE] },
 }
 
 export default function NowPage() {
