@@ -116,7 +116,7 @@ export async function report(at: Date = new Date()): Promise<Report> {
     ["GET", "pv:total"],
     ...dates.map((d) => ["GET", `pv:${d}`]),
     ...dates.map((d) => ["PFCOUNT", `uv:${d}`]),
-    ...DIMENSIONS.flatMap((dim) => dates.map((d) => ["ZRANGE", `${dim}:${d}`, 0, 99, "REV", "WITHSCORES"])),
+    ...DIMENSIONS.flatMap((dim) => dates.map((d) => ["ZRANGE", `${dim}:${d}`, 0, 999, "REV", "WITHSCORES"])),
   ])
   const days = dates.map((date, i) => ({
     date,
