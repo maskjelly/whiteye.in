@@ -1,6 +1,6 @@
 import Link from "next/link"
 import type { Metadata } from "next"
-import { JsonLd, person, PERSON_ID, SITE } from "@/lib/structured-data"
+import { JsonLd, person, PERSON_ID, SITE, SOCIAL_IMAGE } from "@/lib/structured-data"
 import { faq } from "@/lib/faq"
 
 export const dynamic = "force-static"
@@ -12,8 +12,8 @@ export const metadata: Metadata = {
   title: "About",
   description,
   alternates: { canonical: "/about" },
-  openGraph: { title: "About · Aaryan Singh", description, url: `${SITE}/about`, type: "profile" },
-  twitter: { title: "About · Aaryan Singh", description, card: "summary_large_image" },
+  openGraph: { title: "About · Aaryan Singh", description, url: `${SITE}/about`, type: "profile", images: [SOCIAL_IMAGE] },
+  twitter: { title: "About · Aaryan Singh", description, card: "summary_large_image", images: [SOCIAL_IMAGE] },
 }
 
 export default function AboutPage() {
