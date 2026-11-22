@@ -1,6 +1,6 @@
 import Link from "next/link"
 import type { Metadata } from "next"
-import { JsonLd, PERSON_ID, SITE } from "@/lib/structured-data"
+import { JsonLd, PERSON_ID, SITE, SOCIAL_IMAGE } from "@/lib/structured-data"
 
 export const dynamic = "force-static"
 
@@ -10,8 +10,8 @@ export const metadata: Metadata = {
   title: "Uses",
   description,
   alternates: { canonical: "/uses" },
-  openGraph: { title: "Uses · Aaryan Singh", description, url: `${SITE}/uses`, type: "website" },
-  twitter: { title: "Uses · Aaryan Singh", description, card: "summary_large_image" },
+  openGraph: { title: "Uses · Aaryan Singh", description, url: `${SITE}/uses`, type: "website", images: [SOCIAL_IMAGE] },
+  twitter: { title: "Uses · Aaryan Singh", description, card: "summary_large_image", images: [SOCIAL_IMAGE] },
 }
 
 type UseItem = {

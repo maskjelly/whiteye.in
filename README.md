@@ -12,6 +12,7 @@ Aaryan's personal website: a quiet, numbered-section profile (left navigation ra
 ## SEO and GEO
 
 - Canonical URLs, Open Graph and Twitter cards, generated social images for every page.
+- The home page leads with an animated card, `public/og.gif` (apps that animate link previews, such as Discord, play it; the rest show the first frame, which is a complete card), with the static `/opengraph-image` as fallback and for X. Rebuild it after changing the headline figures with `node scripts/build-og-animation.mjs` (requires `ffmpeg` and `gifsicle`).
 - JSON-LD on every page sharing one `Person` identity (`https://whiteye.in/#person`): `WebSite` and `ProfilePage` on the home page, `Blog` on the index, `TechArticle` on essays, `ItemList` of projects, `WebPage` on now and uses.
 - `robots.txt` allows search and AI crawlers explicitly; `sitemap.xml` carries real last-modified dates.
 - `/llms.txt` is a short map for language models; `/llms-full.txt` is the whole profile, projects, contributions, measurements and essay summaries as plain text. `/resume.txt` and `/feed.xml` remain.
