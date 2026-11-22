@@ -28,8 +28,8 @@ const aiCrawlers = [
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: [
-      { userAgent: "*", allow: "/", disallow: ["/api/", "/s/"] },
-      ...aiCrawlers.map((userAgent) => ({ userAgent, allow: "/", disallow: ["/api/", "/s/"] })),
+      { userAgent: "*", allow: "/", disallow: ["/api/", "/s/", "/stats"] },
+      ...aiCrawlers.map((userAgent) => ({ userAgent, allow: "/", disallow: ["/api/", "/s/", "/stats"] })),
     ],
     sitemap: "https://whiteye.in/sitemap.xml",
     host: "https://whiteye.in",

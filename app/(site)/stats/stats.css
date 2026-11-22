@@ -1,0 +1,158 @@
+.st-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
+  margin: 2rem 0 1rem;
+  background: var(--bg-elev);
+  overflow: hidden;
+  border: 1px solid var(--line);
+  font-family: var(--font-sans);
+}
+
+.st-tiles > div {
+  padding: 1rem 1.1rem;
+  box-shadow: 1px 0 0 var(--line), 0 1px 0 var(--line);
+}
+
+.st-tiles dd {
+  margin: 0;
+  font-size: 1.75rem;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.st-tiles dt {
+  margin-top: 0.2rem;
+  color: var(--fg-3);
+  font-size: 0.8rem;
+}
+
+.st-card {
+  padding: 1rem 1.1rem 1.15rem;
+  background: var(--bg-elev);
+  border: 1px solid var(--line);
+  font-family: var(--font-sans);
+  min-width: 0;
+}
+
+.st-card-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.9rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.st-card-head > :last-child {
+  color: var(--fg-3);
+  font-weight: 400;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.st-key {
+  display: inline-block;
+  width: 0.55rem;
+  height: 0.55rem;
+  margin-left: 0.5rem;
+}
+
+.st-key-views,
+.st-views {
+  background: color-mix(in srgb, var(--fg) 14%, transparent);
+}
+
+.st-key-visitors,
+.st-visitors {
+  background: var(--accent);
+}
+
+.st-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 9rem;
+  border-bottom: 1px solid var(--line-strong);
+}
+
+.st-col {
+  position: relative;
+  flex: 1;
+  height: 100%;
+}
+
+.st-col i {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  min-height: 1px;
+}
+
+.st-axis {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.4rem;
+  color: var(--fg-3);
+  font-size: 0.72rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.st-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.st-board {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.st-board li {
+  display: grid;
+  grid-template-columns: minmax(0, 9rem) minmax(1.5rem, 1fr) 3rem;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 0;
+  border-top: 1px solid var(--line);
+  font-size: 0.85rem;
+}
+
+.st-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.st-bar {
+  height: 6px;
+  background: color-mix(in srgb, var(--fg) 6%, transparent);
+}
+
+.st-bar i {
+  display: block;
+  height: 100%;
+  min-width: 2px;
+  background: var(--fg);
+}
+
+.st-board li:first-child .st-bar i {
+  background: var(--accent);
+}
+
+.st-count {
+  color: var(--fg-3);
+  font-size: 0.78rem;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.st-empty {
+  margin: 0;
+  color: var(--fg-3);
+  font-size: 0.85rem;
+}

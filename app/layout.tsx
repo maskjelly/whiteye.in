@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next"
 import { Geist, Geist_Mono, Source_Serif_4 } from "next/font/google"
 import "./globals.css"
 import { Arrival } from "@/components/arrival"
-import { Analytics } from "@vercel/analytics/next"
+import { Analytics } from "@/components/analytics"
 
 const sans = Geist({ subsets: ["latin"], variable: "--font-geist", display: "swap" })
 const serif = Source_Serif_4({ subsets: ["latin"], style: ["normal", "italic"], variable: "--font-source-serif", display: "swap" })

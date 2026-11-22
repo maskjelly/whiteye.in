@@ -92,3 +92,9 @@ Wallpaper and icon credits are in `public/xp/credits.txt`. The reference asset l
 Arrival uses the standard published `@arrival/next` integration. `middleware.ts` exports the package middleware; the root layout includes its browser component. No copied reporter or custom check-in endpoint is used.
 
 Vercel Production settings: `NEXT_PUBLIC_ARRIVAL_URL`, `NEXT_PUBLIC_ARRIVAL_SITE_ID` and private `ARRIVAL_INGEST_KEY`, supplied by the customer setup screen. Questions and entry behavior are managed in Whiteye's private workspace. The middleware handles discovery, forms/URL answers, clearance and background reporting. Search indexers and unknown clients are observed; outages fail open.
+
+## Visitor analytics
+
+First-party and cookieless. `components/analytics.tsx` posts each page view to `/api/hit`, which counts it in a Redis REST store (Upstash). A visitor is a daily-rotating hash of IP and user agent; neither is stored. Known bots are skipped.
+
+Vercel settings: `KV_REST_API_URL` and `KV_REST_API_TOKEN` (or `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN`), plus `ANALYTICS_KEY`. The dashboard is at `/stats?key=<ANALYTICS_KEY>` and returns 404 without the key. Without the store variables nothing is recorded.
