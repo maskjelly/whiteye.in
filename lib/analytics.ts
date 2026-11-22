@@ -24,6 +24,8 @@ async function pipeline(commands: Command[]): Promise<unknown[]> {
   })
   if (!res.ok) throw new Error(`analytics store: ${res.status}`)
   const rows = (await res.json()) as { result?: unknown; error?: string }[]
+  const failed = rows.find((r) => r.error)
+  if (failed) throw new Error(`analytics store: ${failed.error}`)
   return rows.map((r) => r.result)
 }
 
