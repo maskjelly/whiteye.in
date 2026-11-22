@@ -1183,7 +1183,7 @@ video {
     gap: 0;
   }
 
-  @media (min-width: 1100px) {
+  @media (min-width: 1280px) {
     .post-layout {
       grid-template-columns: minmax(0, 1fr) 0;
     }
@@ -1193,9 +1193,15 @@ video {
     display: none;
   }
 
-  @media (min-width: 1100px) {
+  /* Shown only once the column leaves room for it beside the text. */
+  @media (min-width: 1280px) {
     .toc {
       display: block;
+    }
+  }
+
+  @media (min-width: 1100px) {
+    .toc {
       position: sticky;
       top: 5.5rem;
       align-self: start;
