@@ -8,13 +8,13 @@ export async function POST(req: Request) {
   const ua = req.headers.get("user-agent")
   if (!analyticsReady() || isBot(ua) || req.headers.get("sec-fetch-site") === "cross-site") return done()
 
-  let body: { p?: unknown; r?: unknown }
+  let body: { p?: unknown; r?: unknown } | null
   try {
     body = JSON.parse((await req.text()).slice(0, 2000))
   } catch {
     return done()
   }
-  const path = cleanPath(body.p)
+  const path = cleanPath(body?.p)
   if (!path) return done()
 
   const country = req.headers.get("x-vercel-ip-country") ?? ""
@@ -22,7 +22,7 @@ export async function POST(req: Request) {
   try {
     await record({
       path,
-      referrer: cleanReferrer(body.r, new URL(req.url).hostname),
+      referrer: cleanReferrer(body?.r, new URL(req.url).hostname),
       country: /^[A-Z]{2}$/.test(country) ? country : "Unknown",
       device: device(ua!),
       visitor: visitorId(istDay(), ip, ua!),
