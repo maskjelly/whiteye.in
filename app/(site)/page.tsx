@@ -4,7 +4,7 @@ import profile from "@/lib/resume-data.json"
 import contributions from "@/lib/contributions.json"
 import { projectItems } from "@/lib/project-items"
 import { posts } from "@/lib/posts"
-import { ANIMATED_SOCIAL_IMAGE, JsonLd, person, PERSON_ID, SITE, SOCIAL_IMAGE } from "@/lib/structured-data"
+import { ANIMATED_SOCIAL_IMAGE, HOME_SOCIAL_IMAGE, JsonLd, person, PERSON_ID, SITE } from "@/lib/structured-data"
 import { getLiveStats, GITHUB_USER, type ContributionDay } from "@/lib/live"
 import { getUsage, compact } from "@/lib/usage"
 import { BASELINE, CACHE_SHARE, DAILY_MEAN } from "@/lib/token-estimate"
@@ -28,9 +28,9 @@ export const metadata: Metadata = {
     firstName: "Aaryan",
     lastName: "Singh",
     username: "maskjelly",
-    images: [ANIMATED_SOCIAL_IMAGE, SOCIAL_IMAGE],
+    images: [ANIMATED_SOCIAL_IMAGE, HOME_SOCIAL_IMAGE],
   },
-  twitter: { title: "Aaryan Singh · Remote software engineer from India, Rust and AI agents", description, card: "summary_large_image", images: [SOCIAL_IMAGE] },
+  twitter: { title: "Aaryan Singh · Remote software engineer from India, Rust and AI agents", description, card: "summary_large_image", images: [HOME_SOCIAL_IMAGE] },
 }
 
 const stats = [
