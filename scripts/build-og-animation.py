@@ -22,6 +22,9 @@ from PIL import Image, ImageDraw, ImageFont
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "public/og.gif"
 STILL = ROOT / "public/og.png"
+# Layers for the live card at /card (app/card/route.ts): the backdrop and the text on transparency.
+BACKDROP = ROOT / "public/og-base.png"
+TEXT = ROOT / "public/og-text.png"
 
 W, H, S, FPS = 1200, 630, 2, 20
 TITLE, SUBTITLE = "Aaryan Singh", "engineer · 20"
@@ -291,6 +294,8 @@ def main():
         )
         subprocess.run(["gifsicle", "-O3", "--lossy=30", raw, "-o", str(OUT)], check=True)
     frame(0).convert("RGB").save(STILL, optimize=True)
+    base.resize((W, H), Image.LANCZOS).save(BACKDROP, optimize=True)
+    card.resize((W, H), Image.LANCZOS).save(TEXT, optimize=True)
     print(f"{OUT}: {total} frames, {OUT.stat().st_size // 1024} KB")
 
 
