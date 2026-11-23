@@ -13,7 +13,7 @@ const html = String.raw`<!doctype html>
 <style>
 html,body{height:100%;margin:0;overflow:hidden;background:#f7f6f5}
 body{display:grid;place-items:center}
-#stage{position:relative;width:min(100vw,calc(100vh*1200/630));aspect-ratio:1200/630}
+#stage{position:relative;width:min(100vw,calc(100vh*1200/630));aspect-ratio:1200/630;background:url(/og.png) center/100% 100%}
 canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:crosshair}
 a{position:absolute;left:3%;top:5%;width:13%;height:7%}
 </style>
