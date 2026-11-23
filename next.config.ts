@@ -1,11 +1,16 @@
 import type { NextConfig } from "next";
 
-const securityHeaders = [
+const baseHeaders = [
   { key: "X-Content-Type-Options", value: "nosniff" },
-  { key: "X-Frame-Options", value: "SAMEORIGIN" },
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
   { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
   { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" },
+];
+const securityHeaders = [...baseHeaders, { key: "X-Frame-Options", value: "SAMEORIGIN" }];
+// /card is the twitter:player page, so X has to be allowed to frame it.
+const cardHeaders = [
+  ...baseHeaders,
+  { key: "Content-Security-Policy", value: "frame-ancestors 'self' https://x.com https://*.x.com https://twitter.com https://*.twitter.com" },
 ];
 
 const nextConfig: NextConfig = {
@@ -18,7 +23,8 @@ const nextConfig: NextConfig = {
   },
   async headers() {
     return [
-      { source: "/(.*)", headers: securityHeaders },
+      { source: "/((?!card$).*)", headers: securityHeaders },
+      { source: "/card", headers: cardHeaders },
       {
         source: "/:path(llms.txt|llms-full.txt|resume.txt|Aaryan-Singh-Resume.pdf)",
         headers: [{ key: "Cache-Control", value: "public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800" }],
