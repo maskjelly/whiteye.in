@@ -30,7 +30,15 @@ export const metadata: Metadata = {
     username: "maskjelly",
     images: [ANIMATED_SOCIAL_IMAGE, HOME_SOCIAL_IMAGE],
   },
-  twitter: { title: "Aaryan Singh · Remote software engineer from India, Rust and AI agents", description, card: "summary_large_image", images: [HOME_SOCIAL_IMAGE] },
+  twitter: {
+    title: "Aaryan Singh · Remote software engineer from India, Rust and AI agents", description,
+    site: "@aaryantwt",
+    creator: "@aaryantwt",
+    // Player card: X frames /card inside the post, so the animation plays there. The image is the still it shows first.
+    card: "player",
+    players: [{ playerUrl: `${SITE}/card`, streamUrl: "", width: 1200, height: 630 }],
+    images: [HOME_SOCIAL_IMAGE],
+  },
 }
 
 const stats = [
