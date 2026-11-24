@@ -3,7 +3,7 @@ import { after } from "next/server"
 import { notFound } from "next/navigation"
 import { CopyText } from "@/components/copy-text"
 import { istDay } from "@/lib/analytics"
-import { allowed, board, HANDLE, refresh, xReady, type Board, type Post } from "@/lib/x"
+import { allowed, board, HANDLE, refresh, target, xReady, type Board, type Post } from "@/lib/x"
 import "../stats/stats.css"
 import "./x.css"
 
@@ -13,6 +13,7 @@ export const maxDuration = 60
 export const metadata: Metadata = {
   title: "X",
   robots: { index: false, follow: false },
+  referrer: "no-referrer",
 }
 
 const fmt = (n: number) => n.toLocaleString("en-US")
@@ -124,7 +125,7 @@ export default async function XPage({ searchParams }: { searchParams: Promise<{ 
   const before = data.days.filter((d) => d.date < today && d.followers !== null).at(-1)
   const followers = data.profile?.followers ?? 0
   const gained = before ? followers - (before.followers as number) : null
-  const targetToday = todayRow?.target ?? data.plan.goal
+  const targetToday = todayRow?.target ?? target(data.plan, today)
   const ahead = followers - targetToday
 
   const mine = data.posts.filter((p) => !p.reply)
