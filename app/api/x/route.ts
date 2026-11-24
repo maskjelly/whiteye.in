@@ -29,6 +29,9 @@ export async function POST(req: Request) {
     return Response.json({ error: "invalid JSON" }, { status: 400 })
   }
 
+  const plan = body.plan === undefined ? undefined : cleanPlan(body.plan)
+  if (plan === null) return Response.json({ error: "invalid plan" }, { status: 400 })
+
   const saved: string[] = []
   if (Array.isArray(body.drafts)) {
     const items = body.drafts.map((d) => text(d, 600)).filter((d): d is string => Boolean(d)).slice(0, 10)
@@ -42,9 +45,7 @@ export async function POST(req: Request) {
     await saveReport(report)
     saved.push("report")
   }
-  if (body.plan !== undefined) {
-    const plan = cleanPlan(body.plan)
-    if (!plan) return Response.json({ error: "invalid plan" }, { status: 400 })
+  if (plan) {
     await savePlan(plan)
     saved.push("plan")
   }
