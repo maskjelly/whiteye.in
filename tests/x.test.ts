@@ -44,6 +44,8 @@ describe("x tracker", () => {
   test("plans are validated", () => {
     expect(cleanPlan({ start: "2026-11-25", startFollowers: 696, goal: 1000, days: 7 })).not.toBeNull()
     expect(cleanPlan({ start: "tomorrow", startFollowers: 696, goal: 1000, days: 7 })).toBeNull()
+    expect(cleanPlan({ start: "2026-13-01", startFollowers: 696, goal: 1000, days: 7 })).toBeNull()
+    expect(cleanPlan({ start: "2026-02-30", startFollowers: 696, goal: 1000, days: 7 })).toBeNull()
     expect(cleanPlan({ start: "2026-11-25", startFollowers: 696, goal: 500, days: 7 })).toBeNull()
   })
 })

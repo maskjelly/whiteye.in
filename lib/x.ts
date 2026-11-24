@@ -92,11 +92,16 @@ export function toAccount(raw: Raw): Account {
   }
 }
 
-async function statuses(handle: string, pages: number): Promise<Post[]> {
-  const out: Post[] = []
+async function statuses(handle: string, pages: number): Promise<Post[] & { ok?: boolean }> {
+  const out: Post[] & { ok?: boolean } = []
+  out.ok = true
   let cursor = ""
   for (let i = 0; i < pages; i++) {
     const d = await getJson(`${API}/${handle}/statuses${cursor ? `?cursor=${encodeURIComponent(cursor)}` : ""}`)
+    if (!d) {
+      out.ok = false
+      break
+    }
     const rows = (d?.results ?? []) as Raw[]
     if (!rows.length) break
     for (const r of rows) {
@@ -114,7 +119,7 @@ async function graph(handle: string, kind: "followers" | "following", maxPages: 
   let cursor = ""
   for (let i = 0; i < maxPages; i++) {
     const d = await getJson(`${API}/${handle}/${kind}${cursor ? `?cursor=${encodeURIComponent(cursor)}` : ""}`)
-    if (!d) return i === 0 ? null : out
+    if (!d) return null
     const rows = (d.results ?? []) as Raw[]
     out.push(...rows.map(toAccount).filter((a) => a.handle))
     const next = d.cursor?.bottom ?? ""
@@ -173,13 +178,14 @@ export async function refresh(force = false, at: Date = new Date()): Promise<{ r
   const day = istDay(at)
   const cutoff = at.getTime() - KEEP_DAYS * 86400_000
 
-  const [stored, poolRaw, idxRaw, graphDone] = await pipeline([
-    ["HKEYS", "x:posts"],
+  const [backfilled, poolRaw, idxRaw, graphDone] = await pipeline([
+    ["GET", "x:backfilled"],
     ["GET", "x:peerpool"],
     ["INCR", "x:peeridx"],
     ["SET", `x:graph:${day}`, 1, "NX", "EX", 86400 * 2],
   ])
-  const posts = (await statuses(HANDLE, Array.isArray(stored) && stored.length ? 2 : 6)).filter((p) => p.at >= cutoff)
+  const fetched = await statuses(HANDLE, backfilled ? 2 : 6)
+  const posts = fetched.filter((p) => p.at >= cutoff)
 
   const commands: (string | number)[][] = [
     ["SET", "x:profile", j({ ...me, at: at.getTime() })],
@@ -188,6 +194,7 @@ export async function refresh(force = false, at: Date = new Date()): Promise<{ r
     ["ZREMRANGEBYSCORE", "x:series", 0, cutoff],
     ...posts.map((p) => ["HSET", "x:posts", p.id, j(p)]),
   ]
+  if (!backfilled && fetched.ok) commands.push(["SET", "x:backfilled", 1])
 
   let pool = parse<Peer[]>(poolRaw, [])
   if (graphDone === "OK") {
@@ -334,6 +341,7 @@ export function cleanPlan(raw: unknown): Plan | null {
   if (!p || typeof p !== "object") return null
   const ok =
     typeof p.start === "string" && /^\d{4}-\d{2}-\d{2}$/.test(p.start) &&
+    new Date(Date.parse(p.start) || 0).toISOString().slice(0, 10) === p.start &&
     Number.isInteger(p.startFollowers) && Number.isInteger(p.goal) && Number.isInteger(p.days) &&
     p.days! > 0 && p.days! <= 365 && p.goal! > p.startFollowers!
   return ok ? { start: p.start!, startFollowers: p.startFollowers!, goal: p.goal!, days: p.days! } : null
