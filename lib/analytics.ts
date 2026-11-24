@@ -15,7 +15,7 @@ export const analyticsReady = () => Boolean(URL_ && TOKEN)
 
 type Command = (string | number)[]
 
-async function pipeline(commands: Command[]): Promise<unknown[]> {
+export async function pipeline(commands: Command[]): Promise<unknown[]> {
   const res = await fetch(`${URL_}/pipeline`, {
     method: "POST",
     headers: { Authorization: `Bearer ${TOKEN}`, "Content-Type": "application/json" },
@@ -51,7 +51,7 @@ export function device(ua: string): string {
 export function cleanPath(raw: unknown): string | null {
   if (typeof raw !== "string" || !raw.startsWith("/") || raw.startsWith("//")) return null
   const path = raw.split(/[?#]/)[0].replace(/\/+$/, "") || "/"
-  return path.length > 200 || path.startsWith("/api") || path.startsWith("/stats") ? null : path
+  return path.length > 200 || path.startsWith("/api") || path.startsWith("/stats") || path === "/x" ? null : path
 }
 
 export function cleanReferrer(raw: unknown, ownHost: string): string {
