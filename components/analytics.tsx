@@ -9,7 +9,7 @@ export function Analytics() {
   const first = useRef(true)
 
   useEffect(() => {
-    if (!pathname || pathname.startsWith("/stats")) return
+    if (!pathname || pathname.startsWith("/stats") || pathname === "/x") return
     const body = JSON.stringify({ p: pathname, r: first.current ? document.referrer : "" })
     first.current = false
     if (!navigator.sendBeacon?.("/api/hit", body)) {

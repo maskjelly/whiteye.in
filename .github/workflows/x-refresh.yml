@@ -1,0 +1,16 @@
+name: X tracker refresh
+
+on:
+  schedule:
+    # 08:17, 14:17 and 20:47 IST (the last one lands just before the 21:00 report)
+    - cron: "47 2 * * *"
+    - cron: "47 8 * * *"
+    - cron: "17 15 * * *"
+  workflow_dispatch:
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - run: curl -fsS --max-time 90 https://whiteye.in/api/x/refresh
